@@ -1,0 +1,41 @@
+\begin{tikzpicture}[>=stealth',shorten >=1pt,auto,node distance=2.0cm,
+    thick,main node/.style={rectangle,%%fill=blue!20,draw,
+      font=\sffamily,minimum height=7mm,minimum width=10mm}, 
+      roundnode/.style={circle, draw=black, minimum size=3cm},]
+  
+    \node[main node] (Phrase) {$P1$};
+    %\node[main node] (ChaseP) [below of=Request] {$\langle P\rangle $};
+    
+    \node[main node] (Phrase') [node distance=6.0cm, right of=Phrase] {$P2$};
+    % \node[main node] (ChaseP') [node distance=6.0cm, right of=Proposal] {$\langle P'\rangle$};
+      
+    \node[roundnode] (ChaseP) [node distance=3.0cm, below of=Phrase] {};
+    \node[roundnode] (ChaseP') [node distance=6.0cm, right of=ChaseP] {};
+
+    \node[] (a1) at (-.5,-2.5) {a1};
+    \node[] (a2) at (0.5,-2.5) {a2};
+    \node[] (a3) at (0,-3.5) {a3};
+
+    \node[] (a1') at (5.5,-2.5) {a1'};
+    \node[] (a2') at (6.5,-2.5) {a2'};
+    \node[] (a3') at (6,-3.5) {a3'};
+    %\node[] (a4') at (6.5,-3.5) {a4'};
+
+    \node[] (ord) at (3,-3) {$\leq$};
+
+  
+    \path[every node/.style={font=\sffamily\small, fill=white,inner sep=1pt}, ->]
+      (Phrase) edge node [] {$\leq$} (Phrase')
+      (Phrase) edge node[left=1mm] {CHASE} (ChaseP)
+      %(ChaseP) edge [dashed] node[below=1mm] {Ordering} (ChaseP')
+      (Phrase') edge node[right=1mm] {CHASE} (ChaseP')
+      % (a1) edge [dashed] node {} (a1')
+      ;
+
+      \draw[dotted, inner sep=0pt, ->]
+        (a1) to[bend left] (a1');
+      \draw[dotted, inner sep=0pt, ->]
+        (a2) to[bend left] (a2');
+      \draw[dotted, inner sep=0pt, ->]  
+        (a1) to[bend left] (a3');
+  \end{tikzpicture}

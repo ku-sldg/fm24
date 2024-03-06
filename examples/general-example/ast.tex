@@ -1,0 +1,44 @@
+\begin{tikzpicture}[->,>=stealth']
+
+    \node[circle,
+          draw,
+          %minimum width = 2cm, 
+          minimum height = 1.2cm
+          ] (p1) at (0,0) {};
+    \node[] at (p1.center) {@p1};
+
+
+    \node[circle,
+        draw,
+        minimum height = 1.2cm
+        ] (split) at (0,-1.5) {};
+    \node[] at (split.center) {+<+};
+
+    \node[circle,
+        draw,
+        minimum height = 1.2cm
+        ] (ms1) at (-1,-3) {};
+    \node[] at (ms1.center) {ms1};
+
+    \node[circle,
+        draw,
+        minimum height = 1.2cm
+        ] (p2) at (1,-3) {};
+    \node[] at (p2.center) {@p1};
+
+    \node[circle,
+        draw,
+        minimum height = 1.2cm
+        ] (ms2) at (1,-4.5) {};
+    \node[] at (ms2.center) {ms2};
+
+
+    \path[every node/.style={font=\sffamily\small}]
+    %host1 path
+    (p1) edge [] node [right] {} (split.north) 
+    (split) edge [] node [right] {} (ms1.north) 
+    (split) edge [] node [right] {} (p2.north)
+    (p2) edge [] node [right] {} (ms2.north) ;
+
+
+\end{tikzpicture}

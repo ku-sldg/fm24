@@ -1,0 +1,68 @@
+\begin{tikzpicture}[->,>=stealth']
+
+    \node[rectangle,
+          draw,
+          fill = green!30,
+          minimum width = 1.5cm, 
+          minimum height = 0.5cm
+          ] (ms4) at (0,-1) {};
+    \node[] at (ms4.center) {ms2};
+
+    \node[rectangle,
+        draw,
+        fill = green!30,
+        minimum width = 1.5cm, 
+        minimum height = 0.5cm
+        ] (ms2) at (1,1) {};
+    \node[] at (ms2.center) {ms1};
+
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = 1.5cm, 
+        minimum height = 0.5cm
+        ] (sys) at (-1,0) {};
+    \node[] at (sys.center) {c\_c1};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = 1.5cm, 
+        minimum height = 0.5cm
+        ] (c2) at (0,2) {};
+    \node[] at (c2.center) {c\_c2};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = 1.5cm, 
+        minimum height = 0.5cm
+        ] (vc) at (2,2) {};
+    \node[] at (vc.center) {c\_c3};
+
+    \node[rectangle,
+        draw,
+        fill = orange!30,
+        minimum width = 1.5cm, 
+        minimum height = 0.5cm
+        ] (r1) at (1,0) {};
+    \node[] at (r1.center) {r\_c2};
+
+    \node[rectangle,
+        minimum width = 1cm, 
+        minimum height = 0.5cm
+        ] (label) at (0,-2) {};
+    \node[] at (label.center) {c};
+
+
+    \path[every node/.style={font=\sffamily\small}]
+    %host1 path
+    (r1) edge [] node [right] {} (ms4.north) 
+    (c2) edge [] node [right] {} (ms2.north) 
+    (vc) edge [] node [right] {} (ms2.north) 
+    (sys) edge [] node [right] {} (ms4.north)
+    (ms2) edge [] node [right] {} (r1.north) ;
+
+
+\end{tikzpicture}
