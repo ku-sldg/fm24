@@ -106,112 +106,80 @@ Considering these assumptions, the formalized model and subsequent analysis reve
 
 \section{Tools \& Techniques}
 
-Properties of orderings and the Chase model finder developed by MITRE \cite{Ramsdell:2020:Chase} are paramount tools for our adversary-constrained protocol ordering and subsequent analysis. Key concepts include preorder and equivalence relations for Copland protocols as well as Chase generated attack graphs. These topics are explained in more detail in the following sections.
+Properties of orderings and the Chase model finder developed by MITRE \cite{Ramsdell:2020:Chase} are paramount tools for our adversary-constrained protocol ordering and subsequent analysis. Key concepts include equivalence and partial order relations for Copland protocols as well as Chase generated attack graphs. These topics are explained in more detail in the following sections.
 
 \subsection*{Properties of Orders}
 
-Critical to our study is various relations $R$ between objects in a set $X$. We specifically consider the following properties, formally defined below: 
+Critical to our study is various properties of a binary relation $R$ on a set $X$. We specifically consider the following properties, formally defined below.
 
 \begin{itemize}
     \squash
-    \item \emph{antisymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \& \:\: R\: y\: x \rightarrow \:x\: =\: y$ 
-    \item \emph{asymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow  \:\: \neg \:R\: y\: x $  
-    \item \emph{irreflexive} -- $ \forall \: x\: \in X, \: \neg \: R\: x\: x$
     \item \emph{reflexive} -- $ \forall\: x\: \in X$, $R\: x\: x$
+    \item \emph{irreflexive} -- $ \forall \: x\: \in X, \: \neg \: R\: x\: x$
     \item \emph{symmetric} -- $ \forall\: x\: , y\: \in X,$ $R\: x\: y\:\rightarrow R\: y\: x$
+    \item \emph{asymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow  \:\: \neg \:R\: y\: x $  
+    \item \emph{antisymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow \:\: R\: y\: x \rightarrow \:x = y$ 
     \item \emph{transitive} -- $ \forall\: x,\: y,\: z\:\in X$, $R\: x\: y\: \rightarrow R\: y\: z \rightarrow R\: x\: z$
 \end{itemize}
 
-\noindent Combining these properties in specific ways lends itself to the following ordering relations:
+\noindent Combining these properties in specific ways lends itself to the following ordering relations.
 
 \begin{itemize}
     \squash
+    \item a \emph{preorder} is reflexive and transitive
     \item an \emph{equivalence} relation is reflexive, symmetric, and transitive 
     \item a \emph{partial order} is reflexive, antisymmetric, and transitive 
-    \item a \emph{preorder} is reflexive and transitive
     \item a \emph{strict partial order} is irreflexive, asymmetric, and transitive 
 \end{itemize}
 
-\noindent When attempting to introduce new ordering relations, as with this protocol ordering, each property of the ordering must be proven true in order to accurately state the ordering holds.  
+\noindent When attempting to introduce new ordering relations, as with this protocol ordering, each required property must be proven in order to accurately state the ordering holds.  
 
 \subsection*{Chase Analysis}
 
 Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first order model finder that utilizes geometric logic\cite{Enderton:logic} to find minimal models of a given theory, rendering the models as graphs for analysis. Input to the Chase model finder includes axiomatized queries describing assumptions and system dependencies. From those queries, the model finder generates all models which satisfy the given formulas. A rudimentary example involves using Chase to manage a conference paper review process where provided theory states relationships between authors, papers, conflicts, and the paper review scores \cite{Ramsdell:2020:Chase:Guide}. The result is all models where authors can read their scores. More complex examples involve communication and encryption protocols, such as Blanchet's protocol using unnamed asymmetric keys, to determine if secrets are leaked \cite{Ramsdell:2020:Chase:Guide}. 
 
-Chase can be leveraged to understand the susceptibility of a Copland protocol to previously undetectable attacks \cite{Rowe:2021:AutomatedTrust}. When using Chase in this way, the model finder reasons over user-provided axiomatized system dependencies and assumptions to automatically produce output containing all possible protocol executions, rendered in \texttt{.xhtml} as attack trees. Within the attack trees, the presence of an active adversary can be recognized by visualizing corruption and repair events. A corruption event indicates an adversary has performed some activity to manipulate the behavior of a component such that it is in a malicious state yet, when measured, the component returns seemingly trustworthy evidence. A repair event indicates that an adversary has repaired the previously corrupted component by reverting it to its state prior to the corruption. Both corruption and repair events can be categorized as evidence tampering where the specific details of how an adversary performs tampering are not the focus of this work or the Chase work. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
+Chase can be leveraged to understand the susceptibility of a Copland protocol to undetectable attacks \cite{Rowe:2021:AutomatedTrust}. When using Chase in this way, the model finder reasons over user-provided axiomatized system dependencies and assumptions to automatically produce output containing all possible protocol executions, rendered in \texttt{.xhtml} as attack trees. Within the attack trees, the presence of an active adversary can be recognized by visualizing corruption and repair events. A corruption event indicates an adversary has performed some activity to manipulate the behavior of a component such that it is in a malicious state yet, when measured, the component returns seemingly trustworthy evidence. A repair event indicates that an adversary has repaired the previously corrupted component by reverting it to its state prior to the corruption. Both corruption and repair events can be categorized as evidence tampering where the specific details of how an adversary performs tampering are not the focus of this work or the Chase work. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
 
-%\citet{Rowe:2021:AutomatedTrust} leveraged the initial Chase reasoning to confirm that the composition of Copland protocols directly impacts the trustworthiness of produced evidence. When testing this hypothesis, authors proved it is possible for an adversary to manipulate components in an informed way such that the resulting evidence appears trustworthy but is actually fraudulent. Authors confirmed this hypothesis using Chase to automate the adversarial analysis. Given a theory describing the system configuration and other system-dependent assumptions, Chase allowed \citet{Rowe:2021:AutomatedTrust} to discover components that had been unknowingly manipulated by an adversary. 
+Inputs to the Chase model finder includes a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol. A run of the Chase analysis tool utilizes the provided inputs to produce structures which satisfy the given theory. In the Copland protocol analysis context, these structures are automatically assembled into attack trees \cite{Rowe:2021:AutomatedTrust}.  
+These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of the ways in which an adversary might attack a system while evading detection at the final measurement event. 
 
-%The development of Chase required \citet{Ramsdell:2020:Chase} to enrich the Copland event semantics to include corruption and repair events to denote adversary actions.
 
-%In turn, this may provide opportunity to manipulate the protocol to diminish the likelihood of such vulnerabilities.
 
-% Throughout the Chase analysis, it is assumed that an adversary may corrupt or repair measurements as warranted yet still pass appraisal. 
 
-Input to the Chase model finder includes the Copland phrase, a model of Copland adversary events, a model of the evaluated protocol, and a Makefile. This information is captured respectively in the four files below with examples of each file in Appendix \ref{Appendix.Chase}.   
 
-\vspace*{-10mm}
+%% MOVE TO SECTION 3 FORMALIZED CHASE OUTPUT 
 
-\begin{align*}
-    \squash
-    1. &\texttt{<basename>.cop} \\
-    2. &\texttt{<basename>.gln} \\
-    3. &\texttt{thy.gli} \\ 
-    4. &\text{Makefile}
-\end{align*}
+%To better understand Chase output, consider an example protocol where two measurements are performed in sequence as abstractly rendered below:
 
-Aside from the protocol evaluation model in \texttt{<basename>.gln}, files are straightforward and reusable across Chase examples. The analyzed Copland protocol is specified in \texttt{<basename>.cop} and must be written in the proper Copland grammar as the \texttt{.cop} extension triggers a Copland parser. In the theory file \texttt{thy.gli}, Chase maintainers include standard theory describing adversary-ordered executions where basic assumptions and axioms aligning with the Chase logic are indicated. This file may include minimality conditions, event ordering conditions, such as a strict partial order over events, rules for saturated queries, and anything else that may pertain to the circumstances. The Makefile specifies the rules to compile the theories to generate the \texttt{.xhtml} output. In our case, both the theory and Makefile are provided by Chase maintainers.
+% \begin{center}
+%     *target: $@_{p1}[ms1$ \texttt{+<+}  $\at{p1}{ms2}]$
+% \end{center}
 
-Theory in \texttt{<basename>.gln} is more complicated, requiring user-defined model finding parameters, axiomatizated system dependencies, and other contextual nuances. Within the first lines of this file, Chase input parameters including bound (limiting the size of the structure), limit (limiting the number of inference steps), and order of formula consideration (often the order at which they appear) are stated. The following line declares the measurement event where an adversary evades detection. This is often the final measurement event because generated evidence appears trustworthy when the system has actually been maliciously manipulated. System dependencies are also described in this file as logical statements. If applicable, the recent or deep assumptions \cite{Rowe:2016:Confining} can also be stated. The final lines contain file inputs, including the previously defined theory of adversary-ordered executions and the Copland protocol file. It is critical that this file accurately depict the system, its dependencies, and other assumptions, to produce correct output. 
-%Because so much of this file is situationally dependent, it is difficult to reuse existing file. 
+%\noindent where at place \emph{p1} some measurement \emph{ms1} is performed followed by place \emph{p1} again performing the measurement \emph{ms2}. In the abstract scenario, we assume \emph{ms2} is the final measurement operation and therefore the adversary evades detection at \emph{ms2}. We also assume that \emph{ms1} and \emph{ms2} depend on some components the environment, \emph{c1} and \emph{c2}, and \emph{ms1} additionally depends on \emph{c3}. These system dependencies are realized within the user-defined theory file (\texttt{<basename>.gln}). Executing this protocol in Chase generates the abstract syntax tree shown in Figure \ref{fig:example-ast}. The Chase output also includes attack graphs found in Figure \ref{fig:chase-ex}. In these figures, the prefix \emph{ms} represents measurement events, where the final measurement event is in a green box. The prefix \emph{c\_} represents corruption events and the prefix \emph{r\_} represents repair events. Both corruption and repair events are classified as adversary events and presented within yellow and orange boxes, respectively. This abstract labeling system mirrors the labeling system of the Chase model finder. 
 
-% system dependencies are stated with first order logic, specifically geometric logic. Within the theory input, many important assumptions are stated. That is, an analyst specifies the measurement events at which an adversary may go undetected. This is often the final measurement event although that claim need not be ubiquitous. 
-
-A run of the Chase analysis tool utilizes the provided files to produce structures which satisfy the given theory. In the Copland protocol analysis context, these structures are automatically assembled into attack trees \cite{Rowe:2021:AutomatedTrust} and rendered as \texttt{.xhtml}.  Within the output, first statements include the problem configuration with the analyzed protocol, the protocol's abstract syntax tree, and the protocol's execution semantics. This configuration information is followed by all possible attack trees which satisfy the given model. These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of the ways in which an adversary might attack a system. 
-
-To better understand Chase output, consider an example protocol where two measurements are performed in sequence as abstractly rendered below:
-
-\begin{center}
-    *target: $@_{p1}[ms1$ \texttt{+<+}  $\at{p1}{ms2}]$
-\end{center}
-
-\noindent where at place \emph{p1} some measurement \emph{ms1} is performed followed by place \emph{p1} again performing the measurement \emph{ms2}. In the abstract scenario, we assume \emph{ms2} is the final measurement operation and therefore the adversary evades detection at \emph{ms2}. We also assume that \emph{ms1} and \emph{ms2} depend on some components the environment, \emph{c1} and \emph{c2}, and \emph{ms1} additionally depends on \emph{c3}. These system dependencies are realized within the user-defined theory file (\texttt{<basename>.gln}). Executing this protocol in Chase generates the abstract syntax tree shown in Figure \ref{fig:example-ast}. The Chase output also includes attack graphs found in Figure \ref{fig:chase-ex}. In these figures, the prefix \emph{ms} represents measurement events, where the final measurement event is in a green box. The prefix \emph{c\_} represents corruption events and the prefix \emph{r\_} represents repair events. Both corruption and repair events are classified as adversary events and presented within yellow and orange boxes, respectively. This abstract labeling system mirrors the labeling system of the Chase model finder. 
 
 % \begin{figure}[hbtp]
 %     \centering 
-%     \input{examples/general-example/ast.tex}
-%     \caption[Example Chase AST]{Example Chase generated AST}
-%     \label{fig:example-ast}
+%     \begin{tabular}{c c c}
+%         \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
+%     \end{tabular}
+%     \caption[Example Chase Models]{Example Chase models}
+%     \label{fig:chase-ex}
 % \end{figure}
 
-\begin{figure}[hbtp]
-    \centering 
-    \begin{tabular}{c c c}
-        \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
-    \end{tabular}
-    \caption[Example Chase Models]{Example Chase models}
-    \label{fig:chase-ex}
-\end{figure}
 
-% Considering the aforementioned system specifications and he following set of models may be generated, as shown in  Figure \ref{fig:chase-ex}. These models vaguely follow real life examples but are fabricated to showcase various patterns which may arise during analysis. In these figures, the prefix \emph{ms} represents measurement events, the prefix \emph{c\_} represents corruption events, and the prefix \emph{r\_} represents repair events. This labeling system mirrors the actual labeling system of the Chase model finder. 
+%The Chase generated attack graphs presented in Figure \ref{fig:chase-ex} reveal hypothetical corruption and repair events, providing essential insights for developing an adversary-constrained protocol ordering. In Figure \ref{fig:chase-ex}.a, corruption events \emph{c\_c1} and \emph{c\_c2} occur before any measurement events, implying that the adversary's actions are not time-constrained. They must simply be completed before the measurement begins. This is perhaps advantageous to an adversary because they are not forced to operate in a timely manner. In Figure \ref{fig:chase-ex}.b, the adversary is confined to perform a recent corruption as their efforts must be completed between measurement actions. This is more challenging for an adversary because they must work in an unknown time window. In Figure \ref{fig:chase-ex}.c, an adversary must perform three corruption events and one time-constrained repair event. This requires the adversary to exert far more effort to perform a successful attack as actionable events have increased. Upon analyzing all three graphs, it becomes apparent that Figure \ref{fig:chase-ex}.a presents the easiest attack, given the absence of time-constrained events and the minimal number of actions required by the adversary. Because of this, we assume an adversary would likely perform the attacks found in graph a to deceive a relying party. These attacks graphs are all generated by one protocol, yet when comparing this protocol to others, we seek to find a protocol where the easiest attacks (i.e. those performed in graph a) are made more difficult thus increasing adversary constraint.
 
-%However, it is possible that once an adversary has performed a corruption event, it is easier to perform a repair event because the adversary has an understanding of the corrupted component.
-
-The Chase generated attack graphs presented in Figure \ref{fig:chase-ex} reveal hypothetical corruption and repair events, providing essential insights for developing an adversary-constrained protocol ordering. In Figure \ref{fig:chase-ex}.a, corruption events \emph{c\_c1} and \emph{c\_c2} occur before any measurement events, implying that the adversary's actions are not time-constrained. They must simply be completed before the measurement begins. This is perhaps advantageous to an adversary because they are not forced to operate in a timely manner. In Figure \ref{fig:chase-ex}.b, the adversary is confined to perform a recent corruption as their efforts must be completed between measurement actions. This is more challenging for an adversary because they must work in an unknown time window. In Figure \ref{fig:chase-ex}.c, an adversary must perform three corruption events and one time-constrained repair event. This requires the adversary to exert far more effort to perform a successful attack as actionable events have increased. Upon analyzing all three graphs, it becomes apparent that Figure \ref{fig:chase-ex}.a presents the easiest attack, given the absence of time-constrained events and the minimal number of actions required by the adversary. Because of this, we assume an adversary would likely perform the attacks found in graph a to deceive a relying party. These attacks graphs are all generated by one protocol, yet when comparing this protocol to others, we seek to find a protocol where the easiest attacks (i.e. those performed in graph a) are made more difficult thus increasing adversary constraint.
+%% END MOVE
 
 
-%The Chase inputs may be manipulated in the following ways.... Things I tried but didn’t have much impact… 
-%- Change measurement combination (parallel to sequence) 
-%- Add measurements
-%- Not sure how to distinguish when something is a “useful” measurement
-%Changing dependencies 
 
 
 \subsection*{Goals for Protocol Ordering}
 
 % protocol -> set of attack graphs 
 % need to talk about how we put it all together 
-We introduce a Coq-based, formally-verified mathematical model that considers the abilities of an active adversary to order protocols by attack difficulty. This ordering methodology compares two distinct Copland protocols by comparing their Chase-generated attack graphs. From the graphs, we reason over a protocol's hypothesized corruption and repair events, introducing additional definitions and orderings for adversary event comparisons. These event comparisons are foundational for our adversary-constrined protocol ordering, ultimately allowing us to link preorder and equivalence relations to Copland phrases.
+We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required by an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack graphs. From the graphs, we reason over a protocol's hypothesized corruption and repair events, introducing additional definitions and orderings for adversary event comparisons. These event comparisons are foundational for our adversary-constrained protocol ordering, ultimately allowing us to link preorder and equivalence relations to Copland phrases.
 
 %We leverage attack graph comparisons to ultimately introduce an adversary-constrained protocol ordering over Copland phrases. 
 
