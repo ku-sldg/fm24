@@ -240,20 +240,20 @@ In the following sections, definitions and proofs pertaining to the ordering rel
 
 \section{Formalized Chase Output}
 
-This protocol ordering scheme relies on a formal model of the Chase generated attack graphs. These graphs are similar to directed graphs which contain nodes, edges, and a labeling function. 
+This protocol ordering scheme relies on a formal model of the Chase generated attack graphs. These graphs are similar to directed, labeled graphs which contain nodes, edges, and a labeling function. 
 
-\begin{definition}[Directed graph]
-    A directed, labeled, acyclic graph is a tuple $ G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E$ is a finite set of edges represented as an edge relation $( N \times N)$, and $\ell$ is a node labeling function $\ell : N \rightarrow L$. 
+\begin{definition}[Graph]
+    A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
 \end{definition}
 
 %% We enrich the definition of directed graphs to define attack graphs to ensure the definition better aligns with the Chase output. 
 From directed graphs, the definition must be slightly enhanced to accurately capture the Chase output. Looking at Figure \ref{fig:chase-ex}, one can see that each Chase graph consists of a set of states, a relationship mapping state to state (i.e. an edge relation), and a state label disclosing the type of event -- measurement, corruption, or repair. This very closely mirrors the definition of directed graph except, in the actual Chase output, the states are labeled rather than the steps. We maintain this distinction, abstractly reasoning about corruption and repair events as adversary events, with the formal definition of an attack graph below. 
 
 \begin{definition}[Attack Graph]
-    An attack graph is a directed graph where $N$ is a set of states, $E$ are the edges representing steps between states, and $\ell$ is a labeling function from state to measurement or adversary event. 
+    An attack graph is a directed, labeled graph where $N$ is a set of events, $E$ are the edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
 \end{definition}
 
-\noindent To aid in the readers understanding, we present the Coq definition for attack graphs in Figure \ref{fig:coq-graph}. This formal representation explicitly denotes the labeling mechanism for states in the attack graph as measurement event or adversary (corruption or repair) event. 
+%\noindent To aid in the readers understanding, we present the Coq definition for attack graphs in Figure \ref{fig:coq-graph}. This formal representation explicitly denotes the labeling mechanism for states in the attack graph as measurement event or adversary (corruption or repair) event. 
 
 % \begin{figure}
 % \begin{minted}[xleftmargin=20pt,linenos]{Coq}
@@ -266,10 +266,10 @@ From directed graphs, the definition must be slightly enhanced to accurately cap
 % \label{fig:coq-graph}
 % \end{figure} 
 
-When comparing two individual attack graphs, we restrict our reasoning to only events that concern an active adversary. That is, it is possible that graphs contain measurement events occurring sequentially and therfore do not impact the adversary. We found these measurements introduce unnecessary individual attack graph comparisons, negatively impacting the overall ordering decision. To refrain from considering these sequential measurements, we introduce the idea of attack graph normalization, as formally defined below. Normalization reduces any sequence of measurement events found in the attack graph to only the final measurement event in the chain. This results in attack graphs that only contain the events concerning the adversary. 
+When comparing two individual attack graphs, we need only consider events that concern an active adversary. That is, it is possible for an attack graph to contain two measurement events occurring directly in sequence; the fact that two measurement events occurred instead of one does not impact the adversary. Instead, these sequential measurement events only introduce unnecessary complications in comparing individual attack graph, negatively impacting the overall ordering scheme. Therefore, we introduce the idea of attack graph normalization, as formally defined below. Attack graph normalization reduces consecutive measurement events to a single measurement event, namely the latter one. This process results in attack graphs containing only the events relevant to an adversary. 
 
 \begin{definition}[Attack Graph Normalization]
-    An attack graph is in its \emph{normal form} or \emph{reduced form} when any sequence of consecutive measurement events is reduced to only the final measurement event in the chain. 
+    An attack graph is in its \emph{normal form} or \emph{reduced form} when all sequences of consecutive measurement events are reduced to only the final measurement event in the sequence. 
 \end{definition}
 
 \begin{figure}[htbp]
@@ -278,13 +278,14 @@ When comparing two individual attack graphs, we restrict our reasoning to only e
         \input{examples/general-example/one.tex} & \input{examples/general-example/four.tex} 
     \end{tabular}
     \captionsetup{justification=centering,margin=1cm}
-    \caption[Example of attack graph normalization]{An example of attack graph normalization. \\ Arrow denotes from original form to normalized form.}
+    \caption[Example of attack graph normalization]{An example of attack graph normalization.}
     \label{fig:reduce-ex}
 \end{figure}
-\noindent To demonstrate attack graph normalization, consider the example presented in Figure \ref{fig:reduce-ex} where graph a, taken from Figure \ref{fig:chase-ex}.a, is normalized to Figure \ref{fig:reduce-ex}.a'. When applying normalization, the sequential measurement events \texttt{ms1} and \texttt{ms2} are reduced to only the final measurement event \texttt{ms2}. 
+\noindent To demonstrate attack graph normalization, consider the example presented in Figure \ref{fig:reduce-ex} where graph $a$ is normalized to $a'$. When applying attack graph normalization, the consecutive measurement events \texttt{ms1} and \texttt{ms2} are reduced to only the latter measurement event \texttt{ms2}. 
 
+For the remainder of this paper, unless otherwise noted, we assume all Chase-generated attack graphs are in their normal form.
 
-Attack graph normalization is performed in Coq with the relational definition of \texttt{reducer} as seen in Figure \ref{fig:coq-reducer}. \texttt{reducer} is not defined as a recursive fixpoint because, to Coq's termination checker, it is not obvious the list of steps is getting smaller. Instead, \texttt{reducer} is defined as an inductive proposition to express that the graphs eventually reduce. The two constructors of \texttt{reducer} rely on a call to \texttt{reduce1}, a function that performs one reduction step. In the \texttt{reduce\_done} constructor, a call to \texttt{reduce1} returns its input revealing the graph cannot be further reduced. In the \texttt{reduce\_more} constructor, \texttt{reduce1} does not return its input and the \texttt{reducer} call is repeated.
+% Attack graph normalization is performed in Coq with the relational definition of \texttt{reducer} as seen in Figure \ref{fig:coq-reducer}. \texttt{reducer} is not defined as a recursive fixpoint because, to Coq's termination checker, it is not obvious the list of steps is getting smaller. Instead, \texttt{reducer} is defined as an inductive proposition to express that the graphs eventually reduce. The two constructors of \texttt{reducer} rely on a call to \texttt{reduce1}, a function that performs one reduction step. In the \texttt{reduce\_done} constructor, a call to \texttt{reduce1} returns its input revealing the graph cannot be further reduced. In the \texttt{reduce\_more} constructor, \texttt{reduce1} does not return its input and the \texttt{reducer} call is repeated.
 
 % \begin{figure}[ht]
 %     \begin{minted}[xleftmargin=20pt,linenos]{Coq}
@@ -299,24 +300,24 @@ Attack graph normalization is performed in Coq with the relational definition of
 %   \label{fig:coq-reducer}
 %   \end{figure} 
 
-To ensure \texttt{reducer} behaves as expected, we prove that it is deterministic. Given the same inputs, the reducer will always traverse through the same states, producing equivalent outputs. This theorem and subsequent proof are described below.
+% To ensure \texttt{reducer} behaves as expected, we prove that it is deterministic. Given the same inputs, the reducer will always traverse through the same states, producing equivalent outputs. This theorem and subsequent proof are described below.
 
-\begin{theorem}[Reducer Deterministic]
-    For any lists of steps $x$, $y$, and $z$ in an attack graph $G$, if $x$ reduces to $y$ and $x$ reduces to $z$, then $y=z$.
-\end{theorem}
-\begin{proof}
-Let $x$, $y$, and $z$ be arbitrary lists of steps in an attack graph $G$. Suppose $x$ reduces to $y$ and $x$ reduces to $z$. We aim to show that $y = z$. We proceed by induction on the reduction steps
+% \begin{theorem}[Reducer Deterministic]
+%     For any lists of steps $x$, $y$, and $z$ in an attack graph $G$, if $x$ reduces to $y$ and $x$ reduces to $z$, then $y=z$.
+% \end{theorem}
+% \begin{proof}
+% Let $x$, $y$, and $z$ be arbitrary lists of steps in an attack graph $G$. Suppose $x$ reduces to $y$ and $x$ reduces to $z$. We aim to show that $y = z$. We proceed by induction on the reduction steps
 
-\begin{itemize}
-    \squash
-    \item In the base case, if $x$ reduces to $y$ via the \texttt{reduce\_done} rule, it means \texttt{reduce1}$(x) = x$. Since $x$ reduces to $z$, \texttt{reduce1}$(x)$  also reduces to $z$.
-    \item In the inductive case, If $x$ reduces to $y$ via the \texttt{reduce\_more} rule, it means \texttt{reduce1}$(x) \neq x$. Let $x'$ be the result of applying \texttt{reduce1} to $x$, i.e., \texttt{reduce1}$(x)= x'$. Then, by the induction hypothesis, $y' = z'$, where $y'$ is the result of applying \texttt{reduce1} to $y$ and $z'$ is the result of applying \texttt{reduce1} to $z$. Since $y' = z'$, and $x'$ reduces to $y'$ and $x'$ reduces to $z'$ (by \texttt{reduce\_more}), we can apply the inductive hypothesis to conclude that $y' = z'$. Therefore, $y = z$ since $y' = z'$ and $y$ reduces to $y'$ and $z$ reduces to $z'$.
-\end{itemize}
+% \begin{itemize}
+%     \squash
+%     \item In the base case, if $x$ reduces to $y$ via the \texttt{reduce\_done} rule, it means \texttt{reduce1}$(x) = x$. Since $x$ reduces to $z$, \texttt{reduce1}$(x)$  also reduces to $z$.
+%     \item In the inductive case, If $x$ reduces to $y$ via the \texttt{reduce\_more} rule, it means \texttt{reduce1}$(x) \neq x$. Let $x'$ be the result of applying \texttt{reduce1} to $x$, i.e., \texttt{reduce1}$(x)= x'$. Then, by the induction hypothesis, $y' = z'$, where $y'$ is the result of applying \texttt{reduce1} to $y$ and $z'$ is the result of applying \texttt{reduce1} to $z$. Since $y' = z'$, and $x'$ reduces to $y'$ and $x'$ reduces to $z'$ (by \texttt{reduce\_more}), we can apply the inductive hypothesis to conclude that $y' = z'$. Therefore, $y = z$ since $y' = z'$ and $y$ reduces to $y'$ and $z$ reduces to $z'$.
+% \end{itemize}
 
-By induction, we have shown that if $x$ reduces to $y$ and $x$ reduces to $z$, then $y = z$.
-\end{proof}
+% By induction, we have shown that if $x$ reduces to $y$ and $x$ reduces to $z$, then $y = z$.
+% \end{proof}
 
-\noindent This proves that \texttt{reducer} behaves as expected and can be leveraged to normalize attack graphs. For the remainder of this Chapter, unless otherwise noted, we assume all Chase-generated attack graphs are in their normalized form, therefore only contain events that concern an adversary.
+% \noindent This proves that \texttt{reducer} behaves as expected and can be leveraged to normalize attack graphs. 
 
 \section{Ordering}
 
