@@ -138,39 +138,31 @@ Critical to our study is various properties of a binary relation $R$ on a set $X
 
 Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first order model finder that utilizes geometric logic\cite{Enderton:logic} to find minimal models of a given theory, rendering the models as graphs for analysis. Input to the Chase model finder includes axiomatized queries describing assumptions and system dependencies. From those queries, the model finder generates all models which satisfy the given formulas. A rudimentary example involves using Chase to manage a conference paper review process where provided theory states relationships between authors, papers, conflicts, and the paper review scores \cite{Ramsdell:2020:Chase:Guide}. The result is all models where authors can read their scores. More complex examples involve communication and encryption protocols, such as Blanchet's protocol using unnamed asymmetric keys, to determine if secrets are leaked \cite{Ramsdell:2020:Chase:Guide}. 
 
-Chase can be leveraged to understand the susceptibility of a Copland protocol to undetectable attacks \cite{Rowe:2021:AutomatedTrust}. When using Chase in this way, the model finder reasons over user-provided axiomatized system dependencies and assumptions to automatically produce output containing all possible protocol executions, rendered in \texttt{.xhtml} as attack trees. Within the attack trees, the presence of an active adversary can be recognized by visualizing corruption and repair events. A corruption event indicates an adversary has performed some activity to manipulate the behavior of a component such that it is in a malicious state yet, when measured, the component returns seemingly trustworthy evidence. A repair event indicates that an adversary has repaired the previously corrupted component by reverting it to its state prior to the corruption. Both corruption and repair events can be categorized as evidence tampering where the specific details of how an adversary performs tampering are not the focus of this work or the Chase work. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
+Chase can be leveraged to understand the susceptibility of a Copland protocol to undetectable attacks \cite{Rowe:2021:AutomatedTrust}. When using Chase in this way, the model finder reasons over user-provided axiomatized system dependencies and assumptions to automatically produce output containing all possible protocol executions, rendered in \texttt{.xhtml} as attack trees. Within the attack trees, the presence of an active adversary can be recognized by corruption and repair events. A corruption event indicates an adversary has performed some activity to manipulate the behavior of a component such that it is in a malicious state yet, when measured, the component returns seemingly trustworthy evidence. A repair event indicates that an adversary has repaired the previously corrupted component by reverting it to its state prior to the corruption. Both corruption and repair events can be categorized as evidence tampering where the specific details of how an adversary performs tampering are not the focus of this work or the Chase work. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
 
-Inputs to the Chase model finder includes a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol. A run of the Chase analysis tool utilizes the provided inputs to produce structures which satisfy the given theory. In the Copland protocol analysis context, these structures are automatically assembled into attack trees \cite{Rowe:2021:AutomatedTrust}.  
-These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of the ways in which an adversary might attack a system while evading detection at the final measurement event. 
+Inputs to the Chase model finder includes a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol. A run of the Chase analysis tool utilizes the provided inputs to produce structures which satisfy the given theory. In the Copland protocol analysis context, these structures are automatically assembled into attack trees \cite{Rowe:2021:AutomatedTrust}. These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of all the ways in which an adversary might attack a system while evading detection at the final measurement event. 
 
+To better understand Chase output, consider an example protocol where two measurements are performed in sequence as abstractly rendered below.
 
+\begin{center}
+    *target: $@_{\texttt{p1}}$[\texttt{ms1 +<+} $\at{\texttt{p1}}{\texttt{ms2}}]$
+\end{center}
 
-
-
-%% MOVE TO SECTION 3 FORMALIZED CHASE OUTPUT 
-
-%To better understand Chase output, consider an example protocol where two measurements are performed in sequence as abstractly rendered below:
-
-% \begin{center}
-%     *target: $@_{p1}[ms1$ \texttt{+<+}  $\at{p1}{ms2}]$
-% \end{center}
-
-%\noindent where at place \emph{p1} some measurement \emph{ms1} is performed followed by place \emph{p1} again performing the measurement \emph{ms2}. In the abstract scenario, we assume \emph{ms2} is the final measurement operation and therefore the adversary evades detection at \emph{ms2}. We also assume that \emph{ms1} and \emph{ms2} depend on some components the environment, \emph{c1} and \emph{c2}, and \emph{ms1} additionally depends on \emph{c3}. These system dependencies are realized within the user-defined theory file (\texttt{<basename>.gln}). Executing this protocol in Chase generates the abstract syntax tree shown in Figure \ref{fig:example-ast}. The Chase output also includes attack graphs found in Figure \ref{fig:chase-ex}. In these figures, the prefix \emph{ms} represents measurement events, where the final measurement event is in a green box. The prefix \emph{c\_} represents corruption events and the prefix \emph{r\_} represents repair events. Both corruption and repair events are classified as adversary events and presented within yellow and orange boxes, respectively. This abstract labeling system mirrors the labeling system of the Chase model finder. 
+\noindent At place \texttt{p1}, the measurement \texttt{ms1} is performed followed by, at place \texttt{p1} again, the measurement \texttt{ms2}. In the abstract scenario, we assume \texttt{ms2} is the final measurement operation and therefore the adversary evades detection at \texttt{ms2}. We also assume that \texttt{ms1} and \texttt{ms2} depend on some components of the environment, namely \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on \texttt{c3}. These system dependencies are realized within the user-defined theory file input into the Chase tool. Running the Chase tool on this protocol generates attack graphs as found in Figure \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms} represents measurement events, where the final measurement event is in a green box. The prefix \texttt{c\_} represents corruption events and the prefix \texttt{r\_} represents repair events. Both corruption and repair events are classified as adversary events and presented within yellow and orange boxes respectively. This abstract labeling system mirrors the labeling system of the Chase model finder. 
 
 
-% \begin{figure}[hbtp]
-%     \centering 
-%     \begin{tabular}{c c c}
-%         \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
-%     \end{tabular}
-%     \caption[Example Chase Models]{Example Chase models}
-%     \label{fig:chase-ex}
-% \end{figure}
+\begin{figure}[hbtp]
+    \centering 
+    \begin{tabular}{c c c}
+        \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
+    \end{tabular}
+    \caption[Example Chase Models]{Example Chase models}
+    \label{fig:chase-ex}
+\end{figure}
 
 
 %The Chase generated attack graphs presented in Figure \ref{fig:chase-ex} reveal hypothetical corruption and repair events, providing essential insights for developing an adversary-constrained protocol ordering. In Figure \ref{fig:chase-ex}.a, corruption events \emph{c\_c1} and \emph{c\_c2} occur before any measurement events, implying that the adversary's actions are not time-constrained. They must simply be completed before the measurement begins. This is perhaps advantageous to an adversary because they are not forced to operate in a timely manner. In Figure \ref{fig:chase-ex}.b, the adversary is confined to perform a recent corruption as their efforts must be completed between measurement actions. This is more challenging for an adversary because they must work in an unknown time window. In Figure \ref{fig:chase-ex}.c, an adversary must perform three corruption events and one time-constrained repair event. This requires the adversary to exert far more effort to perform a successful attack as actionable events have increased. Upon analyzing all three graphs, it becomes apparent that Figure \ref{fig:chase-ex}.a presents the easiest attack, given the absence of time-constrained events and the minimal number of actions required by the adversary. Because of this, we assume an adversary would likely perform the attacks found in graph a to deceive a relying party. These attacks graphs are all generated by one protocol, yet when comparing this protocol to others, we seek to find a protocol where the easiest attacks (i.e. those performed in graph a) are made more difficult thus increasing adversary constraint.
 
-%% END MOVE
 
 
 
@@ -229,9 +221,8 @@ This protocol ordering scheme relies on a formal model of the Chase generated at
 \begin{definition}[Graph]
     A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
 \end{definition}
-
-%% We enrich the definition of directed graphs to define attack graphs to ensure the definition better aligns with the Chase output. 
-From directed graphs, the definition must be slightly enhanced to accurately capture the Chase output. Looking at Figure \ref{fig:chase-ex}, one can see that each Chase graph consists of a set of states, a relationship mapping state to state (i.e. an edge relation), and a state label disclosing the type of event -- measurement, corruption, or repair. This very closely mirrors the definition of directed graph except, in the actual Chase output, the states are labeled rather than the steps. We maintain this distinction, abstractly reasoning about corruption and repair events as adversary events, with the formal definition of an attack graph below. 
+ 
+An attack graph is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each Chase graph consists of a set of events, an arrow relationship mapping event to event (i.e. a set of edges), and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
 
 \begin{definition}[Attack Graph]
     An attack graph is a directed, labeled graph where $N$ is a set of events, $E$ are the edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
@@ -303,38 +294,36 @@ For the remainder of this paper, unless otherwise noted, we assume all Chase-gen
 
 % \noindent This proves that \texttt{reducer} behaves as expected and can be leveraged to normalize attack graphs. 
 
-\section{Ordering}
+\section{Ordering Individual Attack Graphs}
 
-Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack graphs. Formally defined attack graphs introduce necessary structures for reasoning. Yet, we still must institute operations to compare attack difficulty. In the following section, we establish definitions to compare adversary events and utilize these definitions to reason over attack graphs individually. Specifically, we prove a strict partial order and equivalence relations for comparing individual attack graphs. We then leverage these relations, and additional definitions, to introduce equivalence and preorder relations over sets of attack graphs. Finally, we link the ordering decision over sets of attack graphs to the corresponding Copland protocols to introduce a formally-verified adversary-constrained protocol order. Formal definitions and mathematical proofs are described in the following section. Mechanized proofs are available in Coq at \url{git@github.com:ku-sldg/protocol_ordering.git}
+Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack graphs. Formally defined attack graphs introduce necessary structures for reasoning. Yet, we still must institute operations to compare attack difficulty. In the following section, we establish definitions to compare adversary events and utilize these definitions to reason over attack graphs individually. Specifically, we introduce strict partial order and equivalence relations over individual attack graphs. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack graphs. Lastly, we link the ordering decision over sets of attack graphs to the corresponding Copland protocols to introduce a formally-verified adversary-constrained protocol order.
 
-\subsection*{Ordering Individual Attack Graphs}
+To compare individual Chase-generated attack graphs, we introduce additional definitions to aid in determining when one attack graph requires strictly more or equivalent effort to perform. Central to this comparison is the different classification of adversary actions that may be present within an attack graph. That is, Chase generated attack graphs contain measurement and adversary events, and it is the variety of consecutive occurences that may occur with these events that influence our ordering definitions. 
 
-To compare individual Chase-generated attack graphs, we introduce additional definitions to determine when one attack graph requires strictly more effort or equivalent effort to attack. Central to this comparison is the formal definition of adversary actions that may be present within an attack graph. That is, Chase generated attack graphs contain measurement and adversary events. Measurement events are self-explanatory. Adversary events include corruption and repair events and are formally defined below.
-
-%ultimately defining and proving strict partial order ($<$) and equality ($=$) relations hold. To do this, we must introduce additional definitions for determining when one attack graph is strictly better than another attack graph. Attack graphs are comprised of adversary events and measurement events. While measurement events are intuitive, adversary events must be formally defined, as presented below. 
+While measurement events are self-explanatory, adversary events warrant more of an explanation and are formally defined below.
+ 
 
 \begin{definition}[Adversary Event]
-    An adversary event is an action performed by an adversary to change the behavior of a component in a target system. Within the Chase output, adversary events are classified as  corruption or repair events. 
+    An adversary event is any action performed by an adversary to change the behavior of a component in a target system. Adversary events are classified as either corruption or repair events. 
 \end{definition}
 
 \noindent To reason over individual attack graphs, we must consider all adversary actions present in the graph. For each graph, we therefore study the output to derive a set containing all present, abstractly denoted, adversary events. We then use these sets to compare adversary actions between individual graphs. For set comparisons, we adopt the idea of adversary event subsets and adversary event proper subsets, as formally defined below. 
 
-\begin{definition}[Adversary Event (Proper) Subset]
-    The set of adversary events of a graph a1 is an adversary event (proper) subset of the set of adversary events of a graph a2 if and only if all adversary events of a1 are contained in a2 (and a2 contains at least one adversary event not in a1).
- \end{definition}
- %-- $a2 \subset a1$ ($a2 \subseteq a1 $) -- 
+% \begin{definition}[Adversary Event (Proper) Subset]
+%     The set of adversary events of a graph a1 is an adversary event (proper) subset of the set of adversary events of a graph a2 if and only if all adversary events of a1 are contained in a2 (and a2 contains at least one adversary event not in a1).
+% \end{definition}
 
 As previously alluded to, time constraints escalate difficulty. That is, we assume the difficulty of an attack is increased if an adversary must complete it between measurement events. To realize this distinction, we classify time-constrained adversary events formally below:  
 
 \begin{definition}[Time-Constrained Adversary Event]
-    A time-constrained adversary event is one where the attacker must perform the corruption or repair of a component in between measurement events thus limiting the time they have to complete the action.  
+    A time-constrained adversary event is an adversary event where the attacker must perform the corruption or repair of a component in between measurement events thus limiting the time available to complete the action.
 \end{definition}
 
 \noindent For comparing time-constrained adversary events between individual attack graphs, we again define time-constrained adversary event subsets and time-constrained adversary event proper subsets.
  
- \begin{definition}[Time-Constrained Adversary Event (Proper) Subset]   
-    The set of time-constrained adversary events of a graph a1 is a time-constrained adversary event (proper) subset of the set of time-constrained adversary events of a graph a2 if and only if all time-constrained adversary events of a1 are contained in a2 (and a2 contains at least one time-constrained adversary event not in a1).
- \end{definition}
+%  \begin{definition}[Time-Constrained Adversary Event (Proper) Subset]   
+%     The set of time-constrained adversary events of a graph a1 is a time-constrained adversary event (proper) subset of the set of time-constrained adversary events of a graph a2 if and only if all time-constrained adversary events of a1 are contained in a2 (and a2 contains at least one time-constrained adversary event not in a1).
+%  \end{definition}
 
 Adversary event (proper) subsets and time-constrained adversary event (proper) subsets serve as the basis for comparing events within individual attack graphs. It is from these definitions that we are able to subsequently model and prove equivalence and strict partial order relations over individual Chase-generated graphs. 
 %The ordering conditions over individual attack graphs are explained in further detail in the following subsections. 
@@ -343,24 +332,18 @@ Adversary event (proper) subsets and time-constrained adversary event (proper) s
 
 We say two individual attack graphs are equivalent if the graphs are semantically equivalent. Defining equivalence in this way ensures graphs which have the same adversary events in the same order are indeed equivalent, regardless of inconsequential measurement events. It is easy to visualize the case where two attack graphs that are structurally equivalent have the exact same set of states, steps, and labels and are therefore equal. However, consider the graphs in Figure \ref{fig:reduce-ex}. We wish to say \emph{a'} is equivalent to \emph{a} because both graphs have the same set of adversary events. A natural model to compare the semantics of attack graphs begins with the definition of homomorphism.
 
-%With this notion of semantic equivalence defined as a bidirectional homomorphism, we can prove this is true.  
-
-%\footnote[1]{From this point on, we use equivalence ($=$) and bidirectional homomorphism interchangeably.}. 
-
 %have the same states, steps, and labels. There is one exception, however, which is that we are not concerned with measurement events which place no additional burden on the adversary.  While we care about the final measurement event being the same, equivalence for an adversary ordering does not concern unconstrained measurement events. This distinction allows us to compare protocols which have the same final measurement but potentially different prepended measurements. Because of this condition, we introduce a semantic equivalence rather than a 
 
 
-\begin{definition}[Homomorphism]
-    A labeled (graph) homomorphism $\eta : G \to H$ between graphs \\ $G = (N_G, E_G, l_G)$ and $H = (N_H, E_H, l_H)$ is a function $\eta : N_G \to N_H$ on the nodes such that for every edge $(n_1, n_2) \in E_G$, $(\eta(n_1), \eta(n_2)) \in E_H$, and for every node $n \in N_G$, $l_G(n) = l_H(n)$.  \cite{Rowe:2021:OnOrdering}
+\begin{definition}[Isomorphism]
+    Directed, labeled graphs $G$ and $H$ are isomorphic if and only if there exists a bijection $f : N_G \to N_H$ such that for all pairs of nodes $n_1, n_2 \in N_G$, $(n_1,n_2) \in E_G$ if and only if $(f(n_1),f(n_2)) \in E_H$ and for all nodes $n \in N_G$, $\ell_G(n) = \ell_H(f(n))$.
 \end{definition}
 
-A homomorphism is a relation between two graphs, $G$ and $H$, where $G$ and $H$ are homomorphic if there exists some function mapping the nodes of $G$ to the nodes of $H$ such that all edges in $G$ have a corresponding edge in $H$ and all labeled nodes in $G$ have related labeled nodes in $H$. To prove two graphs are homomorphic, one must obtain any function that satisfies the homomorphism relation. To prove a homomorphism does not exist, one must prove no functions are satisfactory. 
 
-Homomorphisms provide one-way comparisons, yet equality must compare individual attack graphs bidirectionally. A seemingly natural result for bidirectional comparison from a homomorphism is an isomorphism (bijective homomorphism). However, in the context of attack graphs, the homomorphism relation does not necessarily have a one-to-one correspondence. Because of this, we cannot use an isomorphism for equality. Instead, we propose that an equality relation between individual attack graphs is a bidirectional homomorphism or the existence of a labeled attack graph homomorphism in both directions. The formal definition is presented below.
-
-\begin{definition}[Bidirectional Homomorphism (Attack Graph Equivalence)]
-    We say two attack graphs $G$ and $H$ are equivalent if there exists a  homomorphism $\eta : N_G \to N_H$ from $G$ to $H$ and a homomorphism $\phi : N_H \to N_G$ from $H$ to $G$.
+\begin{definition}[Attack Graph Equivalence]
+  Attack graphs $G$ and $H$ are equivalent if and only they are isomorphic.
 \end{definition}
+
 
 Proving a bidirectional homomorphism is an equivalence relation requires proofs of reflexivity, symmetry, and transitivity over the bidirectional homomorphism relation. We complete these proofs in Coq and present important facets of the mechanized code in Appendix \ref{appendix:order}. In the following text, a mathematical representation of the theorems and proofs is outlined beginning with a proof of reflexivity followed by proofs of symmetry and transitivity. In these proofs, we use equivalence and bidirectional homomorphism interchangeably.
 
