@@ -175,18 +175,11 @@ These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal mod
 
 
 
-\subsection*{Goals for Protocol Ordering}
+\section{Overview}
 
 % protocol -> set of attack graphs 
 % need to talk about how we put it all together 
 We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required by an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack graphs. From the graphs, we reason over a protocol's hypothesized corruption and repair events, introducing additional definitions and orderings for adversary event comparisons. These event comparisons are foundational for our adversary-constrained protocol ordering, ultimately allowing us to link preorder and equivalence relations to Copland phrases.
-
-%We leverage attack graph comparisons to ultimately introduce an adversary-constrained protocol ordering over Copland phrases. 
-
-%first using Chase to generate all possible attacks and subsequently comparing if all attacks from a comparable protocol better confine the adversary. 
-
-%We first compare the Chase generated attack graphs individually and then compare them as a set. The ordering decision over sets of attack graphs can be linked to the protocols which produced the graphs to assess if the change in the protocol better confined the adversary. 
-%, to an ordering decision yielding the more confining protocol.  
 
 \begin{figure}[hbtp]
     \centering
@@ -196,12 +189,7 @@ We introduce a Coq-based, formally-verified mathematical model to order attestat
     \label{fig:protocol-org-fig}
 \end{figure}
 
-%, as denoted with the ordering relation ($\leq$) above the arrow 
-The goal of this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Here, more difficult to attack means more difficult to prevent evidence of adversary presence. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack graphs $\{ a1, a2, a3\}$ for $P1$ and the set of attack graphs for $\{a1', a2', a3'\}$ for $P2$. When then compare the Chase-generated attack graphs individually, discovering relations between $a1$ and $a1'$, $a2$ and $a2'$, and $a1$ and $a3'$ as represented with the dotted lines. Here, the arrow points from the easier attack towards the equally difficult or more difficult attack. Next, looking at the sets of attack graphs, it is apparent that every attack graph in $P2$ has a related graph in $P1$ that is either the same or less difficult to attack. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to define when $ P1 \leq P2$.  
-
-%the change in $P1$ and $P2$ is $\triangle{P}$ as seen with the top line. We can generate the set of attack graphs $\{ a1, a2, a3\}$ for $P1$ and the set of attack graphs for $\{a1', a2', a3'\}$ for $P2$. When comparing the individual Chase generated attack graphs, we see there exists some relation between $a1$ and $a1'$, $a2$ and $a2'$, and $a1$ and $a3'$ as represented with the dotted lines where the arrow points towards the equally difficult or more difficult attack. Looking at the sets of attack graphs, it is apparent that every graph in $P2$ has a related graph in $P1$ that is either the same or less difficult to attack. From this observation, we conclude that $P2$ is at least as difficult to attack thus at least as strong as $P1$. This logic is propagated to reveal that $\triangle{P}$ made the protocol stronger.  
-
-%Less than or equal to is not the only operator we introduce for protocol comparison. 
+Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack graphs $\{ a^1_1, a^1_2, a^1_3\}$ for $P1$ and the set of attack graphs for $\{a^2_1, a^2_2, a^2_3\}$ for $P2$. We then compare the Chase-generated attack graphs individually, discovering ordering relations between $a^1_1$ and $a^2_1$, $a^1_2$ and $a^2_2$, and $a^1_1$ and $a^2_3$ as represented by the dotted lines. Here, the arrow points from an attack to one that is at least as difficult to perform. Next, looking at the sets of attack graphs, we can see that every attack graph in $P2$ has a graph in $P1$ that is equal or easier to perform. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to define $ P1 \leq P2$.  
 
 Following our workflow, we introduce four mutually inclusive relationships for an adversary-constrained protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are a preorder over Copland protocols. These four relations are enumerated below:
 
@@ -795,6 +783,8 @@ This observation prompts us to consider the effort involved in a repair event. T
 
 These examples demonstrate the applicability of this ordering approach to examples from the literature. With these completed examples, we reliably conclude our adversary-constrained protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack graphs and linking the relationship between attack graphs to the protocol in question. By testing various protocol composition and protocol ordering hypotheses regarding Copland phrases, we reliably conclude that measuring according to the system's dependency chain provably increases the trustworthiness of generated evidence. This methodology introduces a novel approach to protocol ordering, paving the way for more complex examples to ultimately create more robust and resilient attestation systems.
 
+
+\section*{Appendix}
 
 
 %%%%%%%%%%%
