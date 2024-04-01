@@ -191,52 +191,36 @@ We introduce a Coq-based, formally-verified mathematical model to order attestat
 
 Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack graphs $\{ a^1_1, a^1_2, a^1_3\}$ for $P1$ and the set of attack graphs for $\{a^2_1, a^2_2, a^2_3\}$ for $P2$. We then compare the Chase-generated attack graphs individually, discovering ordering relations between $a^1_1$ and $a^2_1$, $a^1_2$ and $a^2_2$, and $a^1_1$ and $a^2_3$ as represented by the dotted lines. Here, the arrow points from an attack to one that is at least as difficult to perform. Next, looking at the sets of attack graphs, we can see that every attack graph in $P2$ has a graph in $P1$ that is equal or easier to perform. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to define $ P1 \leq P2$.  
 
-Following our workflow, we introduce four mutually inclusive relationships for an adversary-constrained protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are a preorder over Copland protocols. These four relations are enumerated below:
+Following our workflow, we introduce four ordering relations for adversary-constrained protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are partial orders. The relations are enumerated below.
 
-% \begin{center}
-% \begin{enumerate}
-%     \squash
-% \item P1 = P2
-% \item P1 $\le$ P2 
-% \item P1 $\ge$ P2 
-% \item Incomparable
-% \end{enumerate}
-% \end{center}
-\vspace*{-10mm}
+\vspace*{-5mm}
 
 \begin{align*}
-1. & P1 = P2 \\
-2. & P1 \le P2 \\
-3. & P1 \ge P2 \\
-4. & \text{Incomparable}
+1. & \text{ } P1 = P2 \\
+2. & \text{ } P1 \le P2 \\
+3. & \text{ } P1 \ge P2 \\
+4. & \text{ } P1 \text{ and } P2 \text{ are incomparable}
 \end{align*}
 
-\noindent We choose to define the ordering in this way for a few reasons. First, we refrain from introducing four mutually exclusive relationships, finding this would result in an increase of incomparable protocols. As such, under this ordering, it is impossible to conclude that one protocol is strictly better than another protocol. We could define the relations using the irreflexive kernel (deriving a strictly less than operator from the satisfaction of both less than and not equal conditions). However, we found this was not appropriate because the strictly less than would introduce some arbitrary ordering on corruption or repair events where there should not be one.  
+\noindent We choose to define the ordering in this way for a few reasons. First, we refrain from introducing four mutually exclusive relationships (i.e., $=$, $<$, $>$, incomparable) because this results in a drastic increase in the number incomparable protocols. As such, under our ordering, we do not conclude that one protocol is strictly better than another protocol. Although one might think we could define the relations necessary to draw such conclusions using the irreflexive kernel (deriving a strictly less than operator from the satisfaction of both less than and not equal conditions), we found this was not appropriate because the strictly less than operator would inadvertently introduce an arbitrary ordering over adversarial corruption and repair events where there should not be one.  
 
-%% why we consider these four relations 
-%% consider because they are more meaningful... could've considered the 4 mutually exclusive relations but we choose to do the overlapping... we do overlapping so less things are incomparable
-%% describe why we don't conclude that sets are strictly better 
-%% irreflexive kernel not an appropriate way to determine strictly better because 
-%% - here you have <= and not = so you have < 
-%% - if we do take the irr kernel as a relation then it puts some arbitrary ordering on corruption events where there shouldn't be one  
 
-These four mutually inclusive relationships serve as foundational categories for adversary-constrained protocol ordering. While the ordering may appear intuitive, mathematically modeling the Chase output and subsequently comparing attacks graphs through Coq-based mechanized proofs is challenging. Our results overcome this challenge, verifying the four relationships over sets of attack graphs does provably demonstrate the properties of equivalence and preorder relations. By completing proofs over these relations, we formally define this relationship, verifying one protocol is at least as good as another because it requires at least as many adversary actions to generate seemingly trustworthy evidence. The following sections describe the process of introducing and verifying an adversary-constrained ordering between two Copland protocols. 
+These four ordering relations serve as foundational categories for adversary-constrained protocol ordering. While the ordering may appear intuitive, mathematically modeling the Chase output and subsequently defining the ordering operations themselves through Coq-based mechanized proofs is challenging. Our results overcome this challenge, defining and verifying the equivalence and partial order relationships over sets of attack graphs which are built upon ordering relations over individual attack graphs. With this ordering infrastructure, one can provably determine that one protocol is at least as good as another because it requires at least as much adversary effort to generate seemingly trustworthy evidence. 
 
 Under our methodology, an ordering relation between two Copland protocol can be obtained by completing the following workflow:
 
 \begin{enumerate}
     \squash
     \item Obtain Chase output for each protocol and formally model generated attack graphs
-    \item Compare individual Chase-generated attack graphs
-    \item Leverage individual order to obtain ordering relation over the sets of attack graphs
-    \item Link set ordering decision to obtain protocol order
+    \item Determine ordering relationships between the individual Chase-generated attack graphs
+    \item Leverage the individual ordering relationships to determine the ordering relationship between the sets of attack graphs
+    \item Link the set ordering relationship to determine protocol ordering relationship
 \end{enumerate}
 
-\noindent The process begins by subjecting two distinct Copland protocols to the Chase model finder to generate all possible attack graphs and then modeling the attack graphs formally in the Coq environment. Within the environment, the graphs are individually compared to determine if and how they are related. More specifically, we introduce and prove a strict partial order and an equivalence relation for comparing individual attack graphs. We leverage the ordering to then introduce the four aforementioned relationships ($=$, $\leq$, $\geq$, incomparable) over sets of attack graphs, proving equivalence and preorder relations satisfy respective properties. Once the set ordering decision is made, it is then propagated to the corresponding Copland protocols to realize protocol order. 
+% \noindent The process begins by subjecting two distinct Copland protocols to the Chase model finder to generate all possible attack graphs and then modeling the attack graphs formally in the Coq environment. Within the environment, the graphs are individually compared to determine if and how they are related. More specifically, we introduce and prove a strict partial order and an equivalence relation for comparing individual attack graphs. We leverage the ordering to then introduce the four aforementioned relationships ($=$, $\leq$, $\geq$, incomparable) over sets of attack graphs, proving equivalence and preorder relations satisfy respective properties. Once the set ordering decision is made, it is then propagated to the corresponding Copland protocols to realize protocol order. 
 
-In the following sections, definitions and proofs pertaining to the ordering relations are stated. Here, mathematical proofs are completed manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}. For additional accessibility, important Coq definitions and proof outlines are presented in Appendix \ref{appendix:order}.
+The following sections describe the process of introducing and verifying an adversary-constrained ordering between two Copland protocols. In this paper, mathematical proofs are presented manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}.
 
-%The first step towards this ordering is using Chase to generate individual attack graphs and subsequently comparing the relation between the individual attack graphs. We find that an individual attack graph may be either strictly less than or equal to comparable attack graph. If one of those relations hold,  Throughout the remainder of this work, we prove that the four relationships over sets of attack graphs does exhibit the properties of equivalence and preorder relations thereby formally introducing this relationship.
 
 \section{Formalized Chase Output}
 
