@@ -5,49 +5,49 @@
 
     \node[ellipse,
     draw = black,
-    minimum width = 2cm, 
-    minimum height = 5cm] (e) at (-6,0) {};
+    minimum width = 1.5cm, 
+    minimum height = 3cm] (e) at (-4.8,0) {};
 
     \node[ellipse,
     draw = black,
-    minimum width = 2cm, 
-    minimum height = 5cm] (e) at (-3,0) {};
+    minimum width = 1.5cm, 
+    minimum height = 3cm] (e) at (-1.8,0) {};
 
     \node[ellipse,
     draw = black,
-    minimum width = 2cm, 
-    minimum height = 5cm] (e) at (3,0) {};
+    minimum width = 1.5cm, 
+    minimum height = 3cm] (e) at (1.8,0) {};
 
     \node[ellipse,
     draw = black,
-    minimum width = 2cm, 
-    minimum height = 5cm] (e) at (6,0) {};
+    minimum width = 1.5cm, 
+    minimum height = 3cm] (e) at (4.8,0) {};
 
 
-    \node[] (a1) at (-6,1) {s1};
-    \node[] (a2) at (-6,0) {s2};
-    \node[] (a3) at (-6,-1) {s3};
+    \node[] (a1) at (-4.8,.8) {$a^S_1$};
+    \node[] (a2) at (-4.8,0) {$a^S_2$};
+    \node[] (a3) at (-4.8,-.8) {$a^S_3$};
 
-    \node[] (a1') at (-3,1) {t1};
-    \node[] (a2') at (-3,0) {t2};
-    \node[] (a3') at (-3,-1) {t3};
+    \node[] (a1') at (-1.8,.8) {$a^T_1$};
+    \node[] (a2') at (-1.8,0) {$a^t_2$};
+    \node[] (a3') at (-1.8,-.8) {$a^T_3$};
 
-    \node[] (b1) at (6,1) {t1};
-    \node[] (b2) at (6,0) {t2};
-    \node[] (b3) at (6,-1) {t3};
+    \node[] (b1) at (4.8,.8) {$a^T_1$};
+    \node[] (b2) at (4.8,0) {$a^T_2$};
+    \node[] (b3) at (4.8,-.8) {$a^T_3$};
 
-    \node[] (b1') at (3,1) {s1};
-    \node[] (b2') at (3,0) {s2};
-    \node[] (b3') at (3,-1) {s3};
+    \node[] (b1') at (1.8,.8) {$a^S_1$};
+    \node[] (b2') at (1.8,0) {$a^S_2$};
+    \node[] (b3') at (1.8,-.8) {$a^S_3$};
 
-    \node[] (label) at (-4.5, -3) {S supports T};
-    \node[] (label) at (4.5, -3) {T covers S};
+    \node[] (label) at (-3.3, -2.1) {$S$ supports $T$};
+    \node[] (label) at (3.3, -2.1) {$T$ covers $S$};
 
-    \node[] (label) at (-6, 3) {S};
-    \node[] (label) at (-3, 3) {T};
+    \node[] (label) at (-4.8, 1.9) {$S$};
+    \node[] (label) at (-1.8, 1.9) {$T$};
 
-    \node[] (label) at (3, 3) {S};
-    \node[] (label) at (6, 3) {T};
+    \node[] (label) at (1.8, 1.9) {$S$};
+    \node[] (label) at (4.8, 1.9) {$T$};
 
 
       \draw[->] (a1) to (a1');

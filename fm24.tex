@@ -302,7 +302,6 @@ As previously alluded to, time constraints escalate difficulty. That is, we assu
 
 \noindent It is worth noting that by definition, $\tau(a) \subseteq \iota(a)$ for every attack graph $a$.
 
-%\subsection*{Individual Attack Graph Equivalence}
 
 We say two individual attack graphs are equivalent if the graphs are semantically equivalent. Defining equivalence in this way ensures graphs which have the same adversary events in the same order are indeed equivalent, regardless of inconsequential measurement events. It is easy to visualize the case where two attack graphs that are structurally equivalent have the exact same set of states, steps, and labels and are therefore equal. However, consider the graphs in Figure \ref{fig:reduce-ex}. We wish to say $a'$ is equivalent to $a$ because both graphs have the same set of adversary events. A natural model to compare the semantics of attack graphs begins with the definition of homomorphism.
 
@@ -312,19 +311,18 @@ We say two individual attack graphs are equivalent if the graphs are semanticall
 \end{definition}
 
 
-\begin{definition}[Equivalence =]
-  Attack graphs $a$ and $b$ are equivalent (i.e., $a=b$) if and only they are isomorphic.
+\begin{definition}[Equivalence $\simeq$]
+  Attack graphs $a$ and $b$ are equivalent (i.e., $a \simeq b$) if and only they are isomorphic.
 \end{definition}
 
 
 \noindent With these three completed proofs, we obtain a formally-verified equality relation over individual attack graphs allowing us to provably determine if two graphs are semantically equivalent.
 
-%\subsection*{Individual Attack Graph Strict Partial Order}
 
 A strict partial order over individual attack graphs reveals that one attack graph is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack graphs to ground our logic in concrete examples. By studying patterns in the graphs, it is evident that an adversary could be confined under two distinct conditions. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. More formally stated, if an attack graph $a1$ is an adversary event proper subset of $a2$ then we would conclude $a2$ is strictly better than $a1$ because more corruption events requires more work on the adversary's behalf. Secondly, if an attack graph $a1$ is a time-constrained adversary event proper subset of $a2$ then we would conclude $a2$ is strictly better than $a1$ because a time-constrained corruption event requires more work. These ideas are captured with the formal definition for strict partial order below.
 
 \begin{definition}[Strictly Less Work]
-  An attack graph $a$ requires strictly less work to perform by an adversary than attack graph $b$ if and only if one of the following hold: 
+  An attack graph $a$ requires strictly less work to perform by an adversary than attack graph $b$ if and only if at least one of the following hold: 
 \begin{enumerate}
   \squash
   \item $\iota(a) \subseteq \iota(b)$ and $\tau(a) \subset \tau(b)$
@@ -334,8 +332,8 @@ A strict partial order over individual attack graphs reveals that one attack gra
 \end{enumerate}
 \end{definition}
 
-\begin{definition}[Strict Partial Order $<$]
-    An attack graph $a$ is strictly less than attack graph $b$ (i.e., $a < b$) if and only if $a$ requires strictly less work than $b$.
+\begin{definition}[Strict Partial Order $\prec$]
+    An attack graph $a$ is strictly less than attack graph $b$ (i.e., $a \prec b$) if and only if $a$ requires strictly less work than $b$.
 \end{definition}
 
 This definition of strict partial order ($a1 < a2$) over individual attack graphs implies that graphs can only be compared if $a1$ is both an adversary event subset and time-constrained adversary event subset of $a2$. Additionally, $a1$ must either be an adversary event proper subset or time-constrained adversary proper subset of $a2$ to produce a strict partial order. To formally verify this is indeed a strict partial order, we prove the relation is irreflexive, asymmetric, and transitive using $<$ to imply strict partial order. We begin by proving irreflexivity below.
@@ -377,8 +375,8 @@ This definition of strict partial order ($a1 < a2$) over individual attack graph
 Completing proofs of irreflexivity, asymmetry, and transitivity allows us to establish a formally-defined strict partial ordering relation for comparing individual attack graphs. With this, we can realize if an individual attack graph is strictly better than another, a paramount result towards our adversary-constrained protocol ordering.
 
 
-\begin{definition}[Partial Order $\le$]
-  An attack graph $a$ is less than attack graph $b$ (i.e., $a \le b$) if and only if $a$ is isomorphic to $b$ or $a$ requires strictly less work than $b$ (i.e., $a = b$ or $a < b$).
+\begin{definition}[Partial Order $\preceq$]
+  An attack graph $a$ is less than attack graph $b$ (i.e., $a \preceq b$) if and only if $a$ is isomorphic to $b$ or $a$ requires strictly less work than $b$ (i.e., $a \simeq b$ or $a \prec b$).
 \end{definition}
 
 
@@ -387,7 +385,7 @@ Completing proofs of irreflexivity, asymmetry, and transitivity allows us to est
 The previously introduced relations of equality and strict partial order between individual attack graphs can be leveraged to compare protocols by ordering their corresponding set of Chase-generated attack graphs. Yet, before any set ordering decision can be realized, we introduce additional infrastructure to compare sets of attack graphs. We begin by recalling Rowe's definition of supports and covers below \cite{Rowe:2021:OnOrdering}:
 
 \begin{definition}[Supports/Covers]
-    Given two sets of graphs S and T and some relation over the sets R, we say that S supports T iff for every $H \in T$, there is some $G \in S$, such that $R\: G\: H$. We  say that T covers S iff for every $G \in S$ there is some $H \in T$ such that $R\: G\: H$.
+    Given two sets of graphs $S$ and $T$ and some relation $R$ over their elements, we say that $S$ supports $T$ if and only if for every $b \in T$, there is some $a \in S$, such that $R\: a\: b$. We  say that $T$ covers $S$ if and only if for every $a \in S$ there is some $b \in T$ such that $R\: a\: b$.
 \end{definition}
 
 Supports states that, for every graph in $T$, there exists some related graph in $S$. Conversely, covers says that, for every graph in $S$, there exists a related graph in $T$.  This idea is best visualized within Figure \ref{fig:sup-cov} where we abstractly denote Copland protocols as $S$ and $T$. We assume these protocols generate the corresponding set of attack graphs $\{s1, s2 , s3 \}$ and $ \{t1, t2 ,t3\}$.
@@ -396,7 +394,7 @@ Supports states that, for every graph in $T$, there exists some related graph in
     \centering
     \input{supports-fig.tex}
     \captionsetup{justification=centering,margin=1cm}
-    \caption[Supports and covers]{A visual representation of supports and covers. \\ Arrows represent ordering relation holds.}
+    \caption[Supports and covers]{A visual representation of supports and covers. \\ Arrows represent ordering relationships.}
     \label{fig:sup-cov}
 \end{figure}
 
@@ -406,16 +404,10 @@ While Rowe defines both supports and covers, we only need to be concerned with s
 
 Rowe's \cite{Rowe:2021:OnOrdering} definition of supports must be changed to account for the aforementioned properties. Formally stated below, this enhanced definition denotes $R$ as the previously defined equality (bidirectional homomorphism) or strict partial order relations. These relations are defined over individual graphs. By using them under supports, we are able to compare sets of attack graphs. 
 
-\begin{definition}[Supports (Attack Graph Version)]
-    Given two sets of attack graphs S and T and the equality and strict partial order relation over the sets, we say that S supports T if and only if for every $H \in T$, there is some $G \in S$, such that $G$ equals $H$ or $G$ is strictly less than $H$.
+\begin{definition}[Partial Order $\leq$]
+  A set of attack graphs $S$ is less than a set of attack graphs $T$ (i.e., $S \leq T$) if and only if S supports T with the partial order relation $\preceq$.
 \end{definition}
 
-% \begin{lstlisting}[language=Coq]
-% Definition supports' (SS TT: list (attackgraph measurement corruption)) : Prop := 
-%   forall (H : (attackgraph measurement corruption)), In H TT ->
-%   (exists (G : (attackgraph measurement corruption)), In G SS /\ 
-%   (bidir_homo G H \/ strict_partial_order G H)).
-% \end{lstlisting}
 
 \noindent Supports is a preorder over sets of Chase-generated attack graphs. Verifying this is indeed a preorder requires proofs of reflexivity and transitivity. Mathematical versions of these proofs are completed below. Mechanized proofs are available in Coq.  
 
@@ -438,7 +430,11 @@ Rowe's \cite{Rowe:2021:OnOrdering} definition of supports must be changed to acc
 Recall we introduce four mutually inclusive relations. While we now have a preorder $\leq$ over sets of attack graphs, we must also introduce a verified equivalence relation to ascertain when two sets of Chase-generated attack graphs are equivalent. Set equality is defined in the same way as supports (attack graph version) sans the strictly less than relation. This formally stated as follows: 
 
 \begin{definition}[Set Equality]
-    Two sets of attack graphs $S$ and $T$ are equivalent if and only if for every $H \in T$, there is some $G \in S$, such that $G$ is bidirectionally homomorphic to $H$ and for every $G \in S$, there is some $H \in T$, such that $H$ is bidirectionally homomorphic to $G$.
+  Two sets $S$ and $T$ are equal if and only $S \subseteq T$ and $T \subseteq S$.
+\end{definition}
+
+\begin{definition}[Equivalence =]
+    Two sets of attack graphs $S$ and $T$ are equivalent (i.e., $S = T$) if and only if they are equal up to isomorphism of their elements.
 \end{definition}
 
 This definition of set equality is essentially a bidirectional version of supports with equivalence (bidirectional homomorphism) over individual graphs as $R$. We prove that set equality is indeed an equivalence relation by proving reflexivity, symmetry, and transitivity. 
@@ -584,7 +580,7 @@ When constructing this case study, we start from the simplest protocol and seque
 
 Formal reasoning to demonstrate that \emph{rtm-ker-vc-sys-seq} is indeed the most resistant to attacks begins by obtaining the Chase generated attack graphs for each protocol. With the protocols presented in Table \ref{Chase-table} and the necessary Chase inputs, we obtain the following attack models presented in Figure \ref{fig:rtm-compare}. After applying graph normalization, the attack graphs can be reduced to only activities that affect an active adversary, as presented in Figure \ref{fig:rtm-compare-reduced}.  The remainder of this analysis will only consider the graphs under normal form. 
 
-\newpage
+
 
 Employing the previously introduced formalism to determine the relationship between the three protocols begins by analyzing the underlying relationship between individual attack graphs. Starting with \texttt{m1a}, it is apparent that \texttt{m1b} is strictly better than \texttt{m1a} because \texttt{m1b} has a time-constrained measurement event. The same logic applies when comparing \texttt{m2a} and \texttt{m2b}. It is also apparent that graph \texttt{m3b} is equivalent to \texttt{m2a} because they have the same corruption events. \texttt{m4b} is strictly better than either \texttt{m2a} or \texttt{m1a} because it has more corruption events. By the same reasoning, \texttt{m5b} is strictly better than \texttt{m1a}. This concludes comparison of the individual attack graphs.
 
@@ -706,8 +702,6 @@ This observation prompts us to consider the effort involved in a repair event. T
 
 These examples demonstrate the applicability of this ordering approach to examples from the literature. With these completed examples, we reliably conclude our adversary-constrained protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack graphs and linking the relationship between attack graphs to the protocol in question. By testing various protocol composition and protocol ordering hypotheses regarding Copland phrases, we reliably conclude that measuring according to the system's dependency chain provably increases the trustworthiness of generated evidence. This methodology introduces a novel approach to protocol ordering, paving the way for more complex examples to ultimately create more robust and resilient attestation systems.
 
-
-\section*{Appendix}
 
 
 %%%%%%%%%%%
