@@ -103,7 +103,7 @@ Considering these assumptions, the formalized model and subsequent analysis reve
 %% -- Same idea as well-supported measurement from confining paper
 %% -- Hypothesis: if measurement chain is not well-supported, then it is “easy” for an adversary to corrupt
 
-\section{Tools \& Techniques}
+\section{Preliminaries}
 
 Properties of orderings and the Chase model finder developed by MITRE \cite{Ramsdell:2020:Chase} are paramount tools for our adversary-constrained protocol ordering and subsequent analysis. Key concepts include equivalence and partial order relations for Copland protocols as well as Chase generated attack graphs. These topics are explained in more detail in the following sections.
 
@@ -167,7 +167,7 @@ To better understand Chase output, consider an example protocol where two measur
 
 
 \section{Overview}
-We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required by an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack graphs. From the graphs, we reason over a protocol's hypothesized corruption and repair events, introducing additional definitions and orderings for adversary event comparisons. These event comparisons are foundational for our adversary-constrained protocol ordering, ultimately allowing us to link preorder and equivalence relations to Copland phrases.
+We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required by an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack graphs. Sets of attack graphs are compared using our proposed novel ordering scheme which is reliant upon an ordering scheme over individual attack graphs. We propose an ordering over individual attack graphs that considers two facets regarding the difficulty required by an adversary. This ordering scheme is designed such that one can easily plug in additional considerations and constraints to enhance the ordering.
 
 \begin{figure}[hbtp]
     \centering
@@ -177,9 +177,9 @@ We introduce a Coq-based, formally-verified mathematical model to order attestat
     \label{fig:protocol-org-fig}
 \end{figure}
 
-Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack graphs $\{ a^1_1, a^1_2, a^1_3\}$ for $P1$ and the set of attack graphs for $\{a^2_1, a^2_2, a^2_3\}$ for $P2$. We then compare the Chase-generated attack graphs individually, discovering ordering relations between $a^1_1$ and $a^2_1$, $a^1_2$ and $a^2_2$, and $a^1_1$ and $a^2_3$ as represented by the dotted lines. Here, the arrow points from an attack to one that is at least as difficult to perform. Next, looking at the sets of attack graphs, we can see that every attack graph in $P2$ has a graph in $P1$ that is equal or easier to perform. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to define $ P1 \leq P2$.  
+Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack graphs $\{ a_1, a_2, a_3\}$ for $P1$ and the set of attack graphs for $\{b_1, b_2, b_3\}$ for $P2$. We then compare the Chase-generated attack graphs individually, discovering ordering relations between $a_1 \preceq b_1$, $a_2 \preceq b_2$, and $a_1 \preceq b_3$ as represented by the dotted lines with arrows pointing from an attack to one that is at least as difficult to perform. Next, looking at the sets of attack graphs, we can see that every attack graph in $P2$ has a graph in $P1$ that is at most as difficult to perform. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to define $ P1 \leq P2$.  
 
-Following our workflow, we introduce four ordering relations for adversary-constrained protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are partial orders. The relations are enumerated below.
+We introduce four ordering relations for adversary-constrained protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are partial orders. The relations are enumerated below.
 
 \vspace*{-5mm}
 
@@ -190,7 +190,7 @@ Following our workflow, we introduce four ordering relations for adversary-const
 4. & \text{ } P1 \text{ and } P2 \text{ are incomparable}
 \end{align*}
 
-\noindent We choose to define the ordering in this way for a few reasons. First, we refrain from introducing four mutually exclusive relationships (i.e., $=$, $<$, $>$, incomparable) because this results in a drastic increase in the number incomparable protocols. As such, under our ordering, we do not conclude that one protocol is strictly better than another protocol. Although one might think we could define the relations necessary to draw such conclusions using the irreflexive kernel (deriving a strictly less than operator from the satisfaction of both less than and not equal conditions), we found this was not appropriate because the strictly less than operator would inadvertently introduce an arbitrary ordering over adversarial corruption and repair events where there should not be one.  
+\noindent We choose to define the ordering in this way for a few reasons. First, we refrain from introducing four mutually exclusive relationships (i.e., $=$, $<$, $>$, incomparable) because this results in a drastic increase in the number of incomparable protocols. As such, under our ordering, we do not conclude that one protocol is strictly better than another protocol. Although one might think we could define the relations necessary to draw such conclusions using the irreflexive kernel (deriving a strictly less than operator from the satisfaction of both less than and not equal conditions), we found this was not appropriate because the strictly less than operator would inadvertently introduce an arbitrary ordering over adversarial corruption and repair events where there should not be one.  
 
 
 These four ordering relations serve as foundational categories for adversary-constrained protocol ordering. While the ordering may appear intuitive, mathematically modeling the Chase output and subsequently defining the ordering operations themselves through Coq-based mechanized proofs is challenging. Our results overcome this challenge, defining and verifying the equivalence and partial order relationships over sets of attack graphs which are built upon ordering relations over individual attack graphs. With this ordering infrastructure, one can provably determine that one protocol is at least as good as another because it requires at least as much adversary effort to generate seemingly trustworthy evidence. 
@@ -199,13 +199,11 @@ Under our methodology, an ordering relation between two Copland protocol can be 
 
 \begin{enumerate}
     \squash
-    \item Obtain Chase output for each protocol and formally model generated attack graphs
-    \item Determine ordering relationships between the individual Chase-generated attack graphs
+    \item Obtain Chase output for each protocol and formally model the generated sets of attack graphs
+    \item Determine ordering relationships between the individual attack graphs
     \item Leverage the individual ordering relationships to determine the ordering relationship between the sets of attack graphs
     \item Link the set ordering relationship to determine protocol ordering relationship
 \end{enumerate}
-
-% \noindent The process begins by subjecting two distinct Copland protocols to the Chase model finder to generate all possible attack graphs and then modeling the attack graphs formally in the Coq environment. Within the environment, the graphs are individually compared to determine if and how they are related. More specifically, we introduce and prove a strict partial order and an equivalence relation for comparing individual attack graphs. We leverage the ordering to then introduce the four aforementioned relationships ($=$, $\leq$, $\geq$, incomparable) over sets of attack graphs, proving equivalence and preorder relations satisfy respective properties. Once the set ordering decision is made, it is then propagated to the corresponding Copland protocols to realize protocol order. 
 
 The following sections describe the process of introducing and verifying an adversary-constrained ordering between two Copland protocols. In this paper, mathematical proofs are presented manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}.
 
@@ -215,31 +213,34 @@ The following sections describe the process of introducing and verifying an adve
 This protocol ordering scheme relies on a formal model of the Chase generated attack graphs. These graphs are similar to directed, labeled graphs which contain nodes, edges, and a labeling function. 
 
 \begin{definition}[Graph]
-    A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
+    A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of directed edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
 \end{definition}
  
-An attack graph is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each Chase graph consists of a set of events, an arrow relationship mapping event to event (i.e. a set of edges), and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
+An attack graph is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each Chase graph consists of a set of events, an arrow relationship mapping event to event, and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
 
 \begin{definition}[Attack Graph]
-    An attack graph is a directed, labeled graph where $N$ is a set of events, $E$ are the edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
+    An attack graph is a directed, labeled graph where $N$ is a set of events, $E$ is a set of directed edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
 \end{definition}
 
-When comparing two individual attack graphs, we need only consider events that concern an active adversary. That is, it is possible for an attack graph to contain two measurement events occurring directly in sequence; the fact that two measurement events occurred instead of one does not impact the adversary. Instead, these sequential measurement events only introduce unnecessary complications in comparing individual attack graph, negatively impacting the overall ordering scheme. Therefore, we introduce the idea of attack graph normalization, as formally defined below. Attack graph normalization reduces consecutive measurement events to a single measurement event, namely the latter one. This process results in attack graphs containing only the events relevant to an adversary. 
+When comparing two individual attack graphs, we need only consider events that concern an active adversary. That is, it is possible for an attack graph to contain two measurement events occurring directly in sequence; the fact that two measurement events occurred instead of one does not impact the adversary. Furthermore, an attacker is not impacted by the details of any intermediate measurement events either. Instead, sequential measurement events and specific names of non-final measurement events only introduce unnecessary complications in comparing individual attack graph. Therefore, we introduce the idea of attack graph normalization, as formally defined below. Attack graph normalization reduces consecutive measurement events to a single measurement event, namely the latter one, and renames all remaining non-final measurement events to a constant label. This process results in attack graphs containing only the events and information relevant to an adversary. 
+
 
 \begin{definition}[Attack Graph Normalization]
-    An attack graph is in its \emph{normal form} or \emph{reduced form} when all sequences of consecutive measurement events are reduced to only the final measurement event in the sequence. 
+    An attack graph is in its normal form when all sequences of consecutive measurement events are reduced to only the final measurement event in the sequence and all remaining non-final measurement events are renamed to \texttt{ms}. 
 \end{definition}
 
 \begin{figure}[htbp]
-    \centering 
-    \begin{tabular}{c c}
-        \input{examples/general-example/one.tex} & \input{examples/general-example/four.tex} 
-    \end{tabular}
-    \captionsetup{justification=centering,margin=1cm}
-    \caption[Example of attack graph normalization]{An example of attack graph normalization.}
-    \label{fig:reduce-ex}
+  \centering 
+  \begin{tabular}{c c}
+      \input{examples/rtm_ker-vc-sys-seq/m3-mod.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m3-mod.tex} 
+  \end{tabular}
+  \captionsetup{justification=centering,margin=1cm}
+  \caption[Example of attack graph normalization]{An example of attack graph normalization.}
+  \label{fig:reduce-ex}
 \end{figure}
-\noindent To demonstrate attack graph normalization, consider the example presented in Figure \ref{fig:reduce-ex} where graph $a$ is normalized to $a'$. When applying attack graph normalization, the consecutive measurement events \texttt{ms1} and \texttt{ms2} are reduced to only the latter measurement event \texttt{ms2}. 
+
+
+\noindent To demonstrate attack graph normalization, consider the example presented in Figure \ref{fig:reduce-ex} where graph $a$ is normalized to $a'$. When applying attack graph normalization, the consecutive measurement events \texttt{ms2} and \texttt{ms3} are reduced to only the latter measurement event \texttt{ms2}, and the remaining non-final measurement event \texttt{ms1} is renamed to \texttt{ms}.
 
 For the remainder of this paper, unless otherwise noted, we assume all Chase-generated attack graphs are in their normal form.
 
@@ -280,30 +281,30 @@ For the remainder of this paper, unless otherwise noted, we assume all Chase-gen
 
 \section{Ordering Individual Attack Graphs}
 
-Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack graphs. Formally defined attack graphs introduce necessary structures for reasoning. Yet, we still must institute operations to compare attack difficulty. In the following section, we establish definitions to compare adversary events and utilize these definitions to reason over attack graphs individually. Specifically, we introduce strict partial order and equivalence relations over individual attack graphs. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack graphs.
+Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack graphs. Formally defined attack graphs introduce necessary structures for reasoning in order to institute operations to compare attack difficulty. In the following section, we establish definitions to compare adversary events and utilize these definitions to reason over attack graphs individually. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack graphs. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack graphs.
 
-The Chase generated attack graphs presented in Figure \ref{fig:chase-ex} reveal hypothetical corruption and repair events, providing essential insights for developing an adversary-constrained protocol ordering. In attack graph $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack graph $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack graph $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three graphs, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. Because of this, we assume an adversary would perform the attack represented by graph $a$ to deceive a relying party.
+The Chase generated attack graphs presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack graph $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack graph $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack graph $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three graphs, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. Because of this, we assume an adversary would perform the attack represented by graph $a$ to deceive a relying party. 
 
-To compare individual Chase-generated attack graphs, we introduce additional definitions to aid in determining when one attack graph requires strictly less or equivalent work to perform by an adversary. Central to this comparison is the different classification of adversary actions that may be present within an attack graph. That is, Chase generated attack graphs contain measurement and adversary events, and it is the variety of consecutive occurences that may occur with these events that influence our ordering definitions. 
+To compare individual Chase-generated attack graphs, we introduce additional definitions to aid in determining when one attack graph requires strictly less or equivalent work to perform by an adversary. Central to this comparison is the different classification of adversary actions that may be present within an attack graph. That is, Chase generated attack graphs contain measurement and adversary events, and it is the variety of consecutive occurences that may occur that influences our ordering definitions. 
 
 While measurement events are self-explanatory, adversary events warrant more of an explanation and are formally defined below.
  
 
-\begin{definition}[Adversary Event, $\iota$]
-    An adversary event is any action performed by an adversary to change the behavior of a component in a target system. Adversary events are classified as either corruption or repair events. Given an attack graph $a$, let $\iota(a) := \{n \in N_a \,|\, n \text{ is an adversary event}\,\}$. An event $n$ is an adversary event if and only if $\ell_a(n)$ is an adversary event label.
+\begin{definition}[Adversary Event, $\pi$]
+    An adversary event is any action performed by an adversary to change the behavior of a component in a target system. Adversary events are classified as either corruption or repair events. Given an attack graph $a$, let $\pi(a) := \{n \in N_a \,|\, n \text{ is an adversary event}\,\}$. An event $n$ is an adversary event if and only if $\ell_a(n)$ is an adversary event label.
 \end{definition}
 
 
-As previously alluded to, time constraints escalate difficulty. That is, we assume the difficulty of an attack is increased if an adversary must complete it between measurement events. To realize this distinction, we classify time-constrained adversary events formally below:  
+As previously alluded to, time constraints escalate difficulty. That is, we assume the difficulty of an attack is increased if an adversary must complete it between measurement events. To realize this distinction, we define time-constrained adversary events formally below.  
 
 \begin{definition}[Time-Constrained Adversary Event, $\tau$]
     A time-constrained adversary event is an adversary event where the attacker must perform the corruption or repair of a component in between measurement events thus limiting the time available to complete the action. Given an attack graph $a$, let $\tau(a) := \{n \in N_a \,|\, n \text{ is a time-constrained adversary event}\,\}$.
 \end{definition}
 
-\noindent It is worth noting that by definition, $\tau(a) \subseteq \iota(a)$ for every attack graph $a$.
+\noindent It is worth noting that by definition, every time-constrained adversary event is itself an adversary event and therefore $\tau(a) \subseteq \pi(a)$ for every attack graph $a$.
 
 
-We say two individual attack graphs are equivalent if the graphs are semantically equivalent. Defining equivalence in this way ensures graphs which have the same adversary events in the same order are indeed equivalent, regardless of inconsequential measurement events. It is easy to visualize the case where two attack graphs that are structurally equivalent have the exact same set of states, steps, and labels and are therefore equal. However, consider the graphs in Figure \ref{fig:reduce-ex}. We wish to say $a'$ is equivalent to $a$ because both graphs have the same set of adversary events. A natural model to compare the semantics of attack graphs begins with the definition of homomorphism.
+With these preliminary definitions in place, we can now describe our proposed order relations. We wish to say two individual attack graphs are equivalent if they are semantically equivalent. Defining equivalence in this way ensures graphs that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare graphs in their normal form. Therefore, there are no sequences of consecutive measurement events and all non-final measurement events have the same label (i.e., given an attack graph $a$, if $n$ is a non-final measurement event in $a$, then $\ell_a(n) = \texttt{ms}$). Now we naturally define attack graph equivalence by graph isomorphism.
 
 
 \begin{definition}[Isomorphism]
@@ -316,7 +317,7 @@ We say two individual attack graphs are equivalent if the graphs are semanticall
 \end{definition}
 
 
-\noindent With these three completed proofs, we obtain a formally-verified equality relation over individual attack graphs allowing us to provably determine if two graphs are semantically equivalent.
+\noindent We formally verify that an isomorphism is an equivalence relation in Coq but do not include the mathematical proofs here since they are easily available in many textbooks or web sources. With the proofs of reflexivity, symmetry, and transitivity completed in Coq, we obtain a formally-verified equivalence relation over individual attack graphs allowing us to provably determine if two graphs are semantically equivalent.
 
 
 A strict partial order over individual attack graphs reveals that one attack graph is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack graphs to ground our logic in concrete examples. By studying patterns in the graphs, it is evident that an adversary could be confined under two distinct conditions. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. More formally stated, if an attack graph $a1$ is an adversary event proper subset of $a2$ then we would conclude $a2$ is strictly better than $a1$ because more corruption events requires more work on the adversary's behalf. Secondly, if an attack graph $a1$ is a time-constrained adversary event proper subset of $a2$ then we would conclude $a2$ is strictly better than $a1$ because a time-constrained corruption event requires more work. These ideas are captured with the formal definition for strict partial order below.
@@ -325,9 +326,9 @@ A strict partial order over individual attack graphs reveals that one attack gra
   An attack graph $a$ requires strictly less work to perform by an adversary than attack graph $b$ if and only if at least one of the following hold: 
 \begin{enumerate}
   \squash
-  \item $\iota(a) \subseteq \iota(b)$ and $\tau(a) \subset \tau(b)$
+  \item $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subset \tau(b)$
   %(i.e., the set of adversary events in $a$ is subset of the set of adversary events in $b$ and the set of time-constrained adversary events in $a$ is a proper subset of the set of time-constrained adversary events in $b$)
-  \item $\iota(a) \subset \iota(b)$ and $\tau(a) \subseteq \tau(b)$
+  \item $\pi(a) \subset \pi(b)$ and $\tau(a) \subseteq \tau(b)$
   %(i.e., the set of adversary events in $a$ is a proper subset of the set of adversary events in $b$ and the set of time-constrained adversary events in $a$ is subset of the set of time-constrained adversary events in $b$)
 \end{enumerate}
 \end{definition}
