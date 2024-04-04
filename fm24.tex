@@ -304,7 +304,7 @@ As previously alluded to, time constraints escalate difficulty. That is, we assu
 \noindent It is worth noting that by definition, every time-constrained adversary event is itself an adversary event and therefore $\tau(a) \subseteq \pi(a)$ for every attack graph $a$.
 
 
-With these preliminary definitions in place, we can now describe our proposed order relations. We wish to say two individual attack graphs are equivalent if they are semantically equivalent. Defining equivalence in this way ensures graphs that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare graphs in their normal form. Therefore, there are no sequences of consecutive measurement events and all non-final measurement events have the same label (i.e., given an attack graph $a$, if $n$ is a non-final measurement event in $a$, then $\ell_a(n) = \texttt{ms}$). Now we naturally define attack graph equivalence by graph isomorphism.
+With these preliminary definitions in place, we can now describe our proposed ordering relations. We wish to say two individual attack graphs are equivalent if they are semantically equivalent. Defining equivalence in this way ensures graphs that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare graphs in their normal form so that here are no sequences of consecutive measurement events and all non-final measurement events have the same label (i.e., given an attack graph $a$, if $n$ is a non-final measurement event in $a$, then $\ell_a(n) = \texttt{ms}$). Now we naturally define attack graph equivalence by graph isomorphism.
 
 
 \begin{definition}[Isomorphism]
@@ -320,7 +320,7 @@ With these preliminary definitions in place, we can now describe our proposed or
 \noindent We formally verify that an isomorphism is an equivalence relation in Coq but do not include the mathematical proofs here since they are easily available in many textbooks or web sources. With the proofs of reflexivity, symmetry, and transitivity completed in Coq, we obtain a formally-verified equivalence relation over individual attack graphs allowing us to provably determine if two graphs are semantically equivalent.
 
 
-A strict partial order over individual attack graphs reveals that one attack graph is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack graphs to ground our logic in concrete examples. By studying patterns in the graphs, it is evident that an adversary could be confined under two distinct conditions. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. More formally stated, if an attack graph $a1$ is an adversary event proper subset of $a2$ then we would conclude $a2$ is strictly better than $a1$ because more corruption events requires more work on the adversary's behalf. Secondly, if an attack graph $a1$ is a time-constrained adversary event proper subset of $a2$ then we would conclude $a2$ is strictly better than $a1$ because a time-constrained corruption event requires more work. These ideas are captured with the formal definition for strict partial order below.
+Next, we must define a strict partial order relation over individual attack graphs. It should be the case that under this relation one attack graph is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack graphs to ground our logic in concrete examples. By studying patterns in the graphs, we select two distinct conditions that confine an adversary to consider in our ordering scheme. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. We formally define this relation below as "strictly less work".
 
 \begin{definition}[Strictly Less Work]
   An attack graph $a$ requires strictly less work to perform by an adversary than attack graph $b$ if and only if at least one of the following hold: 
@@ -333,11 +333,13 @@ A strict partial order over individual attack graphs reveals that one attack gra
 \end{enumerate}
 \end{definition}
 
+\noindent By design, this definition only allows the comparison of attack graphs $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack graphs that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure 1, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a$, $b$, and $c$ and then determine what ordering relationships hold between them. For attack $a$ we get that $\pi(a) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a) = \emptyset$. For attack $b$, $\pi(b) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(b) = \{ \texttt{c\_c2} \}$. And lastly for attack $c$, $\pi(c) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(c) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a \prec b$, $a \prec c$, and $b$ and $c$ are incomparable.
+
 \begin{definition}[Strict Partial Order $\prec$]
     An attack graph $a$ is strictly less than attack graph $b$ (i.e., $a \prec b$) if and only if $a$ requires strictly less work than $b$.
 \end{definition}
 
-This definition of strict partial order ($a1 < a2$) over individual attack graphs implies that graphs can only be compared if $a1$ is both an adversary event subset and time-constrained adversary event subset of $a2$. Additionally, $a1$ must either be an adversary event proper subset or time-constrained adversary proper subset of $a2$ to produce a strict partial order. To formally verify this is indeed a strict partial order, we prove the relation is irreflexive, asymmetric, and transitive using $<$ to imply strict partial order. We begin by proving irreflexivity below.
+To formally verify this relation is indeed a strict partial order, we prove the relation is irreflexive, asymmetric, and transitive in Coq. Our proofs rely primarily on the fact that subset is a partial order and proper subset is a strict partial order. We do not present the proofs mathematically here since they are uninteresting.
 
 
 % \begin{theorem}[Irreflexivity of Strict Partial Order]
@@ -373,8 +375,7 @@ This definition of strict partial order ($a1 < a2$) over individual attack graph
 %    In all cases, we either have that the set of adversary events of $g1$ is a subset of the set of adversary events of $g3$ or the set of the time-constrained adversary events of $g1$ is a subset of time-constrained adversary events of $g3$. Then, either the set of adversary events of $g1$ is a proper subset of the set of adversary events of $g3$ or the set of the time-constrained adversary events of $g1$ is a proper subset of time-constrained adversary events of $g3$. Therefore, $g1$ is strictly less than $g3$. 
 % \end{proof}
 
-Completing proofs of irreflexivity, asymmetry, and transitivity allows us to establish a formally-defined strict partial ordering relation for comparing individual attack graphs. With this, we can realize if an individual attack graph is strictly better than another, a paramount result towards our adversary-constrained protocol ordering.
-
+We additionally define a partial order relation over individual attack graphs by the combination of the equivalence and strict partial order relations defined earlier in this section. This design is motivated by the reflexive closure principle. We verify in Coq that this definition is in fact a partial order by proving it is reflexive, antisymmetric, and transitive.
 
 \begin{definition}[Partial Order $\preceq$]
   An attack graph $a$ is less than attack graph $b$ (i.e., $a \preceq b$) if and only if $a$ is isomorphic to $b$ or $a$ requires strictly less work than $b$ (i.e., $a \simeq b$ or $a \prec b$).
