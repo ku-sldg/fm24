@@ -79,7 +79,6 @@ The abstract should briefly summarize the contents of the paper in
 %
 %
 \section{Introduction}
-% \subsection{A Subsection Sample}
 A key facet of the negotiation routine is attestation protocol selection where selecting the best attestation protocol from among many poses a challenging problem. This difficulty could be attributed to situational nuances that impact an ordering and the variety of attestation scenarios that exist. To further complicate the problem, various dimensions for protocol analysis arise such as a protocol's complexity, its resource consumption, or its vulnerability to an adversary. Considering all facets at once makes the ordering problem exponentially more difficult. We therefore simplify the problem by focusing solely on comparing protocols based on their susceptibility to attack. Towards this goal, we introduce an equivalence and partial order relations over Copland attestation protocols where a better protocol increases the minimal work required of an active adversary to thwart an appraiser. Our formally-modeled, Coq-based solution includes verified properties of the adversary-constrained ordering relations for Copland protocols. Furthermore we applied our ordering scheme to representative examples to demonstrate its accuracy and efficacy.
 
 This emerging adversary-constrained protocol ordering requires a few key assumptions. First, we assume an adversary will always choose the easiest attack to thwart an appraiser. Therefore, a better protocol increases the demands of an active adversary by making the easiest attack more difficult. Additionally, if there are multiple measurements, we assume that the adversary goes undetected at the final measurement event, implying that the generated evidence passes appraisal when, in reality, the system is in a malicious state. When defining the systems, we assume there is some root of trust, such as a trusted platform module (TPM), which cannot be attacked by an active adversary.
@@ -149,7 +148,6 @@ To better understand Chase output, consider an example protocol where two measur
 \end{center}
 
 \noindent At place \texttt{p1}, the measurement \texttt{ms1} is performed followed by, at place \texttt{p1} again, the measurement \texttt{ms2}. In the abstract scenario, we assume \texttt{ms2} is the final measurement operation and therefore the adversary evades detection at \texttt{ms2}. We also assume that \texttt{ms1} and \texttt{ms2} depend on some components of the environment, namely \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on \texttt{c3}. These system dependencies are realized within the user-defined theory file input into the Chase tool. Running the Chase tool on this protocol generates attack graphs as found in Figure \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms} represents measurement events, where the final measurement event is in a green box. The prefix \texttt{c\_} represents corruption events and the prefix \texttt{r\_} represents repair events. Both corruption and repair events are classified as adversary events and presented within yellow and orange boxes respectively. This abstract labeling system mirrors the labeling system of the Chase model finder. 
-
 
 \begin{figure}[hbtp]
     \centering 
@@ -362,33 +360,30 @@ With verified equivalence and partial order relations, we can link the ordering 
 
 \section{Representative Examples}
 
-%% talk more about irreflexive kernel 
-%% reduce graphs so it is easier to read 
+This research finds inspiration in real-life instances of Copland protocol analysis documented in the attestation literature \cite{Rowe:2021:OnOrdering,Coker::Principles-of-R}. We ground our formally-verified adversary-constrained protocol ordering model in reality by reasoning about a relying party who would like to ensure a remote server (target) is free of viruses. Taken from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure consists of two platforms $P3$ and $P4$ which depend on a hardware root of trust (rtm). Additionally, within $P4$, the system $sys$ is dependent on the virus checker $vc$ which is dependent on the kernel $ker$.  Each platform has various measurement operations (ASPs), including a virus checking measurement and a kernel integrity measurement. From this system, we derive possible Copland protocols and perform various manipulations of their structure and order. We then apply previously derived formal reasoning to determine the most adversary-constrained protocol, further establishing correctness in our model.
 
-This research finds inspiration in real-life instances of Copland protocol analysis documented in the attestation literature \cite{Rowe:2021:OnOrdering,Coker::Principles-of-R}. Motived by the attacks explained in Section \ref{section:running-ex}, we ground our formally-verified adversary-constrained protocol ordering model in reality by reasoning about a relying party who would like to ensure a remote server (target) is free of viruses. Taken from Rowe's \cite{Rowe:2016:Confining} example presented in Figure \ref{fig:Rowe_example}, this target infrastructure for all forthcoming examples is abstractly rendered in Figure \ref{fig:ord-system}. In this system, there are two platforms $P3$ and $P4$ which depend on a hardware root of trust (rtm). Additional system dependencies within $P4$ are denoted with dashed lines.  Each platform has various measurement operations (ASPs), including a virus checking measurement $vc$ and a kernel integrity measurement $ker$. From this system, we derive possible Copland protocols and perform various manipulations in protocol structure and order. We then apply previously derived formal reasoning to determine the most adversary-constrained protocol, further establishing correctness in our model.
+%Taken from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure is abstractly rendered in Figure \ref{fig:ord-system}. In this system, there are two platforms $P3$ and $P4$ which depend on a hardware root of trust (rtm). Additional system dependencies within $P4$ are denoted with dashed lines.  Each platform has various measurement operations (ASPs), including a virus checking measurement $vc$ and a kernel integrity measurement $ker$. From this system, we derive possible Copland protocols and perform various manipulations of their structure and order. We then apply previously derived formal reasoning to determine the most adversary-constrained protocol, further establishing correctness in our model.
 
-%various attestation scenarios where all protocols result in same final measurement event of a virus checking ASP \emph{vc} performing a measurement of the target system (i.e. server) \emph{sys}. 
-% The generated evidence, without undisclosed interference from an adversary, proves the target system is free from viruses. 
+% \begin{figure}[htbp]
+%     \centering
+%     \input{ordered-system-fig.tex}
+%     \captionsetup{justification=centering,margin=1cm}
+%     \caption[Example system for protocol ordering]{Example system for protocol ordering motivated by \cite{Rowe:2016:Confining}.\\ Dashed lines represent dependencies. }
+%     \label{fig:ord-system}
+% \end{figure}
 
-\begin{figure}[htbp]
-    \centering
-    \input{ordered-system-fig.tex}
-    \captionsetup{justification=centering,margin=1cm}
-    \caption[Example system for protocol ordering]{Example system for protocol ordering motivated by \cite{Rowe:2016:Confining}.\\ Dashed lines represent dependencies. }
-    \label{fig:ord-system}
-\end{figure}
+Within the forthcoming protocol ordering examples, we assume that the adversary has manipulated the system and somehow allowed the resulting evidence to appear trustworthy when it is not. We also assume the root of trust (rtm) is inherently trusted and therefore cannot be attacked. We explicitly state these assumptions and the system's dependency structure in the Chase input files.
 
-Within the forthcoming protocol ordering examples, we maintain our initial assumption. Again, we assume that the adversary has manipulated the system and somehow allowed the resulting evidence to appear trustworthy when it is not. We also assume the root of trust (rtm) is inherently trusted and therefore cannot be attacked. We explicitly state these assumptions, and the system's dependency structure, in the Chase input files. Aside from the protocol input file, the same Chase files are used during each protocol ordering experiment. 
-
-Extending from the framework illustrated in Figure \ref{fig:Rowe_example} and Figure \ref{fig:ord-system}, we introduce three distinct scenarios to investigate the impact of adversary constraint when manipulating measurement operations and measurement composition. In the first example, we test the effects of well-supported measurements on an attacker's difficultly of attack. In the second and third examples, we test various effects of protocol composition. Each experiment is tested under our formally defined adversary-constrained model to assign one of the four relationships.
-%(presented in Appendix \ref{Appendix.Chase})
+We introduce three distinct scenarios to investigate the impact of adversary constraint when manipulating measurement operations and measurement composition. In the first example, we test the effects of well-supported measurements on an attacker's difficulty of attack. In the second and third examples, we test various effects of p rotocol composition. Each experiment is tested under our formally defined adversary-constrained model to assign one of the four relationships.
 
 The first example hypothesizes that creating a more comprehensive protocol, one where targets and their dependencies are measured, produces more trustworthy evidence. This hypothesis was initially validated manually, relying on intuition and logical reasoning \cite{Rowe:2016:Confining}. To test this hypothesis under our formal model, we selected the following three protocols presented in Table \ref{Chase-table} where again the goal of each measurement is to ascertain if a system is free from viruses. The Copland phrase that accomplishes this is $\at{p4}{(vc\; p4\; sys)}$. This measurement is therefore the final phrase in each protocol. By maintaining the same final measurement event, we focus our investigation towards the effect of adversary constraint on protocol comprehensiveness.
+
 
 \begin{table}[htbp]
     \setlength\extrarowheight{7pt}
     \centering
-    \begin{tabular}{|M{4cm}|M{12cm}|N}
+    \footnotesize
+    \begin{tabular}{|M{3cm}|M{7cm}|N}
         \hline
         Protocol Name & Actual protocol &\\
         \hline
@@ -406,55 +401,32 @@ The first example hypothesizes that creating a more comprehensive protocol, one 
 
 When constructing this case study, we start from the simplest protocol and sequentially prepend measurement operations until reaching a root of trust, carefully crafting each protocol to mimic the system's dependencies. The first protocol, \texttt{sys}, is a measurement of the system using the virus checker. If the virus checking ASP is inadvertently corrupted, the resulting evidence will lack validity. To ensure the trustworthiness of the virus checking ASP, one may utilize one of the virus checking dependencies to measure the virus checker prior to its measurement of the system. This is achieved through the \texttt{ker-vc-sys-seq} protocol, where the kernel ASP \emph{ker} is invoked to measure the virus checker \emph{vc} before the virus checker \emph{vc} measures the system \emph{sys}. By measuring within the dependency chain, we hypothetically strengthen the resulting evidence. Taking this reasoning a step further, the protocol \texttt{rtm-ker-vc-sys-seq} includes a prepended measurement of the kernel \emph{ker}, performed by the root of trust $rtm$, prior to $ker$'s measurement of the virus checker. Because the root of trust is a trusted source, we can hypothetically further strengthen the resulting evidence. 
 
-
-% \begin{figure}[hbtp]
-%     \begin{center}
-%         \begin{tabular}{ M{3.75cm} | M{4.75cm} | M{4.75cm} }
-%                 sys & ker-vc-sys-seq & rtm-ker-vc-sys-seq \\
-%                 \hline
-%                 &&\\ \input{examples/sys/sys1.tex} & \input{examples/ker_vs-sys-seq/m1.tex} & \input{examples/rtm_ker-vc-sys-seq/m1.tex} \\ 
-%                 m1a & m1b & m1c \\ 
-%                 &&\\
-%                 \input{examples/sys/sys2.tex} & \input{examples/ker_vs-sys-seq/m2.tex} & \input{examples/rtm_ker-vc-sys-seq/m2.tex}  \\
-%                 m2a & m2b & m2c \\   
-%                 & \input{examples/ker_vs-sys-seq/m3.tex}  & \input{examples/rtm_ker-vc-sys-seq/m3.tex}  \\               
-%                 & m3b & m3c \\ 
-%                 &&\\
-%                   & \input{examples/ker_vs-sys-seq/m4.tex} & \input{examples/rtm_ker-vc-sys-seq/m4.tex}  \\
-%                 & m4b & m4c \\
-%                   & \input{examples/ker_vs-sys-seq/m5.tex} & \input{examples/rtm_ker-vc-sys-seq/m5.tex} \\
-%                 & m5b & m5c \\  
-%             \end{tabular}
-%     \end{center}
-%     \caption{Attack graphs for sys, ker-vc-sys-seq, and rtm-ker-vc-sys-seq}
-%     \label{fig:rtm-compare}
-% \end{figure}
-
-% \begin{figure}[hbtp]
-%     \begin{center}
-%         \begin{tabular}{ M{3.75cm} | M{4.75cm} | M{4.75cm} }
-%                 sys & ker-vc-sys-seq & rtm-ker-vc-sys-seq \\
-%                 \hline
-%                 &&\\ \input{examples/sys/sys1.tex} & \input{examples/ker_vs-sys-seq_reduced/m1.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m1.tex} \\ 
-%                 m1a & m1b & m1c \\ 
-%                 &&\\
-%                 \input{examples/sys/sys2.tex} & \input{examples/ker_vs-sys-seq_reduced/m2.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m2.tex}  \\   
-%                 m2a & m2b & m2c \\ 
-%                 &&\\
-%                 & \input{examples/ker_vs-sys-seq_reduced/m3.tex}  & \input{examples/rtm_ker-vc-sys-seq_reduced/m3.tex} \\  
-%                   & m3b & m3c \\ 
-%                  &&\\ 
-%                   & \input{examples/ker_vs-sys-seq_reduced/m4.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m4.tex}  \\
-%                  & m4b & m4c \\ 
-%                 &&\\  
-%                  & \input{examples/ker_vs-sys-seq_reduced/m5.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m5.tex}   \\
-%                  & m5b & m5c \\ 
-%                 &&\\
-%             \end{tabular}
-%     \end{center}
-%     \caption{Reduced attack graphs for sys, ker-vc-sys-seq, and rtm-ker-vc-sys-seq}
-%     \label{fig:rtm-compare-reduced}
-% \end{figure}
+\setlength{\textfloatsep}{0.1cm}
+\begin{figure}[hbtp]
+    \begin{center}
+        \begin{tabular}{ M{3.6cm} | M{4.1cm} | M{4.1cm} }
+                sys & ker-vc-sys-seq & rtm-ker-vc-sys-seq \\
+                \hline
+                &&\\ \input{examples/sys/sys1.tex} & \input{examples/ker_vs-sys-seq_reduced/m1.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m1.tex} \\ 
+                m1a & m1b & m1c \\ 
+                &&\\
+                \input{examples/sys/sys2.tex} & \input{examples/ker_vs-sys-seq_reduced/m2.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m2.tex}  \\   
+                m2a & m2b & m2c \\ 
+                &&\\
+                & \input{examples/ker_vs-sys-seq_reduced/m3.tex}  & \input{examples/rtm_ker-vc-sys-seq_reduced/m3.tex} \\  
+                  & m3b & m3c \\ 
+                 &&\\ 
+                  & \input{examples/ker_vs-sys-seq_reduced/m4.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m4.tex}  \\
+                 & m4b & m4c \\ 
+                &&\\  
+                 & \input{examples/ker_vs-sys-seq_reduced/m5.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m5.tex}   \\
+                 & m5b & m5c \\ 
+                &&\\
+            \end{tabular}
+    \end{center}
+    \caption{Normalized attack graphs for sys, ker-vc-sys-seq, and rtm-ker-vc-sys-seq}
+    \label{fig:rtm-compare-reduced}
+\end{figure}
 
 % Employing the previously introduced formalism, it becomes possible to demonstrate that \emph{rtm-ker-vc-sys-seq} is indeed the most resistant to attacks, establishing it as the optimal protocol. 
 
@@ -464,11 +436,7 @@ Formal reasoning to demonstrate that \emph{rtm-ker-vc-sys-seq} is indeed the mos
 
 Employing the previously introduced formalism to determine the relationship between the three protocols begins by analyzing the underlying relationship between individual attack graphs. Starting with \texttt{m1a}, it is apparent that \texttt{m1b} is strictly better than \texttt{m1a} because \texttt{m1b} has a time-constrained measurement event. The same logic applies when comparing \texttt{m2a} and \texttt{m2b}. It is also apparent that graph \texttt{m3b} is equivalent to \texttt{m2a} because they have the same corruption events. \texttt{m4b} is strictly better than either \texttt{m2a} or \texttt{m1a} because it has more corruption events. By the same reasoning, \texttt{m5b} is strictly better than \texttt{m1a}. This concludes comparison of the individual attack graphs.
 
-Next, we apply the supports formalism to determine the relationship between the sets of attack graphs. Because every graph generated by \texttt{ker-vc-sys-seq} requires the adversary to apply either the same effort or more effort to attack when compared to \texttt{sys}, we say that \texttt{ker-vc-sys-seq} is at least as adversary constrained as \texttt{sys}. Said differently, we find that \texttt{ker-vc-sys-seq} supports \texttt{sys}, as denoted with the following relation: 
-
-\begin{center}
-    sys $\leq$ ker-vs-sys-seq
-\end{center}
+Next, we apply the supports formalism to determine the relationship between the sets of attack graphs. Because every graph generated by \texttt{ker-vc-sys-seq} requires the adversary to apply either the same effort or more effort to attack when compared to \texttt{sys}, we say that \texttt{ker-vc-sys-seq} is at least as adversary constrained as \texttt{sys}. Said differently, we find that \texttt{ker-vc-sys-seq} supports \texttt{sys}, as denoted with the following relationship: sys $\leq$ ker-vs-sys-seq.
 
 We apply the same logic to compare \texttt{ker-vc-sys-seq} and \texttt{rtm-ker-vc-sys-seq}. That is, we first compare the protocols' individual Chase-generated attack graphs. Again, looking at the reduced graphs in Figure \ref{fig:rtm-compare-reduced}, we see that  \texttt{m1c} and  \texttt{m1b} are the same graph; they are equivalent under the bidirectional homomorphism. \texttt{m2c} and \texttt{m2b} are also the same graph thus equivalent. \texttt{m3c} has more time-constrained corruption events when compared to  \texttt{m3b} thus  \texttt{m3c} is strictly better than \texttt{m3b}. The same logic applies to \texttt{m4c} and  \texttt{m4b} where  \texttt{m4b} is strictly less than  \texttt{m4c} because  \texttt{m4c} has more time-constrained corruption events.  \texttt{m5c} and \texttt{m5b} are equivalent. Propagating the findings of individual attack graph comparisons and considering the formalism of supports, we conclude that \texttt{ker-vc-sys-seq} is less than or equal to \texttt{rtm-ker-vc-sys-seq} because every graph in \texttt{rtm-ker-vc-sys-seq} requires the adversary to perform equal or more effort to attack when compared to every graph in  \texttt{ker-vc-sys-seq}. 
 

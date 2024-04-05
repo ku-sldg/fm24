@@ -6,7 +6,7 @@
           minimum width = 2cm, 
           minimum height = 0.5cm
           ] (ms4) at (0,0) {};
-    \node[] at (ms4.center) {ms4};
+    \node[] at (ms4.center) {\texttt{ms4}};
 
 
     %\node[rectangle,
@@ -21,24 +21,31 @@
         fill = yellow!30,
         minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (vc) at (-1.5,1) {};
-    \node[] at (vc.center) {vc};
+        ] (vc) at (0,1) {};
+    \node[] at (vc.center) {\texttt{c\_vc}};
 
     \node[rectangle,
         draw,
         fill = yellow!30,
         minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (c) at (0,1) {};
-    \node[] at (c.center) {ker};
+        ] (c) at (1.5,1) {};
+    \node[] at (c.center) {\texttt{c\_ker}};
 
     \node[rectangle,
         draw,
         fill = yellow!30,
         minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (sys) at (1.5,1) {};
-    \node[] at (sys.center) {sys};
+        ] (sys) at (-1.5,1) {};
+    \node[] at (sys.center) {\texttt{c\_sys}};
+
+    \node[rectangle,
+        minimum width = 1.5cm, 
+        minimum height = 0.5cm
+        ] (ms3) at (1,2) {};
+    \node[] at (ms3.center) {};
+
 
 %     \node[rectangle,
 %     minimum width = 1cm, 
