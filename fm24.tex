@@ -130,12 +130,11 @@ Critical to our study is various properties of a binary relation $R$ on a set $X
     \item a \emph{strict partial order} is irreflexive, asymmetric, and transitive 
 \end{itemize}
 
-\noindent When attempting to introduce new ordering relations, as with this protocol ordering, each required property must be proven in order to accurately state the ordering holds.  
+\noindent When attempting to introduce new ordering relations, as with this protocol ordering, each required property must be proven.  
 
 \subsection*{Chase Analysis}
 
 Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first order model finder that utilizes geometric logic\cite{Enderton:logic} to find minimal models of a given theory, rendering the models as trees for analysis. Input to the Chase model finder includes axiomatized queries describing assumptions and system dependencies. From those queries, the model finder generates all models which satisfy the given formulas. 
-%A rudimentary example involves using Chase to manage a conference paper review process where provided theory states relationships between authors, papers, conflicts, and the paper review scores \cite{Ramsdell:2020:Chase:Guide}. The result is all models where authors can read their scores. More complex examples involve communication and encryption protocols, such as Blanchet's protocol using unnamed asymmetric keys, to determine if secrets are leaked \cite{Ramsdell:2020:Chase:Guide}. 
 
 Chase can be leveraged to understand the susceptibility of a Copland protocol to undetectable attacks \cite{Rowe:2021:AutomatedTrust}. When using Chase in this way, the model finder reasons over user-provided axiomatized system dependencies and assumptions to automatically produce output containing all possible protocol executions, rendered in \texttt{.xhtml} as attack trees. Within the attack trees, the presence of an active adversary can be recognized by corruption and repair events. A corruption event indicates an adversary has performed some activity to manipulate the behavior of a component such that it is in a malicious state yet, when measured, the component returns seemingly trustworthy evidence. A repair event indicates that an adversary has repaired the previously corrupted component by reverting it to its state prior to the corruption. Both corruption and repair events can be categorized as evidence tampering where the specific details of how an adversary performs tampering are not the focus of this work or the Chase work. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
 
@@ -265,11 +264,11 @@ As previously alluded to, time constraints escalate difficulty. That is, we assu
 \noindent It is worth noting that by definition, every time-constrained adversary event is itself an adversary event and therefore $\tau(a) \subseteq \pi(a)$ for every attack tree $a$.
 
 
-With these preliminary definitions in place, we can now describe our proposed ordering relations. We wish to say two individual attack trees are equivalent if they are semantically equivalent. Defining equivalence in this way ensures trees that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare trees in their normal form so that here are no sequences of consecutive measurement events and all non-final measurement events have the same label (i.e., given an attack tree $a$, if $n$ is a non-final measurement event in $a$, then $\ell_a(n) = \texttt{ms}$). Now we naturally define attack tree equivalence by tree isomorphism.
+With these preliminary definitions in place, we can now describe our proposed ordering relations. We wish to say two individual attack trees are equivalent if they are semantically equivalent. Defining equivalence in this way ensures trees that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare trees in their normal form so that here are no sequences of consecutive measurement events and all non-final measurement events have the same label. Now we naturally define attack tree equivalence by graph isomorphism.
 
 
 \begin{definition}[Isomorphism]
-    Directed, labeled trees $G$ and $H$ are isomorphic if and only if there exists a bijection $f : N_G \to N_H$ such that for all pairs of nodes $n_1, n_2 \in N_G$, $(n_1,n_2) \in E_G$ if and only if $(f(n_1),f(n_2)) \in E_H$ and for all nodes $n \in N_G$, $\ell_G(n) = \ell_H(f(n))$.
+    Directed, labeled graphs $G$ and $H$ are isomorphic if and only if there exists a bijection $f : N_G \to N_H$ such that for all pairs of nodes $n_1, n_2 \in N_G$, $(n_1,n_2) \in E_G$ if and only if $(f(n_1),f(n_2)) \in E_H$ and for all nodes $n \in N_G$, $\ell_G(n) = \ell_H(f(n))$.
 \end{definition}
 
 
@@ -294,7 +293,7 @@ Next, we must define a strict partial order relation over individual attack tree
 \end{enumerate}
 \end{definition}
 
-\noindent By design, this definition only allows the comparison of attack trees $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack trees that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure 1, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a$, $b$, and $c$ and then determine what ordering relationships hold between them. For attack $a$ we get that $\pi(a) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a) = \emptyset$. For attack $b$, $\pi(b) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(b) = \{ \texttt{c\_c2} \}$. And lastly for attack $c$, $\pi(c) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(c) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a \prec b$, $a \prec c$, and $b$ and $c$ are incomparable.
+\noindent By design, this definition only allows the comparison of attack trees $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack trees that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure \ref{fig:chase-ex}, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a$, $b$, and $c$ and then determine what ordering relationships hold between them. For attack $a$ we get that $\pi(a) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a) = \emptyset$. For attack $b$, $\pi(b) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(b) = \{ \texttt{c\_c2} \}$. And lastly for attack $c$, $\pi(c) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(c) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a \prec b$, $a \prec c$, and $b$ and $c$ are incomparable.
 
 \begin{definition}[Strict Partial Order $\prec$]
     An attack tree $a$ is strictly less than attack tree $b$ (i.e., $a \prec b$) if and only if $a$ requires strictly less work than $b$.
@@ -313,7 +312,7 @@ We additionally define a partial order relation over individual attack trees by 
 
 The previously introduced ordering relations over individual attack trees can be leveraged to compare protocols by ordering their corresponding sets of Chase-generated attack trees. 
 
-First, we naturally define an equivalence relation over sets of attack trees using set equality up to isomorphism. This means that when determining one set is a subset of another, instead of requiring every element in the former to be in the latter, we only require that every element in the former is isomorphic/equivalent to an element in the latter. Mathematically, we replace the representation of $S \subseteq T$ from $\forall s \in S, s \in T$ to $\forall s \in S, \exists t \in T, s \simeq t$.
+First, we naturally define an equivalence relation over sets of attack trees using set equality up to isomorphism. This means that when determining one set is a subset of another, instead of requiring every element in the former to be in the latter, we only require every element in the former to be isomorphic/equivalent to an element in the latter. Mathematically, we replace the representation of $S \subseteq T$ from $\forall s \in S, s \in T$ to $\forall s \in S, \exists t \in T, s \simeq t$.
 
 \begin{definition}[Set Equality]
   Two sets $S$ and $T$ are equal if and only $S \subseteq T$ and $T \subseteq S$.
@@ -323,10 +322,10 @@ First, we naturally define an equivalence relation over sets of attack trees usi
     Two sets of attack trees $S$ and $T$ are equivalent (i.e., $S = T$) if and only if they are equal up to isomorphism of their elements.
 \end{definition}
 
-Now before we can introduce a partial order relation, we must introduce additional infrastructure to compare sets of attack trees. We begin by recalling Rowe's definition of supports and covers below \cite{Rowe:2021:OnOrdering}:
+Now before we can introduce a partial order relation, we must introduce additional infrastructure to compare sets of attack trees. We begin by recalling Rowe's definition of supports and covers below \cite{Rowe:2021:OnOrdering}.
 
 \begin{definition}[Supports/Covers]
-    Given two sets of trees $S$ and $T$ and some binary relation $R$ over their elements, we say that $S$ supports $T$ if and only if for every $h \in T$, there is some $g \in S$, such that $R\: g\: h$. We  say that $T$ covers $S$ if and only if for every $g \in S$ there is some $h \in T$ such that $R\: g\: h$.
+    Given two sets of graphs $S$ and $T$ and some preorder $R$ over graphs, we say that $S$ supports $T$ if and only if for every $h \in T$, there is some $g \in S$, such that $R\: g\: h$. We  say that $T$ covers $S$ if and only if for every $g \in S$ there is some $h \in T$ such that $R\: g\: h$.
 \end{definition}
 
 Supports states that, for every tree in $T$, there exists some related tree in $S$. Conversely, covers says that, for every tree in $S$, there exists a related tree in $T$.  This idea is best visualized by Figure \ref{fig:sup-cov} where we abstractly denote Copland protocols as $S$ and $T$. We assume these protocols generate the corresponding sets of attack trees $\{a1, a2 , a3 \}$ and $ \{b1, b2 ,b3\}$.
@@ -345,15 +344,17 @@ While Rowe defines both supports and covers, we only need to be concerned with s
 
 \begin{definition}[Partial Order $\leq$]
   A set of attack trees $S$ is less than a set of attack trees $T$ (i.e., $S \leq T$) if and only if S supports T with the partial order relation $\preceq$.
-\end{definition}
+\end{definition} 
 
-Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $S \le T$ and $T \le S$ then $S = T$). A counter example can be found in Appendix ??. Instead, we are able to prove a modified version of antisymmetry. Before we give its specification, we must provide some preliminary definitions.
+Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $S \le T$ and $T \le S$ then $S = T$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $S = \{a,b\}$ and $T = \{a\}$. Then $S \le T$ since $a \preceq a$, and $T \le S$ since $a \preceq a$ and $a \preceq b$. But clearly it is not the case that $S$ is the same set as $T$. Instead, we can see that set of weakest attacks in $S$ is the same set as the set of weakest attacks in $T$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must provide a preliminary definition.
 
 \begin{definition}[Minimal Attack Tree, \normalfont{min}]
   An attack tree $a$ is minimal with respect to a set $S$ if and only $b \nprec a$ for every $b \in S$. Given a set of attack trees $S$, let $min(S) := \{a \in S \,|\, a \text{ is minimal with respect to } S \}$.
 \end{definition}
 
-Our revised version of antisymmetry: if $S \le T$ and $T \le S$ then min($S$) = min($T$).
+Our revised version of antisymmetry is stated as follows: if $S \le T$ and $T \le S$ then min($S$) = min($T$). Although this property is mathematically weaker than its standard version, it is, in practice, considering our goals, adequately and equally as strong.
+
+%% Talk about proof of antisymmetry
 
 With verified equivalence and partial order relations, we can link the ordering decision over sets of attack trees to their corresponding protocols allows us to provably state that one protocol is at least as difficult to attack as another protocol. If no ordering relation holds, the protocols are incomparable. Therefore, with the additional definitions for individual attack tree comparison and set comparison, we have formally verified the four previously defined mutually inclusive relationships hold for ordering Copland protocols. By leveraging existing tools, like the Chase model finder, we were able to successfully capture all possible attacks and adversary may launch yet go undetected. This ordering reasons over those attacks, successfully introducing a proven adversary-constrained protocol ordering. 
 
