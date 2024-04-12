@@ -6,30 +6,44 @@
           minimum width = 1.6cm, 
           minimum height = 0.5cm
           ] (ms4) at (0,0) {};
-    \node[] at (ms4.center) {\texttt{ms3}};
+    \node[] at (ms4.center) {\texttt{ms4}};
 
+
+    \node[rectangle,
+    minimum width = 1cm, 
+    minimum height = 0.5cm
+    ] (lab) at (0,-.5) {};
+  \node[] at (lab.center) {$b_4$};
 
     \node[rectangle,
         draw,
         fill = yellow!30,
-        minimum width = 1cm, 
+        minimum width = .9cm, 
         minimum height = 0.5cm
-        ] (sys) at (-.6,.8) {};
+        ] (sys) at (-1.1,.8) {};
     \node[] at (sys.center) {\texttt{c\_sys}};
 
     \node[rectangle,
         draw,
         fill = yellow!30,
-        minimum width = 1cm, 
+        minimum width = .9cm, 
         minimum height = 0.5cm
-        ] (ker) at (.6,.8) {};
+        ] (ker) at (1.1,.8) {};
     \node[] at (ker.center) {\texttt{c\_ker}};
 
     \node[rectangle,
         draw,
-        minimum width = 1cm, 
+        fill = yellow!30,
+        minimum width = .9cm, 
         minimum height = 0.5cm
-        ] (ms1) at (.6,1.6) {};
+        ] (vc) at (0,.8) {};
+    \node[] at (vc.center) {\texttt{c\_vc}};
+
+    \node[rectangle,
+        draw,
+        minimum width = .9cm, 
+        minimum height = 0.5cm
+        ] (ms1) at (1.1,1.6) {};
     \node[] at (ms1.center) {\texttt{ms}};
 
     %\node[rectangle,
@@ -37,33 +51,21 @@
     %    minimum width = 1.5cm, 
     %    minimum height = 0.5cm
     %    ] (ms2) at (-1,1) {};
-    %\node[] at (ms2.center) {ms};
+    %\node[] at (ms2.center) {ms'};
 
 %     \node[rectangle,
 %     minimum width = 1.5cm, 
 %     minimum height = 0.5cm
 %     ] (label) at (0,-0.5) {};
-% \node[] at (label.center) {m3c};
-
-
-\node[rectangle,
-minimum width = 1cm, 
-minimum height = 0.5cm
-] (label) at (0,-.5) {};
-\node[] at (label.center) {$a'$};
-
-\node[rectangle,
-minimum width = 1cm, 
-minimum height = 0.5cm
-] (label2) at (-1.5,0) {};
-\node[] at (label2.center) {};
+% \node[] at (label.center) {m4c};
 
 
     \path[every node/.style={font=\sffamily\small}]
     %host1 path
     (ms1) edge [] node [right] {} (ker.north)
     (ker) edge [] node [right] {} (ms4.north)
-    %(ms2) edge [] node [right] {} (ms4.north) 
+    (vc) edge [] node [right] {} (ms4.north)
+    % (ms2) edge [] node [right] {} (ms4.north) 
     (sys) edge [] node [right] {} (ms4.north) ;
 
 

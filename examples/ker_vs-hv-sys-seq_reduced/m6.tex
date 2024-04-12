@@ -1,0 +1,70 @@
+\begin{tikzpicture}[->,>=stealth']
+
+    \node[rectangle,
+          draw,
+          fill = green!30,
+          minimum width = 1.6cm, 
+          minimum height = 0.5cm
+          ] (ms4) at (0,0) {};
+    \node[] at (ms4.center) {\texttt{ms4}};
+
+    \node[rectangle,
+    minimum width = 1cm, 
+    minimum height = 0.5cm
+    ] (lab) at (0,-.5) {};
+  \node[] at (lab.center) {$c_6$};
+
+    %\node[rectangle,
+    %    draw,
+    %    minimum width = 1.5cm, 
+    %    minimum height = 0.5cm
+    %    ] (ms) at (-1,1) {};
+    %\node[] at (ms.center) {ms};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = .9cm, 
+        minimum height = 0.5cm
+        ] (vc) at (0,.8) {};
+    \node[] at (vc.center) {\texttt{c\_vc}};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = .9cm, 
+        minimum height = 0.5cm
+        ] (c) at (1.1,.8) {};
+    \node[] at (c.center) {\texttt{c\_ker}};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = .9cm, 
+        minimum height = 0.5cm
+        ] (sys) at (-1.1,.8) {};
+    \node[] at (sys.center) {\texttt{c\_sys}};
+
+    \node[rectangle,
+        minimum width = .9cm, 
+        minimum height = 0.5cm
+        ] (ms3) at (1,1.6) {};
+    \node[] at (ms3.center) {};
+
+
+%     \node[rectangle,
+%     minimum width = 1cm, 
+%     minimum height = 0.5cm
+%     ] (label) at (0,-0.5) {};
+% \node[] at (label.center) {m4b};
+
+
+    \path[every node/.style={font=\sffamily\small}]
+    %host1 path
+    (vc) edge [] node [right] {} (ms4.north)
+    (c) edge [] node [right] {} (ms4.north)
+    (sys) edge [] node [right] {} (ms4.north) ; 
+    % (ms) edge [] node [right] {} (ms4.north) ;
+
+
+\end{tikzpicture}

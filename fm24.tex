@@ -24,6 +24,7 @@
 %\usepackage{cite}
 \usepackage[numbers,sectionbib]{natbib}
 \usepackage{wrapfig}
+\usepackage{multirow}
 \theoremstyle{definition}
 \renewcommand{\qedsymbol}{\hfill\ensuremath{\blacksquare}}
 %\newtheorem{definition}{Definition}[section]
@@ -192,7 +193,13 @@ Under our methodology, an ordering relation between two Copland protocol can be 
 The following sections describe the process of introducing and verifying an adversary-constrained ordering between two Copland protocols. In this paper, mathematical proofs are presented manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}.
 
 
-\section{Formalized Chase Output}
+\section{Ordering Individual Attack Trees}
+
+Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack trees. In this section, we establish definitions to compare adversary events and utilize these definitions to present orderings over attack trees. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack trees. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack trees.
+
+The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack tree $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack tree $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. Because of this, we assume an adversary would perform the attack represented by tree $a$ to deceive a relying party. 
+
+To compare individual Chase-generated attack trees, we introduce additional definitions to aid in determining when one attack tree requires strictly less or equivalent work to perform by an adversary. Central to this comparison is the different classification of adversary actions that may be present within an attack tree. That is, Chase generated attack trees contain measurement and adversary events, and it is the variety of consecutive occurences that may occur that influences our ordering definitions. 
 
 This protocol ordering scheme relies on a formal model of the Chase generated attack trees. These attack trees are similar to directed, labeled graphs which contain nodes, edges, and a labeling function. 
 
@@ -200,13 +207,13 @@ This protocol ordering scheme relies on a formal model of the Chase generated at
     A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of directed edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
 \end{definition}
  
-An attack tree is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each Chase tree consists of a set of events, an arrow relationship mapping event to event, and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
+An attack tree is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each attack tree consists of a set of events, an arrow relationship mapping event to event, and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
 
 \begin{definition}[Attack Tree]
     An attack tree is a directed, labeled graph where $N$ is a set of events, $E$ is a set of directed edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
 \end{definition}
 
-When comparing two individual attack trees, we need only consider events that concern an active adversary. That is, it is possible for an attack tree to contain two measurement events occurring directly in sequence; the fact that two measurement events occurred instead of one does not impact the adversary. Furthermore, an attacker is not impacted by the details of any intermediate measurement events either. Instead, sequential measurement events and specific names of non-final measurement events only introduce unnecessary complications in comparing individual attack tree. Therefore, we introduce the idea of attack tree normalization, as formally defined below. Attack tree normalization reduces consecutive measurement events to a single measurement event, namely the latter one, and renames all remaining non-final measurement events to a constant label. This process results in attack trees containing only the events and information relevant to an adversary. 
+When comparing two individual attack trees, we need only consider events that concern an adversary. It is possible for an attack tree to contain two measurement events occurring directly in sequence; the fact that two measurements occurred instead of one has no bearing on the adversary. Furthermore, an adversary is not impacted by the details of any intermediate measurement events either. Instead, sequential measurement events and specific names of non-final measurement events only introduce unnecessary complications in comparing individual attack trees. Therefore, we introduce the idea of attack tree normalization, as formally defined below. Attack tree normalization reduces consecutive measurement events to a single measurement event, namely the latter one, and renames all remaining non-final measurement events to a constant label. This process results in attack trees containing only the events and information relevant to an adversary. 
 
 
 \begin{definition}[Attack tree Normalization]
@@ -224,18 +231,10 @@ When comparing two individual attack trees, we need only consider events that co
 \end{figure}
 
 
-\noindent To demonstrate attack tree normalization, consider the example presented in Figure \ref{fig:reduce-ex} where tree $a$ is normalized to $a'$. When applying attack tree normalization, the consecutive measurement events \texttt{ms2} and \texttt{ms3} are reduced to only the latter measurement event \texttt{ms2}, and the remaining non-final measurement event \texttt{ms1} is renamed to \texttt{ms}.
+\noindent To demonstrate attack tree normalization, consider the example presented in Figure \ref{fig:reduce-ex} where tree $a$ is normalized to $a'$. When applying attack tree normalization, the consecutive measurement events \texttt{ms2} and \texttt{ms3} are reduced to only the latter measurement event \texttt{ms3}, and the remaining non-final measurement event \texttt{ms1} is renamed to \texttt{ms}.
 
 For the remainder of this paper, unless otherwise noted, we assume all Chase-generated attack trees are in their normal form.
 
-
-\section{Ordering Individual Attack Trees}
-
-Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack trees. Formally defined attack trees introduce necessary structures for reasoning in order to institute operations to compare attack difficulty. In the following section, we establish definitions to compare adversary events and utilize these definitions to reason over attack trees individually. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack trees. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack trees.
-
-The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack tree $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack tree $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. Because of this, we assume an adversary would perform the attack represented by tree $a$ to deceive a relying party. 
-
-To compare individual Chase-generated attack trees, we introduce additional definitions to aid in determining when one attack tree requires strictly less or equivalent work to perform by an adversary. Central to this comparison is the different classification of adversary actions that may be present within an attack tree. That is, Chase generated attack trees contain measurement and adversary events, and it is the variety of consecutive occurences that may occur that influences our ordering definitions. 
 
 While measurement events are self-explanatory, adversary events warrant more of an explanation and are formally defined below.
  
@@ -370,54 +369,49 @@ We introduce three distinct scenarios to investigate the impact of adversary con
 The first example hypothesizes that creating a more comprehensive protocol, one where targets and their dependencies are measured, produces more trustworthy evidence. This hypothesis was initially validated manually, relying on intuition and logical reasoning \cite{Rowe:2016:Confining}. To test this hypothesis under our formal model, we selected the following three protocols presented in Table \ref{Chase-table} where again the goal of each measurement is to ascertain if a system is free from viruses. The Copland phrase that accomplishes this is $\at{p4}{(vc\; p4\; sys)}$. This measurement is therefore the final phrase in each protocol. By maintaining the same final measurement event, we focus our investigation towards the effect of adversary constraint on protocol comprehensiveness.
 
 
-\begin{table}[htbp]
-    \setlength\extrarowheight{7pt}
-    \centering
-    \footnotesize
-    \begin{tabular}{|M{3cm}|M{7cm}|N}
-        \hline
-        Protocol Name & Actual protocol &\\
-        \hline
-        sys & *target: $\at{p4}{(vc\; p4\; sys)}$  &\\ 
-        %\hline
-        % a1-vc-sys-seq & *target: $\at{p3}{[(a1\; p4\; vc) \braseqe\pi \at{p4}{(vc\; p4\; sys)}]}$ &\\ 
-        \hline   
-        ker-vc-sys-seq & *target:  $\at{p4}{[(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}]$ &\\ \hline 
-        rtm-ker-vc-sys-seq & *target: $\at{p1}{[(rtm\; p4\; ker)}$ \texttt{+<+} $\at{p4}{[(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}]]$ &\\
-        \hline
-    \end{tabular}
-    \caption[Chase Analysis with Varied Dependencies]{Sequential protocols analyzed with Chase, mimicking layered measurement style}
-    \label{Chase-table}
+\begin{table}[h]
+  \setlength\extrarowheight{7pt}
+  \centering
+  \footnotesize
+  \begin{tabular}{|M{2.3cm}|M{9.5cm}|N}
+      \hline
+      Protocol Name & Actual protocol &\\
+      %\hline
+      % sys & *target: $\at{p4}{(vc\; p4\; sys)}$  &\\ 
+      \hline   
+      ker-vc-sys & *target:  $\at{p4}{(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}$ &\\ \hline 
+      rtm-ker-vc-sys & *target: $\at{p1}{(rtm\; p4\; ker)}$ \texttt{+<+} $\at{p4}{(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}$ &\\
+      \hline
+      ker-hv-vc-sys & *target: $\at{p4}{(ker\; p4\; hv)}$ \texttt{+<+} $\at{p4}{(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}$ &\\ \hline 
+  \end{tabular}
+  \caption[Chase Analysis with Varied Dependencies]{Example Copland protocols analyzed with Chase}
+  \label{Chase-table}
 \end{table}
 
 When constructing this case study, we start from the simplest protocol and sequentially prepend measurement operations until reaching a root of trust, carefully crafting each protocol to mimic the system's dependencies. The first protocol, \texttt{sys}, is a measurement of the system using the virus checker. If the virus checking ASP is inadvertently corrupted, the resulting evidence will lack validity. To ensure the trustworthiness of the virus checking ASP, one may utilize one of the virus checking dependencies to measure the virus checker prior to its measurement of the system. This is achieved through the \texttt{ker-vc-sys-seq} protocol, where the kernel ASP \emph{ker} is invoked to measure the virus checker \emph{vc} before the virus checker \emph{vc} measures the system \emph{sys}. By measuring within the dependency chain, we hypothetically strengthen the resulting evidence. Taking this reasoning a step further, the protocol \texttt{rtm-ker-vc-sys-seq} includes a prepended measurement of the kernel \emph{ker}, performed by the root of trust $rtm$, prior to $ker$'s measurement of the virus checker. Because the root of trust is a trusted source, we can hypothetically further strengthen the resulting evidence. 
 
-\setlength{\textfloatsep}{0.1cm}
-\begin{figure}[hbtp]
+
+
+
+\begin{figure}[h]
     \begin{center}
-        \begin{tabular}{ M{3.6cm} | M{4.1cm} | M{4.1cm} }
-                sys & ker-vc-sys-seq & rtm-ker-vc-sys-seq \\
+        \begin{tabular}{ M{6cm} | M{6cm} }
+                ker-vc-sys & rtm-ker-vc-sys \\
                 \hline
-                &&\\ \input{examples/sys/sys1.tex} & \input{examples/ker_vs-sys-seq_reduced/m1.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m1.tex} \\ 
-                m1a & m1b & m1c \\ 
-                &&\\
-                \input{examples/sys/sys2.tex} & \input{examples/ker_vs-sys-seq_reduced/m2.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m2.tex}  \\   
-                m2a & m2b & m2c \\ 
-                &&\\
-                & \input{examples/ker_vs-sys-seq_reduced/m3.tex}  & \input{examples/rtm_ker-vc-sys-seq_reduced/m3.tex} \\  
-                  & m3b & m3c \\ 
-                 &&\\ 
-                  & \input{examples/ker_vs-sys-seq_reduced/m4.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m4.tex}  \\
-                 & m4b & m4c \\ 
-                &&\\  
-                 & \input{examples/ker_vs-sys-seq_reduced/m5.tex} & \input{examples/rtm_ker-vc-sys-seq_reduced/m5.tex}   \\
-                 & m5b & m5c \\ 
-                &&\\
+                &\\ 
+                \input{examples/ker_vs-sys-seq_reduced-copy/m1.tex} \hspace{.03cm} \input{examples/ker_vs-sys-seq_reduced-copy/m2.tex} 
+                & \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m1.tex} \hspace{.03cm} \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m2.tex} \\ 
+                &\\
+                \input{examples/ker_vs-sys-seq_reduced-copy/m3.tex} \hspace{.03cm} \input{examples/ker_vs-sys-seq_reduced-copy/m4.tex} 
+                & \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m3.tex} \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m4.tex}  \\
+                 \input{examples/ker_vs-sys-seq_reduced-copy/m5.tex}
+                 & \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m5.tex} \\ 
             \end{tabular}
     \end{center}
-    \caption{Normalized attack trees for sys, ker-vc-sys-seq, and rtm-ker-vc-sys-seq}
+    \caption{Normalized attack trees for ker-vc-sys and rtm-ker-vc-sys}
     \label{fig:rtm-compare-reduced}
 \end{figure}
+
 
 % Employing the previously introduced formalism, it becomes possible to demonstrate that \emph{rtm-ker-vc-sys-seq} is indeed the most resistant to attacks, establishing it as the optimal protocol. 
 
@@ -439,47 +433,28 @@ Ultimately, we arrive at the ordering below. Formal analysis therefore supports 
 %% next example is measuring from a different place 
 Secondly, we investigate the impact of measurement location on adversary constraint specifically studying the effects of attacks when all measurements are carried out on the same platform compared to a separate platform. To test this hypothesis, the following protocols presented in Table \ref{Chase-table-location} were analyzed with Chase and subsequently subjected to the ordering methodology. The baseline protocol \texttt{sys} calls the virus checker located on \texttt{p4} to measure the system \texttt{sys}. The next protocol \texttt{ker-vc-sys-seq} calls the kernel ASP \emph{ker} to measure the virus checker $vc$ prior to the \texttt{sys} measurement. It is important to note that the kernel ASP is located on the same platform, $P4$, as \emph{vc} and \emph{sys}. Again, we know from the system description, that the system depends on the virus checker and the virus checker depends on the kernel. In the third protocol, \texttt{a1-vc-sys-seq}, the ASP \emph{a1}, located on a separate platform \emph{p3}, is used to measure the virus checker prior to the \texttt{sys} measurement. \emph{a1} is not included in the dependency chain of \emph{vc} or \emph{sys} but simply another attestation capability within the target system.
 
-% \begin{table}[htbp]
-%     \setlength\extrarowheight{7pt}
-%     \centering
-%     \begin{tabular}{|M{4cm}|M{10cm}|N}
-%     \hline
-%         Protocol Name & Actual protocol &\\
-%     \hline
-%         sys & *target: $\at{p4}{(vc\; p4\; sys)}$  &\\ 
-%     \hline   
-%         ker-vc-sys-seq & *target:  $\at{p4}{[(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}]$ &\\ 
-%     \hline
-%      a1-vc-sys-seq & *target: $\at{p3}{[(a1\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}]$ &\\ \hline 
-%     \end{tabular}
-%     \caption[Chase Analysis with Varied Place]{Protocols analyzed regarding location of prior measurements with Chase}
-%     \label{Chase-table-location}
-% \end{table}
 
-% \begin{figure}[hbtp]
-%     %\setlength\extrarowheight{20pt}
-%     \begin{center}
-%         % \begin{tabular}{ M{3.75cm} | M{5cm} | M{5cm}}
-%         \begin{tabular}{ c | c | c}
-%         sys & ker-vc-sys-seq & a1-vc-sys-seq \\
-%         \hline
-%         &&\\
-%         \input{examples/sys/sys1.tex} & \input{examples/ker_vs-sys-seq_reduced/m1.tex} & \input{examples/a1-vc-sys-seq/vc-sys-seq1.tex}  \\ 
-%         m1a & m1b & m1c \\ 
-%         &&\\
-%         \input{examples/sys/sys2.tex} & \input{examples/ker_vs-sys-seq_reduced/m2.tex} & \input{examples/a1-vc-sys-seq/vc-sys-seq2.tex}  \\ 
-%         m2a & m2b & m2c \\
-%         &&\\    & \input{examples/ker_vs-sys-seq_reduced/m3.tex} & \input{examples/a1-vc-sys-seq/vc-sys-seq3.tex}  \\ 
-%             & m3b & m3c \\
-%         &&\\  & \input{examples/ker_vs-sys-seq_reduced/m4.tex} & \input{examples/a1-vc-sys-seq/vc-sys-seq4.tex}  \\ 
-%         & m4b & m4c \\
-%         &&\\ & \input{examples/ker_vs-sys-seq_reduced/m5.tex} & \\
-%         & m5b &  \\
-%         \end{tabular}
-%     \end{center}
-%     \caption{Reduced attack trees for sys, ker-vc-sys-seq, and a1-vc-sys-seq}
-%     \label{fig:chase-location}
-% \end{figure}
+\begin{figure}[h]
+  \begin{center}
+      \begin{tabular}{ M{5.2cm} M{6.8cm} }
+              \multicolumn{2}{c}{ker-hv-vc-sys} \\
+              \hline
+              \\
+              \input{examples/ker_vs-hv-sys-seq_reduced/m1.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m2.tex} & 
+              \input{examples/ker_vs-hv-sys-seq_reduced/m4.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m6.tex} \\
+              \multirow{4}{*}[.45cm]{\input{examples/ker_vs-hv-sys-seq_reduced/m9.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m10.tex}} & 
+              \input{examples/ker_vs-hv-sys-seq_reduced/m8.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m3.tex} \\
+              & \\
+              & \input{examples/ker_vs-hv-sys-seq_reduced/m5.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m7.tex} \\
+              & \\
+              \hline
+          \end{tabular}
+  \end{center}
+  \caption{Normalized attack trees for ker-hv-vc-sys}
+  \label{fig:hv-reduced}
+\end{figure}
+
+
 
 One may hypothesize that \texttt{ker-vc-sys-seq} is the strongest measurement because it includes measurements within the system's dependency chain. However, the generated Chase models, presented in Figure \ref{fig:chase-location} in their normal form, did not support this hypothesis. When first analyzing the trees, it is apparent that both protocols \texttt{ker-vc-sys-seq} and \texttt{a1-vc-sys-seq} are at least as good as \texttt{sys}. This claim holds because all attack trees in the more detailed protocols are the same or require more effort than the attack trees generated by \texttt{sys}. However, when comparing \texttt{ker-vc-sys-seq} and \texttt{a1-vc-sys-seq} the relationship is harder to recognize. For instance, consider the tree \texttt{m4b}. It is more difficult to attack when compared to \texttt{m1a} or \texttt{m2a} because it has more corruption events. However, there is not a relatable tree in \texttt{a1-vc-sys-seq} because there is no tree that includes corruption events of \emph{vc}, \emph{ker}, and \emph{sys}. A similar Chase generated model may be \texttt{m3c} or \texttt{m4c}, but adversary events do not have the same label. Therefore, we must conclude that  \texttt{ker-vc-sys-seq} and \texttt{a1-vc-sys-seq} are incomparable. This may actually be desired behavior because we cannot make claims about the difficulty of a specific attack. 
 
@@ -489,49 +464,8 @@ The third facet of protocol ordering investigates the impact of Copland protocol
 
 In Table \ref{Chase-table-order}, we present three protocols where the latter two have varied composition. The first protocol, \texttt{sys}, is a baseline measurement. The next two protocols include an additional measurement involving the kernel $ker$ measuring the virus checker $vc$. The difference between the two measurements is the composition. In \texttt{ker-vc-sys-seq}, the measurements are performed in sequence. In \texttt{ker-vc-sys-par}, measurements are performed in parallel. By altering the composition dynamics in these protocols, we are able to investigate the effects on adversary constraint.
 
-% \begin{table}[htbp]
-%     \setlength\extrarowheight{7pt}
-%     \centering
-%     \begin{tabular}{|M{4cm}|M{10cm}|N}
-%     \hline
-%         Protocol Name & Actual protocol &\\
-%     \hline
-%         sys & *target: $\at{p4}{(vc\; p4\; sys)}$  &\\ 
-%     \hline
-%     ker-vc-sys-seq & *target:  $\at{p4}{[(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}]$ &\\ \hline 
-%     ker-vc-sys-par & *target: $\at{p3}{[(ker\; p4\; vc)}$ \texttt{+}$\sim$\texttt{+} $\at{p4}{(vc\; p4\; sys)}]$ &\\ 
-%         \hline   
-%     \end{tabular}
-%     \caption[Chase Analysis with Varied Composition]{Protocols analyzed regarding measurement composition with Chase}
-%     \label{Chase-table-order}
-% \end{table}
-
-%Beyond the protocol input incorporating diverse composition operators, we maintain consistency in utilizing identical files for the Chase input to ensure accurate analysis. 
 Executing Chase with the three distinct protocols yields the normalized attack trees presented in Figure \ref{fig:chase-comp-trees} where protocol ordering methodology yields incomparable results between the sequential and parallel protocols. Upon analyzing these trees, it becomes evident that the inclusion of additional measurement operations -- specifically those mirroring the dependency chain -- more effectively constrains an adversary. This observation arises from the comparison of \texttt{sys} with both \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par}, wherein both of the latter protocols support \texttt{sys}. When evaluating the relationship between \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par}, determining which one supports the other is not obvious. Notably, trees \texttt{m2b} and \texttt{m2c} are identical and therefore equal. Similarly, \texttt{m1c} and \texttt{m3b} involve the same attacks and culminate in the same final measurement event, so they are equivalent. The complexity arises when comparing \texttt{m3c} to other attack trees. While \texttt{m3c} is more difficult to attack than \texttt{m2a} due to the additional adversary (repair) event, comparing it with any tree generated by \texttt{ker-vc-sys-par} in its current form is impossible. Since the final measurement event of \texttt{m3c} differs from that in any tree generated by \texttt{ker-vc-sys-par} and the repair event cannot be found in any tree generated by \texttt{ker-vc-sys-par}, we find that \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par} are incomparable. This contradicts the conclusions presented by \citet{Rowe:2021:AutomatedTrust}. 
 
-% \begin{figure}
-% \begin{center}
-% \begin{tabular}{ c |  c | c }
-%     sys & ker-vc-sys-seq & ker-vc-sys-par  \\
-%     \hline
-%     &&\\
-%     \input{examples/sys/sys1.tex} & \input{examples/ker_vs-sys-seq_reduced/m1.tex} & \input{examples/vc-sys-par/m1'.tex} \\
-%     m1a & m1b & m1c \\ 
-%     &&\\
-%     \input{examples/sys/sys2.tex} & \input{examples/ker_vs-sys-seq_reduced/m2.tex} & \input{examples/vc-sys-par/m2'.tex} \\
-%     m2a & m2b & m2c \\ 
-%     &&\\
-%     & \input{examples/ker_vs-sys-seq_reduced/m3.tex} & \input{examples/vc-sys-par/m3'.tex} \\ 
-%     & m3b & m3c \\ 
-%     &&\\
-%     & \input{examples/ker_vs-sys-seq_reduced/m4.tex} &  \\
-%     & m4b & \\ 
-%     &&\\    
-% \end{tabular}
-% \end{center}
-% \caption{Reduced attack trees for \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par}}
-% \label{fig:chase-comp-trees}
-% \end{figure}
 
 An intriguing nuance emerging from studying protocol compositions is the frequent occurrence of attack trees with repair events in the Chase output of Copland phrases with parallel measurement operations. It is common to find instances where parallel measurements, mimicking the dependency chain, are not executed in an order that replicates the dependencies. Consequently, the Chase analysis often includes trees where, at the top level measurement, the adversary corrupts a component but then must subsequently repair it before it undergoes measurement. This scenario precisely unfolds in tree m3c: the virus checker is corrupted, leading to a measurement of a compromised system, but repair becomes necessary before the virus checker itself is measured.
 

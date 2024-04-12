@@ -6,15 +6,13 @@
           minimum width = 1.6cm, 
           minimum height = 0.5cm
           ] (ms4) at (0,0) {};
-    \node[] at (ms4.center) {\texttt{ms2}};
+    \node[] at (ms4.center) {\texttt{ms4}};
 
     \node[rectangle,
-        draw,
-        minimum width = 1cm, 
-        minimum height = 0.5cm
-        ] (ms2) at (.6,1.6) {};
-    \node[] at (ms2.center) {\texttt{ms1}};
-
+    minimum width = 1cm, 
+    minimum height = 0.5cm
+    ] (lab) at (0,-.5) {};
+  \node[] at (lab.center) {$c_1$};
 
     \node[rectangle,
         draw,
@@ -22,7 +20,7 @@
         minimum width = 1cm, 
         minimum height = 0.5cm
         ] (sys) at (-.6,.8) {};
-    \node[] at (sys.center) {\texttt{c\_c1}};
+    \node[] at (sys.center) {\texttt{c\_sys}};
 
     \node[rectangle,
         draw,
@@ -30,20 +28,27 @@
         minimum width = 1cm, 
         minimum height = 0.5cm
         ] (vc) at (.6,.8) {};
-    \node[] at (vc.center) {\texttt{c\_c2}};
+    \node[] at (vc.center) {\texttt{c\_vc}};
 
     \node[rectangle,
+        draw,
         minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (label) at (0,-.5) {};
-    \node[] at (label.center) {$b$};
+        ] (ms3) at (.6,1.6) {};
+    \node[] at (ms3.center) {\texttt{ms}};
+
+    % \node[rectangle,
+    %     minimum width = 1cm, 
+    %     minimum height = 0.5cm
+    %     ] (label) at (0,-1) {};
+    % \node[] at (label.center) {m1b};
 
 
     \path[every node/.style={font=\sffamily\small}]
     %host1 path
+    (ms3) edge [] node [right] {} (vc.north)
     (vc) edge [] node [right] {} (ms4.north) 
-    (sys) edge [] node [right] {} (ms4.north)
-    (ms2) edge [] node [right] {} (vc.north) ;
+    (sys) edge [] node [right] {} (ms4.north) ;
 
 
 \end{tikzpicture}

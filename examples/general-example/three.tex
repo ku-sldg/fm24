@@ -3,56 +3,55 @@
     \node[rectangle,
           draw,
           fill = green!30,
-          minimum width = 1.5cm, 
+          minimum width = 1.6cm, 
           minimum height = 0.5cm
-          ] (ms4) at (0,-1) {};
+          ] (ms4) at (0,0) {};
     \node[] at (ms4.center) {\texttt{ms2}};
 
     \node[rectangle,
         draw,
-        fill = green!30,
-        minimum width = 1.5cm, 
+        minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (ms2) at (1,1) {};
+        ] (ms2) at (.6,1.6) {};
     \node[] at (ms2.center) {\texttt{ms1}};
 
 
     \node[rectangle,
         draw,
         fill = yellow!30,
-        minimum width = 1.5cm, 
+        minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (sys) at (-1,0) {};
+        ] (sys) at (-.6,.8) {};
     \node[] at (sys.center) {\texttt{c\_c1}};
 
     \node[rectangle,
         draw,
         fill = yellow!30,
-        minimum width = 1.5cm, 
+        minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (c2) at (0,2) {};
+        ] (c2) at (0,2.4) {};
     \node[] at (c2.center) {\texttt{c\_c2}};
 
     \node[rectangle,
         draw,
         fill = yellow!30,
-        minimum width = 1.5cm, 
+        minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (vc) at (2,2) {};
+        ] (vc) at (1.2,2.4) {};
     \node[] at (vc.center) {\texttt{c\_c3}};
 
     \node[rectangle,
         draw,
         fill = orange!30,
-        minimum width = 1.5cm, 
+        minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (r1) at (1,0) {};
+        ] (r1) at (.6,.8) {};
     \node[] at (r1.center) {\texttt{r\_c2}};
 
     \node[rectangle,
         minimum width = 1cm, 
         minimum height = 0.5cm
-        ] (label) at (0,-2) {};
+        ] (label) at (0,-.5) {};
     \node[] at (label.center) {$c$};
 
 

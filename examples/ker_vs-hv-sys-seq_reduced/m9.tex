@@ -1,0 +1,74 @@
+\begin{tikzpicture}[->,>=stealth']
+
+    \node[rectangle,
+          draw,
+          fill = green!30,
+          minimum width = 1.6cm, 
+          minimum height = 0.5cm
+          ] (ms4) at (0,0) {};
+    \node[] at (ms4.center) {\texttt{ms4}};
+
+    \node[rectangle,
+    minimum width = 1cm, 
+    minimum height = 0.5cm
+    ] (lab) at (0,-.5) {};
+  \node[] at (lab.center) {$c_9$};
+  
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = 1cm, 
+        minimum height = 0.5cm
+        ] (sys) at (-.6,.8) {};
+    \node[] at (sys.center) {\texttt{c\_sys}};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = 1cm, 
+        minimum height = 0.5cm
+        ] (vc) at (.6,.8) {};
+    \node[] at (vc.center) {\texttt{c\_vc}};
+
+    \node[rectangle,
+        draw,
+        minimum width = 1cm, 
+        minimum height = 0.5cm
+        ] (ms3) at (.6,1.6) {};
+    \node[] at (ms3.center) {\texttt{ms}};
+    
+    \node[rectangle,
+    draw,
+    fill = orange!30,
+    minimum width = 1cm, 
+    minimum height = 0.5cm
+    ] (rvc) at (.6,2.4) {};
+    \node[] at (rvc.center) {\texttt{r\_vc}};
+
+    \node[rectangle,
+        draw,
+        minimum width = 1cm, 
+        minimum height = 0.5cm
+        ] (ms2) at (.6,3.2) {};
+    \node[] at (ms2.center) {\texttt{ms}};
+
+    \node[rectangle,
+        draw,
+        fill = yellow!30,
+        minimum width = 1cm, 
+        minimum height = 0.5cm
+        ] (cvc) at (.6,4) {};
+    \node[] at (cvc.center) {\texttt{c\_vc}};
+
+    \path[every node/.style={font=\sffamily\small}]
+    %host1 path
+    (ms3) edge [] node [right] {} (vc.north)
+    (vc) edge [] node [right] {} (ms4.north) 
+    (sys) edge [] node [right] {} (ms4.north) 
+    (rvc) edge [] node [right] {} (ms3.north)
+    (ms2) edge [] node [right] {} (rvc.north)
+    (cvc) edge [] node [right] {} (ms2.north);
+
+
+\end{tikzpicture}
