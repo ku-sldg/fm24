@@ -60,7 +60,7 @@
 Sarah Johnson \and
 Perry Alexander}
 %
-\authorrunning{F. Author et al.}
+\authorrunning{A. Fritz et al.}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
@@ -71,15 +71,19 @@ Perry Alexander}
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
+%% TODO: Abstract
 The abstract should briefly summarize the contents of the paper in
 15--250 words.
 
+%% TODO: Keywords
 \keywords{First keyword  \and Second keyword \and Another keyword.}
 \end{abstract}
 %
 %
 %
 \section{Introduction}
+%% TODO: Motivation
+
 A key facet of the negotiation routine is attestation protocol selection where selecting the best attestation protocol from among many poses a challenging problem. This difficulty can be attributed to situational nuances that impact an ordering and the variety of attestation scenarios that exist. To further complicate the problem, various dimensions for protocol analysis arise such as a protocol's complexity, its resource consumption, or its vulnerability to an adversary. Considering all facets at once makes the ordering problem exponentially harder. We therefore simplify the problem by focusing solely on comparing protocols based on their susceptibility to attack. Towards this goal, we introduce equivalence and partial order relations over Copland attestation protocols where a better protocol increases the minimal work required of an active adversary to thwart an appraiser. Our formally-modeled, Coq-based solution includes verified properties of the adversary-constrained ordering relations. Furthermore, we apply our ordering scheme to representative examples to demonstrate its accuracy and efficacy.
 
 This emerging adversary-constrained protocol ordering requires a few key assumptions and definitions. First, we consider an active adversary that is capable of corrupting any component of the target system causing it to deviate from its regular behavior and is also capable of repairing any component of the target system returning it to its regular state. We assume that the target system has a special component, namely a root of trust for measurement (RTM), that cannot be attacked by the adversary. Furthermore, we assume an adversary will always choose the easiest attack to thwart an appraiser. Therefore, a better protocol increases the demands of an active adversary by making the easiest attack more difficult. For an adversary to attack an attestation protocol means to corrupt and repair a target system's components in a way that passes appraisal and therefore evades detection at the final measurement event. A corrupt measurer---either a measurer that itself is in a corrupt state or a measurer that relies on some other component that is in a corrupt state---will always generate evidence that indicates its target is in its regular state. While a regular measurer will generate evidence that accurately reflects the corruption state of its target. Our analysis relies solely on the structure of possible attacks and is agnostic to the specific details of how an adversary can corrupt or repair system components as required by an attack.
@@ -87,12 +91,10 @@ This emerging adversary-constrained protocol ordering requires a few key assumpt
 Considering these assumptions, the formalized model and subsequent analysis reveal the following two principles.
 
 \begin{enumerate}
-    %\squash
-    \item Increasing the number of measurement events does not necessarily further confine the adversary 
     \item Measurements that mimic the system's dependency chain better confine the adversary
+    \item Increasing the number of measurements does not necessarily further confine the adversary 
 \end{enumerate}
 
-% \noindent Contrary to what may seem intuitive, increasing the volume of measurement operations may not place additional constraints on an active adversary. That is, additional measurements do not necessarily result in additional adversary actions therefore not always affecting the  trustworthiness of evidence. Rather, we prove measuring closer to the root of trust with a protocol that mimics the system's dependencies verifiably makes an adversary's weakest attacks more difficult. Rowe set out to understand this idea by stating that a well-supported measurement chain, one that includes components and their dependencies up to a root of trust, is more difficult for an adversary to corrupt \cite{Rowe:2016:Confining}. We formally model and demonstrate this hypothesis, mechanically proving that selecting well-supported measurements during negotiation better constrains an adversary.
 
 
 \section{Preliminaries}
@@ -129,19 +131,21 @@ Critical to our study is various properties of a binary relation $R$ on a set $X
 
 Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first order model finder that utilizes geometric logic\cite{Enderton:logic} to find minimal models of a given theory. Inputs to the Chase model finder include axiomatized queries describing assumptions and system dependencies. From those queries, Chase generates all models which satisfy the given formulas. 
 
+%% TODO: Talk about difference between these attack trees and those used in the security field
+
 Chase can be leveraged to understand the susceptibility of a Copland protocol to attack \cite{Rowe:2021:AutomatedTrust}. Given a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol, Chase produces output containing all possible protocol executions rendered in \texttt{.xhtml} as attack trees. These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of all the ways in which an adversary might attack a system while evading detection by the attestation. Within the attack trees, the presence of an active adversary can be recognized by the corruption and repair of various components in the target system. The specific details of how an adversary performs these corruption and repairs are not the focus of this work nor of Chase. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
 
 Consider an example protocol where two measurements are performed in sequence as abstractly rendered below.
 
 \begin{center}
-    *target: $@_{\texttt{p1}}$[\texttt{ms1 +<+} $\at{\texttt{p1}}{\texttt{ms2}}]$
+    *target: \texttt{ms1} \texttt{+<+} \texttt{ms2}
 \end{center}
 
-\noindent At place \texttt{p1}, the measurement \texttt{ms1} is performed followed by, at place \texttt{p1} again, the final measurement \texttt{ms2}. We assert that \texttt{ms1} and \texttt{ms2} depend on some components of the environment, namely \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on \texttt{c3}. These system dependencies are realized within the user-defined theory file input into the Chase model finder. Running Chase on this protocol generates attack trees as found in Figure \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms} represents measurement events and are presented within green boxes. The prefix \texttt{c\_} represents corruption events and the prefix \texttt{r\_} represents repair events. Both corruption and repair events are classified as adversary events and are presented within yellow and orange boxes respectively. This abstract labeling scheme mirrors that of the Chase output.
+\noindent First the measurement \texttt{ms1} is performed followed by the final measurement \texttt{ms2}. We assert that \texttt{ms1} and \texttt{ms2} depend on some components of the environment, namely \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on \texttt{c3}. These system dependencies are realized within the user-defined theory file input into the Chase model finder. Running Chase on this protocol generates attack trees as found in Figure \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms} represents measurement events. Final measurement events are presented within green boxes. The prefix \texttt{c\_} represents corruption events and the prefix \texttt{r\_} represents repair events. Both corruption and repair events are classified as adversary events and are presented within yellow and orange boxes respectively. This abstract labeling scheme mirrors that of the Chase output.
 
 \begin{figure}[hbtp]
     \centering 
-    \begin{tabular}{c c c}
+    \begin{tabular}{m{3cm} m{3cm} m{3cm}}
         \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
     \end{tabular}
     \caption[Example Chase Models]{Example Chase models}
@@ -199,7 +203,7 @@ Our main contribution lies in introducing an adversary-constrained protocol orde
 
 The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack tree $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack tree $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. Because of this, we assume an adversary would perform the attack represented by tree $a$ to deceive a relying party. 
 
-To compare individual Chase-generated attack trees, we introduce additional definitions to aid in determining when one attack tree requires strictly less or equivalent work to perform by an adversary. Central to this comparison is the different classification of adversary actions that may be present within an attack tree. That is, Chase generated attack trees contain measurement and adversary events, and it is the variety of consecutive occurences that may occur that influences our ordering definitions. 
+
 
 This protocol ordering scheme relies on a formal model of the Chase generated attack trees. These attack trees are similar to directed, labeled graphs which contain nodes, edges, and a labeling function. 
 
@@ -235,9 +239,7 @@ When comparing two individual attack trees, we need only consider events that co
 
 For the remainder of this paper, unless otherwise noted, we assume all Chase-generated attack trees are in their normal form.
 
-
-While measurement events are self-explanatory, adversary events warrant more of an explanation and are formally defined below.
- 
+To compare individual Chase-generated attack trees, we introduce additional definitions to aid in determining when one attack tree requires strictly less or equivalent work to perform by an adversary. Central to this comparison is the different classification of adversary actions that may be present within an attack tree. That is, Chase generated attack trees contain measurement and adversary events, and it is the variety of consecutive occurences that may occur that influences our ordering definitions.  
 
 \begin{definition}[Adversary Event, $\pi$]
     An adversary event is any action performed by an adversary to change the behavior of a component in a target system. Adversary events are classified as either corruption or repair events. Given an attack tree $a$, let $\pi(a) := \{n \in N_a \,|\, n \text{ is an adversary event}\,\}$. An event $n$ is an adversary event if and only if $\ell_a(n)$ is an adversary event label.
@@ -270,6 +272,8 @@ With these preliminary definitions in place, we can now describe our proposed or
 
 
 Next, we must define a strict partial order relation over individual attack trees. It should be the case that under this relation one attack tree is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack trees to ground our logic in concrete examples. By studying patterns in the trees, we select two distinct conditions that confine an adversary to consider in our ordering scheme. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. We formally define this relation below as "strictly less work".
+
+%% TODO: Talk about parameterization of adversary events
 
 \begin{definition}[Strictly Less Work]
   An attack tree $a$ requires strictly less work to perform by an adversary than attack tree $b$ if and only if at least one of the following hold: 
@@ -343,60 +347,60 @@ Recall that a partial order is reflexive, antisymmetric, and transitive. We easi
 
 Our revised version of antisymmetry is stated as follows: if $S \le T$ and $T \le S$ then min($S$) = min($T$). Although this property is mathematically weaker than its standard version, it is, in practice, considering our goals, adequately and equally as strong.
 
-%% Talk about proof of antisymmetry
+%% TODO: Talk about proof of antisymmetry
 
 With verified equivalence and partial order relations, we can link the ordering decision over sets of attack trees to their corresponding protocols allows us to provably state that one protocol is at least as difficult to attack as another protocol. If no ordering relation holds, the protocols are incomparable. Therefore, with the additional definitions for individual attack tree comparison and set comparison, we have formally verified the four previously defined mutually inclusive relationships hold for ordering Copland protocols. By leveraging existing tools, like the Chase model finder, we were able to successfully capture all possible attacks and adversary may launch yet go undetected. This ordering reasons over those attacks, successfully introducing a proven adversary-constrained protocol ordering. 
 
 
 \section{Representative Examples}
 
-This research finds inspiration in real-life instances of Copland protocol analysis documented in the attestation literature \cite{Rowe:2021:OnOrdering,Coker::Principles-of-R}. We ground our formally-verified adversary-constrained protocol ordering model in reality by reasoning about a relying party who would like to ensure a remote server (target) is free of viruses. Taken from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure consists of two platforms $P3$ and $P4$ which depend on a hardware root of trust (rtm). Additionally, within $P4$, the system $sys$ is dependent on the virus checker $vc$ which is dependent on the kernel $ker$.  Each platform has various measurement operations (ASPs), including a virus checking measurement and a kernel integrity measurement. From this system, we derive possible Copland protocols and perform various manipulations of their structure and order. We then apply previously derived formal reasoning to determine the most adversary-constrained protocol, further establishing correctness in our model.
+This research finds inspiration in real-life instances of Copland protocol analysis documented in the attestation literature \cite{Rowe:2021:OnOrdering,Coker::Principles-of-R}. We ground our formally-verified adversary-constrained protocol ordering methodology in reality by reasoning about an enterprise that would like to ensure a remote server (target) connecting to its network provides a fresh system scan by the appropriate virus checking software. Adapted from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure consists of a platform dependent on a hardware root of trust for measurement $rtm$. Within this platform are several components, namely the kernel $ker$, a hypervisor $hv$, a virus checker $vc$, and the collective parts of the system scanned by the virus checker $sys$. The virus checker and the system are both dependent on the kernel, while the kernel and the hypervisor have no dependencies within the platform. Each component is equipped with measurement capabilities. We use the notation \texttt{ms}$(c_1,c_2)$ to denote the measurement of component $c_2$ by component $c_1$.
 
-%Taken from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure is abstractly rendered in Figure \ref{fig:ord-system}. In this system, there are two platforms $P3$ and $P4$ which depend on a hardware root of trust (rtm). Additional system dependencies within $P4$ are denoted with dashed lines.  Each platform has various measurement operations (ASPs), including a virus checking measurement $vc$ and a kernel integrity measurement $ker$. From this system, we derive possible Copland protocols and perform various manipulations of their structure and order. We then apply previously derived formal reasoning to determine the most adversary-constrained protocol, further establishing correctness in our model.
+We select and evaluate three Copland protocols under this attestation goal and infrastructure using our adversary-constrained protocol ordering methodology in order to demonstrate two hypotheses: (1) measurements that mimic the system's dependency chain better confine the adversary and (2) increasing the number of measurements does not necessarily further confine the adversary. Each protocol contains the same final measurement event \texttt{ms}$(vc,sys)$ since the primary goal of the enterprise is to receive a fresh system scan by the virus checker. Additionally, each protocol contains the same penultimate measurement event \texttt{ms}$(ker,vc)$ since an ancillary goal of the enterprise is to determine whether the target is running the appropriate virus checker.
 
-% \begin{figure}[htbp]
-%     \centering
-%     \input{ordered-system-fig.tex}
-%     \captionsetup{justification=centering,margin=1cm}
-%     \caption[Example system for protocol ordering]{Example system for protocol ordering motivated by \cite{Rowe:2016:Confining}.\\ Dashed lines represent dependencies. }
-%     \label{fig:ord-system}
-% \end{figure}
+%%% NOTE: Uses true Copland syntax
+% \begin{table}[h]
+%   \setlength\extrarowheight{7pt}
+%   \centering
+%   \footnotesize
+%   \begin{tabular}{|M{2.2cm}|M{9.7cm}|N}
+%       \hline
+%       Protocol Name & Actual protocol &\\
+%       \hline   
+%       $ker\text{-}vc\text{-}sys$ & *target:  $\at{\texttt{p4}}{(\texttt{ker p4 vc})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{vc p4 sys})}$ &\\ \hline 
+%       $rtm\text{-}ker\text{-}vc\text{-}sys$ & *target: $\at{\texttt{p1}}{(\texttt{rtm p4 ker})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{ker p4 vc})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{vc p4 sys})}$ &\\
+%       \hline
+%       $ker\text{-}hv\text{-}vc\text{-}sys$ & *target: $\at{\texttt{p4}}{(\texttt{ker p4 hv})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{ker p4 vc})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{vc p4 sys})}$ &\\ \hline 
+%   \end{tabular}
+%   \caption[Chase Analysis with Varied Dependencies]{Example Copland protocols analyzed with Chase}
+%   \label{Chase-table}
+% \end{table}
 
-Within the forthcoming protocol ordering examples, we assume that the adversary has manipulated the system and somehow allowed the resulting evidence to appear trustworthy when it is not. We also assume the root of trust (rtm) is inherently trusted and therefore cannot be attacked. We explicitly state these assumptions and the system's dependency structure in the Chase input files.
-
-We introduce three distinct scenarios to investigate the impact of adversary constraint when manipulating measurement operations and measurement composition. In the first example, we test the effects of well-supported measurements on an attacker's difficulty of attack. In the second and third examples, we test various effects of protocol composition. Each experiment is tested under our formally defined adversary-constrained model to assign one of the four relationships.
-
-The first example hypothesizes that creating a more comprehensive protocol, one where targets and their dependencies are measured, produces more trustworthy evidence. This hypothesis was initially validated manually, relying on intuition and logical reasoning \cite{Rowe:2016:Confining}. To test this hypothesis under our formal model, we selected the following three protocols presented in Table \ref{Chase-table} where again the goal of each measurement is to ascertain if a system is free from viruses. The Copland phrase that accomplishes this is $\at{p4}{(vc\; p4\; sys)}$. This measurement is therefore the final phrase in each protocol. By maintaining the same final measurement event, we focus our investigation towards the effect of adversary constraint on protocol comprehensiveness.
-
-
+%% NOTE: Uses abstract Copland syntax
 \begin{table}[h]
   \setlength\extrarowheight{7pt}
   \centering
   \footnotesize
-  \begin{tabular}{|M{2.3cm}|M{9.5cm}|N}
+  \begin{tabular}{|M{2.2cm}|M{9.7cm}|N}
       \hline
       Protocol Name & Actual protocol &\\
-      %\hline
-      % sys & *target: $\at{p4}{(vc\; p4\; sys)}$  &\\ 
       \hline   
-      ker-vc-sys & *target:  $\at{p4}{(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}$ &\\ \hline 
-      rtm-ker-vc-sys & *target: $\at{p1}{(rtm\; p4\; ker)}$ \texttt{+<+} $\at{p4}{(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}$ &\\
+      $ker\text{-}vc\text{-}sys$ & *target:  \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
+      $rtm\text{-}ker\text{-}vc\text{-}sys$ & *target: \texttt{ms}$(rtm, ker)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\
       \hline
-      ker-hv-vc-sys & *target: $\at{p4}{(ker\; p4\; hv)}$ \texttt{+<+} $\at{p4}{(ker\; p4\; vc)}$ \texttt{+<+} $\at{p4}{(vc\; p4\; sys)}$ &\\ \hline 
+      $ker\text{-}hv\text{-}vc\text{-}sys$ & *target: \texttt{ms}$(ker, hv)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
   \end{tabular}
-  \caption[Chase Analysis with Varied Dependencies]{Example Copland protocols analyzed with Chase}
+  \caption[Chase Analysis with Varied Dependencies]{Abstractly rendered Copland protocols}
   \label{Chase-table}
 \end{table}
 
-When constructing this case study, we start from the simplest protocol and sequentially prepend measurement operations until reaching a root of trust, carefully crafting each protocol to mimic the system's dependencies. The first protocol, \texttt{sys}, is a measurement of the system using the virus checker. If the virus checking ASP is inadvertently corrupted, the resulting evidence will lack validity. To ensure the trustworthiness of the virus checking ASP, one may utilize one of the virus checking dependencies to measure the virus checker prior to its measurement of the system. This is achieved through the \texttt{ker-vc-sys-seq} protocol, where the kernel ASP \emph{ker} is invoked to measure the virus checker \emph{vc} before the virus checker \emph{vc} measures the system \emph{sys}. By measuring within the dependency chain, we hypothetically strengthen the resulting evidence. Taking this reasoning a step further, the protocol \texttt{rtm-ker-vc-sys-seq} includes a prepended measurement of the kernel \emph{ker}, performed by the root of trust $rtm$, prior to $ker$'s measurement of the virus checker. Because the root of trust is a trusted source, we can hypothetically further strengthen the resulting evidence. 
 
-
-
+The first protocol $ker\text{-}vc\text{-}sys$ is our baseline protocol consisting only of the required measurement events described above. The second protocol $rtm\text{-}ker\text{-}vc\text{-}sys$ is intended to strengthen the first by prepending the measurement event \texttt{ms}$(rtm,ker)$. Since the virus checker and system depend on the kernel, taking a measurement of the kernel from a trusted place should strengthen the protocol according to hypothesis 1. The third protocol $ker\text{-}hv\text{-}vc\text{-}sys$ is intended to be no stronger than the first by prepending the measurement event \texttt{ms}$(ker,hv)$. Since the virus checker and system are independent of the hypervisor, taking a measurement of the hypervisor should not change the strength of the protocol according to hypothesis 2. We apply our adversary-constrained protocol ordering to these protocols to verify that this reasoning does indeed hold.
 
 \begin{figure}[h]
     \begin{center}
         \begin{tabular}{ M{6cm} | M{6cm} }
-                ker-vc-sys & rtm-ker-vc-sys \\
+                $ker\text{-}vc\text{-}sys$ & $rtm\text{-}ker\text{-}vc\text{-}sys$ \\
                 \hline
                 &\\ 
                 \input{examples/ker_vs-sys-seq_reduced-copy/m1.tex} \hspace{.03cm} \input{examples/ker_vs-sys-seq_reduced-copy/m2.tex} 
@@ -408,36 +412,22 @@ When constructing this case study, we start from the simplest protocol and seque
                  & \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m5.tex} \\ 
             \end{tabular}
     \end{center}
-    \caption{Normalized attack trees for ker-vc-sys and rtm-ker-vc-sys}
+    \caption{Normalized attack trees for $ker\text{-}vc\text{-}sys$ and $rtm\text{-}ker\text{-}vc\text{-}sys$}
     \label{fig:rtm-compare-reduced}
 \end{figure}
 
+%% TODO: Elaborate on why individual graph ordering relationships hold
+Now, let us first compare the first and second protocols. We begin by collecting the Chase output and reducing the attack trees to normal form as shown in Figure \ref{fig:rtm-compare-reduced}. Next, we can determine the ordering relationships between the individual attack graphs in the two sets: $a_1 \simeq b_1$, $a_2 \simeq b_2$, $a_3 \prec b_3$, $a_4 \prec b_4$, and $a_5 \simeq b_5$. Lastly we can determine the ordering relationships between the two protocols. It is clear to see that for every attack $b$ in $rtm\text{-}ker\text{-}vc\text{-}sys$ there exists an attack $a$ in $ker\text{-}vc\text{-}sys$ such that $a \preceq b$. Therefore, we can conclude that $ker\text{-}vc\text{-}sys \leq rtm\text{-}ker\text{-}vc\text{-}sys$. Furthermore, it is not the case that $rtm\text{-}ker\text{-}vc\text{-}sys \leq ker\text{-}vc\text{-}sys$ since there is no attack in $rtm\text{-}ker\text{-}vc\text{-}sys$ that is less than $a_3$ or $a_4$. Our ultimate conclusion supports hypothesis 1 that measurements that mimic the system's dependency chain better confine the adversary.
 
-% Employing the previously introduced formalism, it becomes possible to demonstrate that \emph{rtm-ker-vc-sys-seq} is indeed the most resistant to attacks, establishing it as the optimal protocol. 
-
-Formal reasoning to demonstrate that \emph{rtm-ker-vc-sys-seq} is indeed the most resistant to attacks begins by obtaining the Chase generated attack trees for each protocol. With the protocols presented in Table \ref{Chase-table} and the necessary Chase inputs, we obtain the following attack models presented in Figure \ref{fig:rtm-compare}. After applying tree normalization, the attack trees can be reduced to only activities that affect an active adversary, as presented in Figure \ref{fig:rtm-compare-reduced}.  The remainder of this analysis will only consider the trees under normal form. 
-
-
-
-Employing the previously introduced formalism to determine the relationship between the three protocols begins by analyzing the underlying relationship between individual attack trees. Starting with \texttt{m1a}, it is apparent that \texttt{m1b} is strictly better than \texttt{m1a} because \texttt{m1b} has a time-constrained measurement event. The same logic applies when comparing \texttt{m2a} and \texttt{m2b}. It is also apparent that tree \texttt{m3b} is equivalent to \texttt{m2a} because they have the same corruption events. \texttt{m4b} is strictly better than either \texttt{m2a} or \texttt{m1a} because it has more corruption events. By the same reasoning, \texttt{m5b} is strictly better than \texttt{m1a}. This concludes comparison of the individual attack trees.
-
-Next, we apply the supports formalism to determine the relationship between the sets of attack trees. Because every tree generated by \texttt{ker-vc-sys-seq} requires the adversary to apply either the same effort or more effort to attack when compared to \texttt{sys}, we say that \texttt{ker-vc-sys-seq} is at least as adversary constrained as \texttt{sys}. Said differently, we find that \texttt{ker-vc-sys-seq} supports \texttt{sys}, as denoted with the following relationship: sys $\leq$ ker-vs-sys-seq.
-
-We apply the same logic to compare \texttt{ker-vc-sys-seq} and \texttt{rtm-ker-vc-sys-seq}. That is, we first compare the protocols' individual Chase-generated attack trees. Again, looking at the reduced trees in Figure \ref{fig:rtm-compare-reduced}, we see that  \texttt{m1c} and  \texttt{m1b} are the same tree; they are equivalent under the bidirectional homomorphism. \texttt{m2c} and \texttt{m2b} are also the same tree thus equivalent. \texttt{m3c} has more time-constrained corruption events when compared to  \texttt{m3b} thus  \texttt{m3c} is strictly better than \texttt{m3b}. The same logic applies to \texttt{m4c} and  \texttt{m4b} where  \texttt{m4b} is strictly less than  \texttt{m4c} because  \texttt{m4c} has more time-constrained corruption events.  \texttt{m5c} and \texttt{m5b} are equivalent. Propagating the findings of individual attack tree comparisons and considering the formalism of supports, we conclude that \texttt{ker-vc-sys-seq} is less than or equal to \texttt{rtm-ker-vc-sys-seq} because every tree in \texttt{rtm-ker-vc-sys-seq} requires the adversary to perform equal or more effort to attack when compared to every tree in  \texttt{ker-vc-sys-seq}. 
-
-Ultimately, we arrive at the ordering below. Formal analysis therefore supports our hypothesis that a measurement which considers system dependencies up to a root of trust, is more difficult to attack and therefore better constrains the adversary. 
-\begin{center}
-    sys $\leq$ ker-vc-sys-seq $\leq$ rtm-ker-vc-sys-seq
-\end{center}
-
-%% next example is measuring from a different place 
-Secondly, we investigate the impact of measurement location on adversary constraint specifically studying the effects of attacks when all measurements are carried out on the same platform compared to a separate platform. To test this hypothesis, the following protocols presented in Table \ref{Chase-table-location} were analyzed with Chase and subsequently subjected to the ordering methodology. The baseline protocol \texttt{sys} calls the virus checker located on \texttt{p4} to measure the system \texttt{sys}. The next protocol \texttt{ker-vc-sys-seq} calls the kernel ASP \emph{ker} to measure the virus checker $vc$ prior to the \texttt{sys} measurement. It is important to note that the kernel ASP is located on the same platform, $P4$, as \emph{vc} and \emph{sys}. Again, we know from the system description, that the system depends on the virus checker and the virus checker depends on the kernel. In the third protocol, \texttt{a1-vc-sys-seq}, the ASP \emph{a1}, located on a separate platform \emph{p3}, is used to measure the virus checker prior to the \texttt{sys} measurement. \emph{a1} is not included in the dependency chain of \emph{vc} or \emph{sys} but simply another attestation capability within the target system.
+%% TODO: Elaborate on why individual graph ordering relationships hold
+%% TODO: Elaborate on antisymmetry conclusion
+Next, let us compare the first and third protocols. The set of reduced attack trees for the third protocol is shown in Figure \ref{fig:hv-reduced}. Now we can determine the ordering relationships between the individual attack graphs in the two sets: $a_1 \simeq c_1$, $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the ordering relationships between the two protocols: $ker\text{-}vc\text{-}sys \leq ker\text{-}hv\text{-}vc\text{-}sys$ and $ker\text{-}hv\text{-}vc\text{-}sys \leq ker\text{-}vc\text{-}sys$. Therefore, by the antisymmetry property of our partial order, we can conclude that these two protocols have the same set of weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This supports hypothesis 2 that increasing the number of measurements does not necessarily further confine the adversary.
 
 
 \begin{figure}[h]
   \begin{center}
       \begin{tabular}{ M{5.2cm} M{6.8cm} }
-              \multicolumn{2}{c}{ker-hv-vc-sys} \\
+              \multicolumn{2}{c}{$ker\text{-}hv\text{-}vc\text{-}sys$} \\
               \hline
               \\
               \input{examples/ker_vs-hv-sys-seq_reduced/m1.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m2.tex} & 
@@ -447,33 +437,19 @@ Secondly, we investigate the impact of measurement location on adversary constra
               & \\
               & \input{examples/ker_vs-hv-sys-seq_reduced/m5.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m7.tex} \\
               & \\
-              \hline
           \end{tabular}
   \end{center}
-  \caption{Normalized attack trees for ker-hv-vc-sys}
+  \caption{Normalized attack trees for $ker\text{-}hv\text{-}vc\text{-}sys$}
   \label{fig:hv-reduced}
 \end{figure}
 
+These examples demonstrate the applicability of our ordering approach to examples from the literature. With these completed examples, we reliably conclude our adversary-constrained protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack trees and linking the relationship between attack trees to the protocol in question.
+
+\section{Conclusion}
+%% TODO: Conclusion
 
 
-One may hypothesize that \texttt{ker-vc-sys-seq} is the strongest measurement because it includes measurements within the system's dependency chain. However, the generated Chase models, presented in Figure \ref{fig:chase-location} in their normal form, did not support this hypothesis. When first analyzing the trees, it is apparent that both protocols \texttt{ker-vc-sys-seq} and \texttt{a1-vc-sys-seq} are at least as good as \texttt{sys}. This claim holds because all attack trees in the more detailed protocols are the same or require more effort than the attack trees generated by \texttt{sys}. However, when comparing \texttt{ker-vc-sys-seq} and \texttt{a1-vc-sys-seq} the relationship is harder to recognize. For instance, consider the tree \texttt{m4b}. It is more difficult to attack when compared to \texttt{m1a} or \texttt{m2a} because it has more corruption events. However, there is not a relatable tree in \texttt{a1-vc-sys-seq} because there is no tree that includes corruption events of \emph{vc}, \emph{ker}, and \emph{sys}. A similar Chase generated model may be \texttt{m3c} or \texttt{m4c}, but adversary events do not have the same label. Therefore, we must conclude that  \texttt{ker-vc-sys-seq} and \texttt{a1-vc-sys-seq} are incomparable. This may actually be desired behavior because we cannot make claims about the difficulty of a specific attack. 
 
-
-%% third example for ordering 
-The third facet of protocol ordering investigates the impact of Copland protocol composition, sequential versus parallel, on adversary capability. \citet{Rowe:2021:AutomatedTrust} motivates the use of Chase to compare attack difficultly, manually studying specific examples with sequential measurements that mimic the system's dependency structure versus parallel measurements with no specified order. \citet{Rowe:2021:AutomatedTrust} logically deduced sequential measurements would better constrain the adversary because measuring within the system's dependency structure would require more complex attacks. We set out to apply our mathematical model to this hypothesis, testing the effects of protocol composition over the target system in Figure \ref{fig:ord-system}. 
-
-In Table \ref{Chase-table-order}, we present three protocols where the latter two have varied composition. The first protocol, \texttt{sys}, is a baseline measurement. The next two protocols include an additional measurement involving the kernel $ker$ measuring the virus checker $vc$. The difference between the two measurements is the composition. In \texttt{ker-vc-sys-seq}, the measurements are performed in sequence. In \texttt{ker-vc-sys-par}, measurements are performed in parallel. By altering the composition dynamics in these protocols, we are able to investigate the effects on adversary constraint.
-
-Executing Chase with the three distinct protocols yields the normalized attack trees presented in Figure \ref{fig:chase-comp-trees} where protocol ordering methodology yields incomparable results between the sequential and parallel protocols. Upon analyzing these trees, it becomes evident that the inclusion of additional measurement operations -- specifically those mirroring the dependency chain -- more effectively constrains an adversary. This observation arises from the comparison of \texttt{sys} with both \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par}, wherein both of the latter protocols support \texttt{sys}. When evaluating the relationship between \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par}, determining which one supports the other is not obvious. Notably, trees \texttt{m2b} and \texttt{m2c} are identical and therefore equal. Similarly, \texttt{m1c} and \texttt{m3b} involve the same attacks and culminate in the same final measurement event, so they are equivalent. The complexity arises when comparing \texttt{m3c} to other attack trees. While \texttt{m3c} is more difficult to attack than \texttt{m2a} due to the additional adversary (repair) event, comparing it with any tree generated by \texttt{ker-vc-sys-par} in its current form is impossible. Since the final measurement event of \texttt{m3c} differs from that in any tree generated by \texttt{ker-vc-sys-par} and the repair event cannot be found in any tree generated by \texttt{ker-vc-sys-par}, we find that \texttt{ker-vc-sys-seq} and \texttt{ker-vc-sys-par} are incomparable. This contradicts the conclusions presented by \citet{Rowe:2021:AutomatedTrust}. 
-
-
-An intriguing nuance emerging from studying protocol compositions is the frequent occurrence of attack trees with repair events in the Chase output of Copland phrases with parallel measurement operations. It is common to find instances where parallel measurements, mimicking the dependency chain, are not executed in an order that replicates the dependencies. Consequently, the Chase analysis often includes trees where, at the top level measurement, the adversary corrupts a component but then must subsequently repair it before it undergoes measurement. This scenario precisely unfolds in tree m3c: the virus checker is corrupted, leading to a measurement of a compromised system, but repair becomes necessary before the virus checker itself is measured.
-
-This observation prompts us to consider the effort involved in a repair event. That is, if an adversary already has a foothold in the system through a previously corrupted component, how challenging is it for them to repair that same component? The difficulty of this decision is context-dependent and lies within the judgment of an informed analyst. If informed attestation analyst determines that the effort required for the repair event in tree \texttt{m3c} is minimal, then perhaps tree \texttt{m3c} is equivalent to tree \texttt{m2a} or strictly less than tree \texttt{m2a}. Following this order, \texttt{ker-vc-sys-seq} supports both \texttt{ker-vc-sys-par} and \texttt{sys}, leading us to conclude that \texttt{ker-vc-sys-seq} is the most difficult to attack and therefore the best protocol. This conclusion would align with the intuition presented by \citet{Rowe:2021:AutomatedTrust}.
-
-%\subsubsection*{Summary}
-
-These examples demonstrate the applicability of this ordering approach to examples from the literature. With these completed examples, we reliably conclude our adversary-constrained protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack trees and linking the relationship between attack trees to the protocol in question. By testing various protocol composition and protocol ordering hypotheses regarding Copland phrases, we reliably conclude that measuring according to the system's dependency chain provably increases the trustworthiness of generated evidence. This methodology introduces a novel approach to protocol ordering, paving the way for more complex examples to ultimately create more robust and resilient attestation systems.
 
 
 
