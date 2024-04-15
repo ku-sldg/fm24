@@ -118,6 +118,10 @@ that adversary's job as difficult as possible. We claim one protocol
 is better than another if it increases the difficulty of producing
 evidence that does not reflect the target system.
 
+This emerging adversary-constrained protocol ordering requires a few key assumptions and definitions. First, we consider an active adversary that is capable of corrupting any component of the target system causing it to deviate from its regular behavior and is also capable of repairing any component of the target system returning it to its regular state. We assume that the target system has a special component, namely a root of trust for measurement (RTM), that cannot be attacked by the adversary. Furthermore, we assume an adversary will always choose the easiest attack to thwart an appraiser. Therefore, a better protocol increases the demands of an active adversary by making the easiest attack more difficult. For an adversary to attack an attestation protocol means to corrupt and repair a target system's components in a way that passes appraisal and therefore evades detection at the final measurement event. A corrupt measurer---either a measurer that itself is in a corrupt state or a measurer that relies on some other component that is in a corrupt state---will always generate evidence that indicates its target is in its regular state. While a regular measurer will generate evidence that accurately reflects the corruption state of its target. Our analysis relies solely on the structure of possible attacks and is agnostic to the specific details of how an adversary can corrupt or repair system components as required by an attack.
+
+Considering these assumptions, the formalized model and subsequent analysis support the following two principles.
+
 \begin{enumerate}
     \item Measurements that mimic the system's dependency chain better confine the adversary
     \item Increasing the number of measurements does not necessarily further confine the adversary 
@@ -161,7 +165,7 @@ Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first order model
 
 %% TODO: Talk about difference between these attack trees and those used in the security field
 
-Chase can be leveraged to understand the susceptibility of a Copland protocol to attack \cite{Rowe:2021:AutomatedTrust}. Given a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol, Chase produces output containing all possible protocol executions rendered in \texttt{.xhtml} as attack trees. These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of all the ways in which an adversary might attack a system while evading detection by the attestation. Within the attack trees, the presence of an active adversary can be recognized by the corruption and repair of various components in the target system. The specific details of how an adversary performs these corruption and repairs are not the focus of this work nor of Chase. Instead, the goal of Chase for protocol analysis is to produce easily identifiable corruption and repair events, allowing users to better understand potential vulnerabilities within the system and Copland protocol. 
+Chase can be leveraged to understand the susceptibility of a Copland protocol to attack \cite{Rowe:2021:AutomatedTrust}. Given a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol, Chase produces output containing all possible protocol executions rendered in \texttt{.xhtml} as attack trees. These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of all the ways in which an adversary might attack a system while evading detection by the attestation. Within the attack trees, the presence of an active adversary can be recognized by the corruption and repair of various components in the target system. The specific details of how an adversary performs these corruption and repairs are not the focus of this work nor of Chase. Instead, the goal of Chase for protocol analysis is to  allow users to better understand potential vulnerabilities within the system and Copland protocol. 
 
 Consider an example protocol where two measurements are performed in sequence as abstractly rendered below.
 
@@ -281,7 +285,7 @@ As previously alluded to, time constraints escalate difficulty. That is, we assu
 \noindent It is worth noting that by definition, every time-constrained adversary event is itself an adversary event and therefore $\tau(a) \subseteq \pi(a)$ for every attack tree $a$.
 
 
-With these preliminary definitions in place, we can now describe our proposed ordering relations. We wish to say two individual attack trees are equivalent if they are semantically equivalent. Defining equivalence in this way ensures trees that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare trees in their normal form so that here are no sequences of consecutive measurement events and all non-final measurement events have the same label. Now we naturally define attack tree equivalence by graph isomorphism.
+With these preliminary definitions in place, we can now describe our proposed ordering relations. We wish to say two individual attack trees are equivalent if they are semantically equivalent. Defining equivalence in this way ensures trees that have the same adversary events in the same order and the same final measurement event are indeed equivalent, regardless of the specific, intermediate measurement events that occurred. Therefore, as stated previously, we only compare trees in their normal form so that there are no sequences of consecutive measurement events and all non-final measurement events have the same label. Now we naturally define attack tree equivalence by graph isomorphism.
 
 
 \begin{definition}[Isomorphism]
@@ -297,7 +301,7 @@ With these preliminary definitions in place, we can now describe our proposed or
 \noindent We formally verify that an isomorphism is an equivalence relation in Coq but do not include the mathematical proofs here since they are easily available in many textbooks or web sources. With the proofs of reflexivity, symmetry, and transitivity completed in Coq, we obtain a formally-verified equivalence relation over individual attack trees allowing us to provably determine if two trees are semantically equivalent.
 
 
-Next, we must define a strict partial order relation over individual attack trees. It should be the case that under this relation one attack tree is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack trees to ground our logic in concrete examples. By studying patterns in the trees, we select two distinct conditions that confine an adversary to consider in our ordering scheme. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. We formally define this relation below as "strictly less work".
+Next, we must define a strict partial order relation over individual attack trees. It should be the case that under this relation one attack tree is strictly better than another if it increases the burden of an attacker. To formally define the concept of increasing adversary constraint, we analyzed many Chase-generated attack trees to ground our logic in concrete examples. By studying patterns in the trees, we select two distinct conditions that confine an adversary to consider in our ordering scheme. That is, an attack has increased difficulty if it requires more adversary events or more time-constrained adversary events. We formally define this relation below as ``strictly less work''.
 
 \begin{definition}[Strictly Less Work]
   An attack tree $a$ requires strictly less work to perform by an adversary than attack tree $b$ if and only if at least one of the following hold: 
@@ -330,7 +334,7 @@ We additionally define a partial order relation over individual attack trees by 
 
 \section{Ordering Sets of Attack Trees}
 
-The previously introduced ordering relations over individual attack trees can be leveraged to compare protocols by ordering their corresponding sets of Chase-generated attack trees. 
+The previously introduced ordering relations over individual attack trees can be leveraged to compare protocols by ordering their corresponding sets of Chase-generated attack trees. Here, we introduce equivalence ($=$) and partial order ($\le$) relations over sets of attack trees.
 
 First, we naturally define an equivalence relation over sets of attack trees using set equality up to isomorphism. This means that when determining one set is a subset of another, instead of requiring every element in the former to be in the latter, we only require every element in the former to be isomorphic/equivalent to an element in the latter. Mathematically, we replace the representation of $S \subseteq T$ from $\forall s \in S, s \in T$ to $\forall s \in S, \exists t \in T, s \simeq t$.
 
@@ -339,7 +343,7 @@ First, we naturally define an equivalence relation over sets of attack trees usi
 \end{definition}
 
 \begin{definition}[Equivalence =]
-    Two sets of attack trees $S$ and $T$ are equivalent (i.e., $S = T$) if and only if they are equal up to isomorphism of their elements.
+    Two sets of attack trees $P$ and $Q$ are equivalent (i.e., $P = Q$) if and only if they are equal up to isomorphism of their elements.
 \end{definition}
 
 Now before we can introduce a partial order relation, we must introduce additional infrastructure to compare sets of attack trees. We begin by recalling Rowe's definition of supports and covers below \cite{Rowe:2021:OnOrdering}.
@@ -348,7 +352,7 @@ Now before we can introduce a partial order relation, we must introduce addition
     Given two sets of graphs $S$ and $T$ and some preorder $R$ over graphs, we say that $S$ supports $T$ if and only if for every $h \in T$, there is some $g \in S$, such that $R\: g\: h$. We  say that $T$ covers $S$ if and only if for every $g \in S$ there is some $h \in T$ such that $R\: g\: h$.
 \end{definition}
 
-Supports states that, for every tree in $T$, there exists some related tree in $S$. Conversely, covers says that, for every tree in $S$, there exists a related tree in $T$.  This idea is best visualized by Figure \ref{fig:sup-cov} where we abstractly denote Copland protocols as $S$ and $T$. We assume these protocols generate the corresponding sets of attack trees $\{a1, a2 , a3 \}$ and $ \{b1, b2 ,b3\}$.
+Supports states that, for every graph in $T$, there exists some related graph in $S$. Conversely, covers says that, for every graph in $S$, there exists a related graph in $T$.  This idea is best visualized by Figure \ref{fig:sup-cov} where we abstractly denote Copland protocols as $P$ and $Q$. We assume these protocols generate the corresponding sets of attack trees $\{a1, a2 , a3 \}$ and $ \{b1, b2 ,b3\}$.
 
 \begin{figure}[htbp]
     \centering
@@ -360,41 +364,41 @@ Supports states that, for every tree in $T$, there exists some related tree in $
 
 The definition of supports and covers is parameterized over a relation $R$. For an adversary-constrained protocol ordering, we choose $R$ to be the partial order over attack trees defined previously. Therefore, in Figure \ref{fig:sup-cov}, arrows between the individual attack trees represent partial order relationships.
 
-While Rowe defines both supports and covers, we only need to be concerned with supports for our adversary-constrained protocol ordering. The motivation for this two-fold. First, we assume that given a protocol and its associated attacks, an adversary will always perform the easiest one (i.e., some attack $a$ such that $\forall b \in S, b \npreceq a$ where $S$ is the associated set of attack trees). Second, we must consider our desired conclusion of protocol ordering: if a protocol $S$ is less than a protocol $T$, then $T$ is at least as good as $S$ and therefore \emph{should be selected over $S$}. Therefore, we must consider every attack in the better protocol so as not to overlook the easiest attack. Furthermore, we need not consider every tree in the weaker protocol. This is best understood by examining the extreme cases for the unevaluated tree: (1) it is the easiest attack or (2) it is the hardest attack. If it is the easiest attack, then clearly the protocol is still the weaker one. If it is the hardest attack, then it has no effect on the protocol since, by our assumption, an attacker would not choose this attack.
-
 \begin{definition}[Partial Order $\leq$]
-  A set of attack trees $S$ is less than a set of attack trees $T$ (i.e., $S \leq T$) if and only if S supports T with the partial order relation $\preceq$.
+  A set of attack trees $P$ is less than a set of attack trees $Q$ (i.e., $P \leq Q$) if and only if P supports Q under the partial order relation $\preceq$.
 \end{definition} 
 
-Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $S \le T$ and $T \le S$ then $S = T$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $S = \{a,b\}$ and $T = \{a\}$. Then $S \le T$ since $a \preceq a$, and $T \le S$ since $a \preceq a$ and $a \preceq b$. But clearly it is not the case that $S$ is the same set as $T$. Instead, we can see that the set of weakest attacks in $S$ is the same as the set of weakest attacks in $T$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must provide a preliminary definition.
+While Rowe defines both supports and covers, we only need to be concerned with supports for our adversary-constrained protocol ordering. The motivation for this two-fold. First, we assume that given a protocol and its associated attacks, an adversary will always perform the easiest one (i.e., some attack $a$ such that $\forall b \in P, b \npreceq a$ where $P$ is the associated set of attack trees). Second, we must consider our desired conclusion of protocol ordering: if a protocol $P$ is less than a protocol $Q$, then $Q$ is at least as good as $P$ and therefore \emph{should be selected over $P$}. Therefore, we must consider every attack in the better protocol so as not to overlook the easiest attack. Furthermore, we need not consider every tree in the weaker protocol. This is best understood by examining the extreme cases for the unevaluated tree: (1) it is the easiest attack or (2) it is the hardest attack. If it is the easiest attack, then clearly the protocol is still the weaker one. If it is the hardest attack, then it has no effect on the protocol since, by our assumption, an attacker would not choose this attack.
+
+Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $P \le Q$ and $Q \le P$ then $P = Q$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $P = \{a,b\}$ and $Q = \{a\}$. Then $P \le Q$ since $a \preceq a$, and $Q \le P$ since $a \preceq a$ and $a \preceq b$. But clearly it is not the case that $P$ is the same set as $Q$. Instead, we can see that the set of easiest attacks in $P$ is the same as the set of easiest attacks in $Q$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must provide a preliminary definition.
 
 \begin{definition}[Minimal Attack Tree, \normalfont{min}]
-  An attack tree $a$ is minimal with respect to a set $S$ if and only $b \nprec a$ for every $b \in S$. Given a set of attack trees $S$, let $\text{min}(S) := \{a \in S \,|\, a \text{ is minimal with respect to } S \}$.
+  An attack tree $a$ is minimal with respect to a set $P$ if and only $b \nprec a$ for every $b \in P$. Given a set of attack trees $P$, let $\text{min}(P) := \{a \in P \,|\, a \text{ is minimal with respect to } P \}$.
 \end{definition}
 
-Our revised version of antisymmetry is stated as follows: if $S \le T$ and $T \le S$ then $\text{min}(S) = \text{min}(T)$. Although this property is mathematically weaker than its standard version, it is, in practice, considering our goals, adequately and equally as strong. To prove this antisymmetry property, we must apply several facts regarding minimal attack trees provided below. These lemmas are true by the definition of minimal.
+Our revised version of antisymmetry is stated as follows: if $P \le Q$ and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. Although this property is mathematically weaker than its standard version, it is, in practice, considering our goals, adequately and equally as strong. To prove this antisymmetry property, we must apply several facts regarding minimal attack trees provided below. These lemmas are true by the definition of minimal.
 
 \begin{lemma}[Minimal Set is Less than Full Set]
-  For every set of attack trees $S$, $\text{min}(S) \le S$ (i.e., $\forall a \in S, \exists a' \in \text{min}(S), a' \preceq a$).
+  For every set of attack trees $P$, $\text{min}(P) \le P$ (i.e., $\forall a \in P, \exists b \in \text{min}(P), b \preceq a$).
 \end{lemma}
 
 \begin{lemma}[Minimal Attack is Not Strictly Less than Another]
-  For every set of attack trees $S$ and attack trees $a_1, a_2 \in \text{min}(S)$, $a_1 \nprec a_2$.
+  For every set of attack trees $P$ and attack trees $a_1, a_2 \in \text{min}(P)$, $a_1 \nprec a_2$.
 \end{lemma}
 
 \begin{theorem}[Antisymmetry of Partial Order $\leq$]
-  For all sets of attack trees $S$ and $T$, if $S \le T$ and $T \le S$ then $\text{min}(S) = \text{min}(T)$. 
+  For all sets of attack trees $P$ and $Q$, if $P \le Q$ and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. 
 \end{theorem}
 \begin{proof}
-  Let $S$ and $T$ be arbitrary sets of attack trees. Suppose that $S \le T$ and $T \le S$. 
+  Let $P$ and $Q$ be arbitrary sets of attack trees. Suppose that $P \le Q$ and $Q \le P$. 
   
-  Let us begin by proving two intermediate statements regarding the ordering relationships between $\text{min}(S)$ and $\text{min}(T)$, namely that $\text{min}(S) \leq \text{min}(T)$ and $\text{min}(T) \leq \text{min}(S)$. Since $\text{min}(S) \leq S$ by Lemma 1 and $S \leq T$ by assumption, $\text{min}(S) \leq T$ by transitivity of $\leq$. Then since $\text{min}(T) \subseteq T$, $\text{min}(S) \leq \text{min}(T)$ trivially. We can apply a similar reasoning to get that $\text{min}(T) \leq \text{min}(S)$.
+  Let us begin by proving two intermediate statements regarding the ordering relationships between $\text{min}(P)$ and $\text{min}(Q)$, namely that $\text{min}(P) \leq \text{min}(Q)$ and $\text{min}(Q) \leq \text{min}(P)$. Since $\text{min}(P) \leq P$ by Lemma 1 and $P \leq Q$ by assumption, $\text{min}(P) \leq Q$ by transitivity of $\leq$. Then since $\text{min}(Q) \subseteq Q$, $\text{min}(P) \leq \text{min}(Q)$ trivially. We can apply a similar reasoning to get that $\text{min}(Q) \leq \text{min}(P)$.
 
-  Now recall our definition of set equivalence: $\text{min}(S) = \text{min}(T)$ if and only if $\text{min}(S) \subseteq \text{min}(T)$ and $\text{min}(T) \subseteq \text{min}(S)$ up to isomorphism. Therefore, let us proceed by proving the first subgoal: $\text{min}(S) \subseteq \text{min}(T)$ up to isomorphism (i.e., $\forall s \in \text{min}(S), \exists t \in \text{min}(T), s \simeq t)$.  Let $s$ be an arbitrary attack tree in $\text{min}(S)$. 
+  Now recall our definition of set equivalence: $\text{min}(P) = \text{min}(Q)$ if and only if $\text{min}(P) \subseteq \text{min}(Q)$ and $\text{min}(Q) \subseteq \text{min}(P)$ up to isomorphism. Therefore, let us proceed by proving the first subgoal: $\text{min}(P) \subseteq \text{min}(Q)$ up to isomorphism (i.e., $\forall a \in \text{min}(P), \exists b \in \text{min}(Q), a \simeq b)$.  Let $a$ be an arbitrary attack tree in $\text{min}(P)$. 
 
-  Since $\text{min}(T) \leq \text{min}(S)$, there exists some attack tree $t \in \text{min}(T)$ such that $t \preceq s$. Therefore, either $t \simeq s$ or $t \prec s$. Suppose $t \simeq s$. Then we have proven our goal and are done. Now suppose $t \prec s$. Since $\text{min}(S) \leq \text{min}(T)$, there exists some attack $s' \in \text{min}(S)$ such that $s' \preceq t$. Then $s' \prec s$ by transitivity of $\preceq$ and $\prec$. A contradiction by Lemma 2.
+  Since $\text{min}(Q) \leq \text{min}(P)$, there exists some attack tree $b \in \text{min}(Q)$ such that $b \preceq a$. Therefore, either $b \simeq a$ or $b \prec a$. Suppose $b \simeq a$. Then $a \simeq b$ by symmetry of $\simeq$. And we have proven our goal and are done. Now suppose $b \prec a$. Since $\text{min}(P) \leq \text{min}(Q)$, there exists some attack $a' \in \text{min}(P)$ such that $a' \preceq b$. Then $a' \prec a$ by transitivity of the composition of $\preceq$ and $\prec$. A contradiction by Lemma 2. Therefore, we have proven that $\text{min}(P) \subseteq \text{min}(Q)$ up to isomorphism.
   
-  We can apply a similar reasoning prove the second subgoal: $\text{min}(T) \subseteq \text{min}(S)$ up to isomorphism. Thereby proving antisymmetry of $\leq$.
+  We can apply a similar reasoning to prove the second subgoal: $\text{min}(Q) \subseteq \text{min}(P)$ up to isomorphism. Thereby proving antisymmetry of $\leq$.
 \end{proof}
 
 
@@ -429,26 +433,24 @@ We select and evaluate three Copland protocols under this attestation goal and i
   \setlength\extrarowheight{7pt}
   \centering
   \footnotesize
-  \begin{tabular}{|M{2.2cm}|M{9.7cm}|N}
+  \begin{tabular}{|M{1cm}|M{8cm}|N}
+      \hline  
+      $P1$ & *target:  \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
+      $P2$ & *target: \texttt{ms}$(rtm, ker)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\
       \hline
-      Protocol Name & Actual protocol &\\
-      \hline   
-      $ker\text{-}vc\text{-}sys$ & *target:  \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
-      $rtm\text{-}ker\text{-}vc\text{-}sys$ & *target: \texttt{ms}$(rtm, ker)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\
-      \hline
-      $ker\text{-}hv\text{-}vc\text{-}sys$ & *target: \texttt{ms}$(ker, hv)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
+      $P3$ & *target: \texttt{ms}$(ker, hv)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
   \end{tabular}
   \caption[Chase Analysis with Varied Dependencies]{Abstractly rendered Copland protocols}
   \label{Chase-table}
 \end{table}
 
 
-The first protocol $ker\text{-}vc\text{-}sys$ is our baseline protocol consisting only of the required measurement events described above. The second protocol $rtm\text{-}ker\text{-}vc\text{-}sys$ is intended to strengthen the first by prepending the measurement event \texttt{ms}$(rtm,ker)$. Since the virus checker and system depend on the kernel, taking a measurement of the kernel from a trusted place should strengthen the protocol according to hypothesis 1. The third protocol $ker\text{-}hv\text{-}vc\text{-}sys$ is intended to be no stronger than the first by prepending the measurement event \texttt{ms}$(ker,hv)$. Since the virus checker and system are independent of the hypervisor, taking a measurement of the hypervisor should not change the strength of the protocol according to hypothesis 2. We apply our adversary-constrained protocol ordering to these protocols to verify that this reasoning does indeed hold.
+The first protocol $P1$ is our baseline protocol consisting only of the required measurement events described above. The second protocol $P2$ is intended to strengthen the first by prepending the measurement event \texttt{ms}$(rtm,ker)$. Since the virus checker and system depend on the kernel, taking a measurement of the kernel from a trusted place should strengthen the protocol according to hypothesis 1. The third protocol $P3$ is intended to be no stronger than the first by prepending the measurement event \texttt{ms}$(ker,hv)$. Since the virus checker and system are independent of the hypervisor, taking a measurement of the hypervisor should not change the strength of the protocol according to hypothesis 2. We apply our adversary-constrained protocol ordering to these protocols to verify that this reasoning does indeed hold.
 
 \begin{figure}[h]
     \begin{center}
         \begin{tabular}{ M{6cm} | M{6cm} }
-                $ker\text{-}vc\text{-}sys$ & $rtm\text{-}ker\text{-}vc\text{-}sys$ \\
+                $P1$ & $P2$ \\
                 \hline
                 &\\ 
                 \input{examples/ker_vs-sys-seq_reduced-copy/m1.tex} \hspace{.03cm} \input{examples/ker_vs-sys-seq_reduced-copy/m2.tex} 
@@ -460,22 +462,22 @@ The first protocol $ker\text{-}vc\text{-}sys$ is our baseline protocol consistin
                  & \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m5.tex} \\ 
             \end{tabular}
     \end{center}
-    \caption{Normalized attack trees for $ker\text{-}vc\text{-}sys$ and $rtm\text{-}ker\text{-}vc\text{-}sys$}
+    \caption{Normalized attack trees for $P1$ and $P2$}
     \label{fig:rtm-compare-reduced}
 \end{figure}
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
-Now, let us first compare the first and second protocols. We begin by collecting the Chase output and reducing the attack trees to normal form as shown in Figure \ref{fig:rtm-compare-reduced}. Next, we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq b_1$, $a_2 \simeq b_2$, $a_3 \prec b_3$, $a_4 \prec b_4$, and $a_5 \simeq b_5$. Lastly we can determine the ordering relationships between the two protocols. It is clear to see that for every attack $b$ in $rtm\text{-}ker\text{-}vc\text{-}sys$ there exists an attack $a$ in $ker\text{-}vc\text{-}sys$ such that $a \preceq b$. Therefore, we can conclude that $ker\text{-}vc\text{-}sys \leq rtm\text{-}ker\text{-}vc\text{-}sys$. Furthermore, it is not the case that $rtm\text{-}ker\text{-}vc\text{-}sys \leq ker\text{-}vc\text{-}sys$ since there is no attack in $rtm\text{-}ker\text{-}vc\text{-}sys$ that is less than $a_3$ or $a_4$. Our ultimate conclusion supports hypothesis 1 that measurements that mimic the system's dependency chain better confine the adversary.
+Now, let us first compare the first and second protocols. We begin by collecting the Chase output and reducing the attack trees to normal form as shown in Figure \ref{fig:rtm-compare-reduced}. Next, we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq b_1$, $a_2 \simeq b_2$, $a_3 \prec b_3$, $a_4 \prec b_4$, and $a_5 \simeq b_5$. Lastly we can determine the ordering relationships between the two protocols. It is clear to see that for every attack $b$ in $P2$ there exists an attack $a$ in $P1$ such that $a \preceq b$. Therefore, we can conclude that $P1 \leq P2$. Furthermore, it is not the case that $P2 \leq P1$ since there is no attack in $P2$ that is less than $a_3$ or $a_4$. Our ultimate conclusion supports hypothesis 1 that measurements that mimic the system's dependency chain better confine the adversary.
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
 %% TODO: Elaborate on antisymmetry application
-Next, let us compare the first and third protocols. The set of reduced attack trees for the third protocol is shown in Figure \ref{fig:hv-reduced}. Now we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq c_1$, $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the ordering relationships between the two protocols: $ker\text{-}vc\text{-}sys \leq ker\text{-}hv\text{-}vc\text{-}sys$ and $ker\text{-}hv\text{-}vc\text{-}sys \leq ker\text{-}vc\text{-}sys$. Therefore, by the antisymmetry property of our partial order, we can conclude that these two protocols have the same set of weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This supports hypothesis 2 that increasing the number of measurements does not necessarily further confine the adversary.
+Next, let us compare the first and third protocols. The set of reduced attack trees for the third protocol is shown in Figure \ref{fig:hv-reduced}. Now we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq c_1$, $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the ordering relationships between the two protocols: $P1 \leq P3$ and $P3 \leq P1$. Therefore, by the antisymmetry property of our partial order, we can conclude that these two protocols have the same set of weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This supports hypothesis 2 that increasing the number of measurements does not necessarily further confine the adversary.
 
 
 \begin{figure}[h]
   \begin{center}
       \begin{tabular}{ M{5.2cm} M{6.8cm} }
-              \multicolumn{2}{c}{$ker\text{-}hv\text{-}vc\text{-}sys$} \\
+              \multicolumn{2}{c}{$P3$} \\
               \hline
               \\
               \input{examples/ker_vs-hv-sys-seq_reduced/m1.tex} \hspace{.03cm} \input{examples/ker_vs-hv-sys-seq_reduced/m2.tex} & 
@@ -487,7 +489,7 @@ Next, let us compare the first and third protocols. The set of reduced attack tr
               & \\
           \end{tabular}
   \end{center}
-  \caption{Normalized attack trees for $ker\text{-}hv\text{-}vc\text{-}sys$}
+  \caption{Normalized attack trees for $P3$}
   \label{fig:hv-reduced}
 \end{figure}
 
