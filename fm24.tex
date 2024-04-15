@@ -89,32 +89,36 @@ The abstract should briefly summarize the contents of the paper in
 a process of obtaining verifiable evidence from a remote party to
 establish trust.  A \emph{relying party} makes a request of a
 \emph{target} that produces evidence for \emph{appraisal}. The
-appraisal result determines whether the relying party will continue
-interactions with the target.
-
-\citet{Coker::Principles-of-R}~define an attestation process centered
-on the execution of \emph{attestation protocols} by \emph{attestation
-  managers}.  An attestation protocol is a sequence of: (i) locally
-performed measurements; (ii) signing and hashing data; and (iii)
-attestation requests sent to other parties.  We have since defined
-Copland~\citep{Rowe:2019:Orchestrating}, a formally specified domain
-specific language for attestation protocols and the
-maat~\citep{Pendergrass:2018:Maat} and
+appraisal result determines if and how the relying party will continue
+interactions with the target.  \citet{Coker::Principles-of-R}~define
+an attestation process centered on the execution of \emph{attestation
+  protocols} by \emph{attestation managers}.  An attestation protocol
+is a sequence of: (i) locally performed measurements; (ii) signing and
+hashing data; and (iii) attestation requests sent to other parties.
+We have since defined Copland~\citep{Rowe:2019:Orchestrating}, a
+formally specified domain specific language for attestation protocols
+and the maat~\citep{Pendergrass:2018:Maat} and
 MAESTRO~\citep{Petz:2021:faithful} infrastructures implementing
 Copland protocol execution.
 
-When designing and selecting attestation protocols it is critical that
+When designing or selecting attestation protocols it is critical that
 we know when one protocol is ``better'' than another.
-\citet{Fritz:2023:framework} defines a framework for protocol ordering
-that defines \emph{soundness} and \emph{sufficiency} over protocols.
-A protocol is sound if it is executable and conforms to access control
-policy.  A protocol is sufficient if it provides information deemed
-suitable for making a trust decision.  Given a protocol set or a
-design decision one should choose a protocol that is sound and
-sufficient.
+\citet{Fritz:2023:framework} provide a framework for protocol
+negotiation that defines protocol \emph{soundness} and
+\emph{sufficiency}.  A protocol is sound if it is executable and
+conforms to access control policy.  A protocol is sufficient if it
+provides information deemed suitable for making a trust decision.
+While soundness has a well-defined semantics and is proven decidable,
+sufficiency remains a work-in-progress.
 
-When multiple good protocols exist or multiple design decisions are
-available, how do we choose a ``best'' protocol?
+Here we examine \emph{protocol ordering}, an important concept related
+to sufficiency that defines when one protocol is objectively better
+than another.  The objective of attestation is establishing trust in
+the presence of an adversary who is trying to convince a relying party
+to trust something they should not.  Our objective thus becomes making
+that adversary's job as difficult as possible. We claim one protocol
+is better than another if it increases the difficult of producing
+evidence that does not reflect the target system.
 
 \begin{enumerate}
     \item Measurements that mimic the system's dependency chain better confine the adversary
