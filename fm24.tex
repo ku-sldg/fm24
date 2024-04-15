@@ -71,9 +71,7 @@ Perry Alexander}
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-%% TODO: Abstract
-The abstract should briefly summarize the contents of the paper in
-15--250 words.
+Semantic remote attestation is a process of obtaining verifiable evidence from a remote party to establish trust. A relying party makes a request of a target in the form of an attestation protocol that produces evidence for appraisal. The appraisal result determines if and how the relying party will continue interactions with the target. This process occurs within the presence of adversaries intent on misleading the relying party to trust a system they should not. This research introduces a robust approach to evaluating and comparing attestation protocols based on their resilience against such adversaries. We develop a Coq-based, formally-verified mathematical model aimed at quantifying the difficulty for an active adversary to successfully compromise the protocol. Our model allows us to systematically rank attestation protocols by the level of adversary effort required to produce misleading evidence that does not accurately reflect the target system's state.
 
 %% TODO: Keywords
 \keywords{First keyword  \and Second keyword \and Another keyword.}
@@ -117,7 +115,7 @@ than another.  The objective of attestation is establishing trust in
 the presence of an adversary who is trying to convince a relying party
 to trust something they should not.  Our objective thus becomes making
 that adversary's job as difficult as possible. We claim one protocol
-is better than another if it increases the difficult of producing
+is better than another if it increases the difficulty of producing
 evidence that does not reflect the target system.
 
 \begin{enumerate}
