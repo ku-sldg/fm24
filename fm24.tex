@@ -118,62 +118,121 @@ that adversary's job as difficult as possible. We claim one protocol
 is better than another if it increases the difficulty of producing
 evidence that does not reflect the target system.
 
-This emerging adversary-constrained protocol ordering requires a few key assumptions and definitions. First, we consider an active adversary that is capable of corrupting any component of the target system causing it to deviate from its regular behavior and is also capable of repairing any component of the target system returning it to its regular state. We assume that the target system has a special component, namely a root of trust for measurement (RTM), that cannot be attacked by the adversary. Furthermore, we assume an adversary will always choose the easiest attack to thwart an appraiser. Therefore, a better protocol increases the demands of an active adversary by making the easiest attack more difficult. For an adversary to attack an attestation protocol means to corrupt and repair a target system's components in a way that passes appraisal and therefore evades detection at the final measurement event. A corrupt measurer---either a measurer that itself is in a corrupt state or a measurer that relies on some other component that is in a corrupt state---will always generate evidence that indicates its target is in its regular state. While a regular measurer will generate evidence that accurately reflects the corruption state of its target. Our analysis relies solely on the structure of possible attacks and is agnostic to the specific details of how an adversary can corrupt or repair system components as required by an attack.
+Our protocol ordering makes several key assumptions and
+definitions. First, we consider an active adversary that is capable of
+corrupting any component of the target causing it to deviate from its
+regular behavior.  Similarly the adversary is capable of repairing any
+component of the target system it corrupts returning it to its regular
+state. Thus, a corruption event followed by a repair event results in
+a component that is indistinguishable from the original component. The
+only exception to this is the targets root-of-trust for measurement
+(RTM) that cannot be corrupted or repaired.
 
-Considering these assumptions, the formalized model and subsequent analysis support the following two principles.
+We assume an adversary will always choose the easiest available attack
+to corrupt an attestation. Therefore, a better protocol increases the
+demands of an adversary by making the easiest available attack more
+difficult. For an adversary to attack an attestation protocol means to
+corrupt and repair a target system's components in a manner that
+passes appraisal and therefore evades detection at the final
+measurement event. A corrupt measurer---either a measurer that is
+itself in a corrupt state or a measurer that relies on some other
+component that is in a corrupt state---will always generate evidence
+that indicates its measurement target is in its regular state. While a
+regular measurer will generate evidence that accurately reflects the
+corruption state of its target. Our analysis relies solely on the
+structure of possible attacks and is agnostic to the specific details
+of how an adversary can corrupt or repair system components as
+required by an attack.
 
-\begin{enumerate}
-    \item Measurements that mimic the system's dependency chain better confine the adversary
-    \item Increasing the number of measurements does not necessarily further confine the adversary 
-\end{enumerate}
+% Considering these assumptions, the formalized model and subsequent analysis support the following two principles.
+
+% \begin{enumerate}
+%     \item Measurements that mimic the system's dependency chain better confine the adversary
+%     \item Increasing the number of measurements does not necessarily further confine the adversary 
+% \end{enumerate}
 
 
 
 \section{Preliminaries}
 
-Properties of orderings and the Chase model finder developed by MITRE \cite{Ramsdell:2020:Chase} are paramount tools for our adversary-constrained protocol ordering and subsequent analysis. Key concepts include equivalence and partial order relations as well as Chase generated attack trees. 
+Properties of orderings and the Chase model finder developed by MITRE
+\cite{Ramsdell:2020:Chase} are primary tools for our protocol ordering
+and subsequent analysis. Key concepts include equivalence and partial
+order relations and Chase generated attack trees.
 
 \subsection*{Properties of Orders}
 
-Critical to our study is various properties of a binary relation $R$ on a set $X$. We specifically consider the following properties, formally defined below.
+Critical to our study are the canonical properties of a binary
+relation $R$ over a set $X$. We use the following
+properties:
 
 \begin{itemize}
-    \squash
-    \item \emph{reflexive} -- $ \forall\: x\: \in X$, $R\: x\: x$
-    \item \emph{irreflexive} -- $ \forall \: x\: \in X, \: \neg \: R\: x\: x$
-    \item \emph{symmetric} -- $ \forall\: x\: , y\: \in X,$ $R\: x\: y\:\rightarrow R\: y\: x$
-    \item \emph{asymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow  \:\: \neg \:R\: y\: x $  
-    \item \emph{antisymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow \:\: R\: y\: x \rightarrow \:x = y$ 
-    \item \emph{transitive} -- $ \forall\: x,\: y,\: z\:\in X$, $R\: x\: y\: \rightarrow R\: y\: z \rightarrow R\: x\: z$
+  \squash
+\item \emph{reflexive} -- $ \forall\: x\: \in X$, $R\: x\: x$
+\item \emph{irreflexive} -- $ \forall \: x\: \in X, \: \neg \: R\: x\: x$
+\item \emph{symmetric} -- $ \forall\: x\: , y\: \in X,$ $R\: x\: y\:\rightarrow R\: y\: x$
+\item \emph{asymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow  \:\: \neg \:R\: y\: x $  
+\item \emph{antisymmetric} --  $\forall\: x,\: y\:\in X,\: R\: x\: y\:\: \rightarrow \:\: R\: y\: x \rightarrow \:x = y$ 
+\item \emph{transitive} -- $ \forall\: x,\: y,\: z\:\in X$, $R\: x\: y\: \rightarrow R\: y\: z \rightarrow R\: x\: z$
 \end{itemize}
 
-\noindent Combining these properties in specific ways lends itself to the following ordering relations.
+\noindent These properties are subsequently used to define ordering relations:
 
 \begin{itemize}
-    \squash
-    \item a \emph{preorder} is reflexive and transitive
-    \item an \emph{equivalence} relation is reflexive, symmetric, and transitive 
-    \item a \emph{partial order} is reflexive, antisymmetric, and transitive 
-    \item a \emph{strict partial order} is irreflexive, asymmetric, and transitive 
+  \squash
+\item a \emph{preorder} is reflexive and transitive
+\item an \emph{equivalence} relation is reflexive, symmetric, and transitive 
+\item a \emph{partial order} is reflexive, antisymmetric, and transitive 
+\item a \emph{strict partial order} is irreflexive, asymmetric, and transitive 
 \end{itemize}
-
-\noindent When attempting to introduce new ordering relations, as with this protocol ordering, each required property must be proven.  
 
 \subsection*{Chase Analysis}
 
-Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first order model finder that utilizes geometric logic\cite{Enderton:logic} to find minimal models of a given theory. Inputs to the Chase model finder include axiomatized queries describing assumptions and system dependencies. From those queries, Chase generates all models which satisfy the given formulas. 
+Chase \cite{Ramsdell:2020:Chase,Rowe:2021:AutomatedTrust} is a first
+order model finder that utilizes geometric
+logic~\citep{Enderton:logic} to find minimal models of a given
+theory. Inputs to the Chase model finder include a set of axioms
+describing assumptions and system dependencies. From those axioms,
+Chase generates all satisfying
 
 %% TODO: Talk about difference between these attack trees and those used in the security field
 
-Chase can be leveraged to understand the susceptibility of a Copland protocol to attack \cite{Rowe:2021:AutomatedTrust}. Given a Copland phrase, a model of Copland adversary events, and a model of the evaluated protocol, Chase produces output containing all possible protocol executions rendered in \texttt{.xhtml} as attack trees. These sequential attack trees \cite{Horne:Attack, Jhaware:attack} are formal models of all the ways in which an adversary might attack a system while evading detection by the attestation. Within the attack trees, the presence of an active adversary can be recognized by the corruption and repair of various components in the target system. The specific details of how an adversary performs these corruption and repairs are not the focus of this work nor of Chase. Instead, the goal of Chase for protocol analysis is to  allow users to better understand potential vulnerabilities within the system and Copland protocol. 
+\citet{Rowe:2021:AutomatedTrust}~define a Chase model for Copland
+attestation protocols useful for establishing the susceptibility of a
+protocol to attack. Given a Copland phrase, a model of adversary
+events, and a model of the evaluated protocol, Chase produces output
+enumerating all possible protocol executions as attack trees. These
+sequential attack trees~\citep{Horne:Attack, Jhaware:attack} are
+formal models of adversary attacks that evade detection by the
+attestation protocol.  In an attack trees the presence of an active
+adversary can be recognized by the corruption and repair of target
+system components. The specific details of how an adversary performs
+corruption and repair are not the focus of this work nor of
+Chase. Instead, the goal of Chase is to allow users to better
+understand potential vulnerabilities of the Copland
+protocol itself.
 
-Consider an example protocol where two measurements are performed in sequence as abstractly rendered below.
+Consider a trivial example Copland protocol where two measurements are
+performed in sequence:
 
 \begin{center}
     *target: \texttt{ms1} \texttt{+<+} \texttt{ms2}
 \end{center}
 
-\noindent First the measurement \texttt{ms1} is performed followed by the final measurement \texttt{ms2}. We assert that \texttt{ms1} and \texttt{ms2} depend on some components of the environment, namely \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on \texttt{c3}. These system dependencies are realized within the user-defined theory file input into the Chase model finder. Running Chase on this protocol generates attack trees as found in Figure \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms} represents measurement events. Final measurement events are presented within green boxes. The prefix \texttt{c\_} represents corruption events and the prefix \texttt{r\_} represents repair events. Both corruption and repair events are classified as adversary events and are presented within yellow and orange boxes respectively. This abstract labeling scheme mirrors that of the Chase output.
+\noindent The measurement \texttt{ms1} is performed followed by the
+final measurement \texttt{ms2}. We assert that \texttt{ms1} and
+\texttt{ms2} depend on some components of the environment, namely
+\texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on
+\texttt{c3}. These system dependencies are realized within the
+user-defined theory file input into the Chase model finder. Running
+Chase on this protocol generates attack trees as found in Figure
+\ref{fig:chase-ex}. In these figures, the prefix \texttt{ms}
+represents measurement events. Final measurement events are presented
+within green boxes. The prefix \texttt{c\_} represents corruption
+events and the prefix \texttt{r\_} represents repair events. Both
+corruption and repair events are classified as adversary events and
+are presented within yellow and orange boxes respectively. This
+abstract labeling scheme mirrors that of the Chase output.
 
 \begin{figure}[hbtp]
     \centering 
