@@ -50,6 +50,7 @@
 
 \begin{document}
 %
+%% TODO: Organization
 \title{An Ordering over Attestation Protocols\thanks{Supported by organization x.}}
 %
 %\titlerunning{Abbreviated paper title}
@@ -80,7 +81,6 @@ Semantic remote attestation is a process of obtaining verifiable evidence from a
 %
 %
 \section{Introduction}
-%% TODO: Motivation
 
 \emph{Semantic remote
   attestation}\citep{Haldar:04:Semantic-Remote,coker2011principles} is
@@ -213,23 +213,18 @@ understand potential vulnerabilities of the Copland
 protocol itself.
 
 Consider a trivial example Copland protocol where two measurements are
-performed in sequence:
-
-\begin{center}
-    *target: \texttt{ms1} \texttt{+<+} \texttt{ms2}
-\end{center}
-
-\noindent The measurement \texttt{ms1} is performed followed by the
-final measurement \texttt{ms2}. We assert that \texttt{ms1} and
+performed in sequence: \texttt{ms1} \texttt{+<+} \texttt{ms2}.
+The measurement \texttt{ms1} is performed followed by the
+final measurement \texttt{ms2}. In this abstract scenario, \texttt{ms1} and
 \texttt{ms2} depend on some components of the environment, namely
 \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on
 \texttt{c3}. These system dependencies are realized within the
 user-defined theory file input into the Chase model finder. Running
 Chase on this protocol generates attack trees as found in Figure
 \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms}
-represents measurement events. Final measurement events are presented
-within green boxes. The prefix \texttt{c\_} represents corruption
-events and the prefix \texttt{r\_} represents repair events. Both
+represents measurement events with final measurement events presented
+within green boxes. The prefixes \texttt{c\_} and  \texttt{r\_} 
+represent the corruption and repair of components. Both
 corruption and repair events are classified as adversary events and
 are presented within yellow and orange boxes respectively. This
 abstract labeling scheme mirrors that of the Chase output.
@@ -292,7 +287,7 @@ The following sections describe the process of introducing and verifying an adve
 
 Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack trees. In this section, we establish definitions to compare adversary events and utilize these definitions to present orderings over attack trees. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack trees. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack trees.
 
-The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack tree $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack tree $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. 
+The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack tree $a_1$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $a_2$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $a_2$ versus in $a_1$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a_1$ and $a_2$, we wish to conclude that $a_1$ is strictly less work to perform by an adversary than $a_2$. Now in attack tree $a_3$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a_1$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a_1$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. 
 
 
 
@@ -377,7 +372,7 @@ Next, we must define a strict partial order relation over individual attack tree
   An attack tree $a$ is strictly less than attack tree $b$ (i.e., $a \prec b$) if and only if $a$ requires strictly less work than $b$.
 \end{definition}
 
-\noindent By design, this definition only allows the comparison of attack trees $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack trees that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure \ref{fig:chase-ex}, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a$, $b$, and $c$ and then determine what ordering relationships hold between them. For attack $a$ we get that $\pi(a) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a) = \emptyset$. For attack $b$, $\pi(b) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(b) = \{ \texttt{c\_c2} \}$. And lastly for attack $c$, $\pi(c) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(c) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a \prec b$, $a \prec c$, and $b$ and $c$ are incomparable.
+\noindent By design, this definition only allows the comparison of attack trees $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack trees that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure \ref{fig:chase-ex}, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a_1$, $a_2$, and $a_3$ and then determine what ordering relationships hold between them. For attack $a_1$ we get that $\pi(a_1) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a_1) = \emptyset$. For attack $a_2$, $\pi(a_2) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a_2) = \{ \texttt{c\_c2} \}$. And lastly for attack $a_3$, $\pi(a_3) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(a_3) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a_1 \prec a_2$, $a_1 \prec a_3$, and $a_2$ and $a_3$ are incomparable.
 
 Furthermore, our design of the strict partial order relation allows it to be enhanced with an ordering over adversarial events themselves. Given a strict partial order over adversarial events, it can be utilized in our definition of ``strictly less work'' in the Coq specification. This is because its definition is parameterized over an arbitrary adversary event ordering. Examples of such orderings are that corrupting a shallower component is less difficult than corrupting a deeper one and that repairing a component is less difficult than corrupting one. We do not assert that these orderings over adversarial events hold. Instead, we only provide them as examples for how our ordering scheme can be enhanced with potentially desirable considerations. For the rest of this paper, we are only reasoning under the empty relation over adversarial events, meaning we do not state that any event is more or less difficult than another.
 
@@ -429,7 +424,7 @@ The definition of supports and covers is parameterized over a relation $R$. For 
 
 While Rowe defines both supports and covers, we only need to be concerned with supports for our adversary-constrained protocol ordering. The motivation for this two-fold. First, we assume that given a protocol and its associated attacks, an adversary will always perform the easiest one (i.e., some attack $a$ such that $\forall b \in P, b \npreceq a$ where $P$ is the associated set of attack trees). Second, we must consider our desired conclusion of protocol ordering: if a protocol $P$ is less than a protocol $Q$, then $Q$ is at least as good as $P$ and therefore \emph{should be selected over $P$}. Therefore, we must consider every attack in the better protocol so as not to overlook the easiest attack. Furthermore, we need not consider every tree in the weaker protocol. This is best understood by examining the extreme cases for the unevaluated tree: (1) it is the easiest attack or (2) it is the hardest attack. If it is the easiest attack, then clearly the protocol is still the weaker one. If it is the hardest attack, then it has no effect on the protocol since, by our assumption, an attacker would not choose this attack.
 
-Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $P \le Q$ and $Q \le P$ then $P = Q$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $P = \{a,b\}$ and $Q = \{a\}$. Then $P \le Q$ since $a \preceq a$, and $Q \le P$ since $a \preceq a$ and $a \preceq b$. But clearly it is not the case that $P$ is the same set as $Q$. Instead, we can see that the set of easiest attacks in $P$ is the same as the set of easiest attacks in $Q$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must provide a preliminary definition.
+Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $P \le Q$ and $Q \le P$ then $P = Q$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $P = \{a_1,a_2\}$ and $Q = \{a_1\}$. Then $P \le Q$ since $a_1 \preceq a_1$, and $Q \le P$ since $a_1 \preceq a_1$ and $a_1 \preceq a_2$. But clearly it is not the case that $P$ is the same set as $Q$. Instead, we can see that the set of easiest attacks in $P$ is the same as the set of easiest attacks in $Q$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must provide a preliminary definition.
 
 \begin{definition}[Minimal Attack Tree, \normalfont{min}]
   An attack tree $a$ is minimal with respect to a set $P$ if and only $b \nprec a$ for every $b \in P$. Given a set of attack trees $P$, let $\text{min}(P) := \{a \in P \,|\, a \text{ is minimal with respect to } P \}$.
