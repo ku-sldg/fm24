@@ -50,6 +50,7 @@
 
 \begin{document}
 %
+%% TODO: Organization
 \title{An Ordering over Attestation Protocols\thanks{Supported by organization x.}}
 %
 %\titlerunning{Abbreviated paper title}
@@ -80,7 +81,6 @@ Semantic remote attestation is a process of obtaining verifiable evidence from a
 %
 %
 \section{Introduction}
-%% TODO: Motivation
 
 \emph{Semantic remote
   attestation}\citep{Haldar:04:Semantic-Remote,coker2011principles} is
@@ -216,23 +216,18 @@ understand potential vulnerabilities of the Copland
 protocol itself.
 
 Consider a trivial example Copland protocol where two measurements are
-performed in sequence:
-
-\begin{center}
-    *target: \texttt{ms1} \texttt{+<+} \texttt{ms2}
-\end{center}
-
-\noindent The measurement \texttt{ms1} is performed followed by the
-final measurement \texttt{ms2}. We assert that \texttt{ms1} and
+performed in sequence: \texttt{ms1} \texttt{+<+} \texttt{ms2}.
+The measurement \texttt{ms1} is performed followed by the
+final measurement \texttt{ms2}. In this abstract scenario, \texttt{ms1} and
 \texttt{ms2} depend on some components of the environment, namely
 \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on
 \texttt{c3}. These system dependencies are realized within the
 user-defined theory file input into the Chase model finder. Running
 Chase on this protocol generates attack trees as found in Figure
 \ref{fig:chase-ex}. In these figures, the prefix \texttt{ms}
-represents measurement events. Final measurement events are presented
-within green boxes. The prefix \texttt{c\_} represents corruption
-events and the prefix \texttt{r\_} represents repair events. Both
+represents measurement events with final measurement events presented
+within green boxes. The prefixes \texttt{c\_} and  \texttt{r\_} 
+represent the corruption and repair of components. Both
 corruption and repair events are classified as adversary events and
 are presented within yellow and orange boxes respectively. This
 abstract labeling scheme mirrors that of the Chase output.
@@ -250,7 +245,7 @@ abstract labeling scheme mirrors that of the Chase output.
 
 
 \section{Overview}
-We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required of an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack trees. Sets of attack trees are compared using our proposed novel ordering scheme which is reliant upon an ordering scheme over individual attack trees. We propose an ordering over individual attack trees that considers two facets regarding the difficulty required by an adversary. This ordering scheme is designed such that one can easily plug in additional considerations and constraints to enhance the ordering.
+We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required of an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack trees. Sets of attack trees are compared using our proposed novel ordering scheme which is reliant upon an ordering scheme over individual attack trees. We propose an ordering over individual attack trees that considers two facets regarding the work required of an adversary. This ordering scheme is designed such that one can easily plug in additional considerations and constraints to enhance the ordering.
 
 \begin{figure}[hbtp]
     \centering
@@ -260,9 +255,9 @@ We introduce a Coq-based, formally-verified mathematical model to order attestat
     \label{fig:protocol-org-fig}
 \end{figure}
 
-Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack trees $\{ a_1, a_2, a_3\}$ for $P1$ and the set of attack trees $\{b_1, b_2, b_3\}$ for $P2$. We then compare the Chase-generated attack trees individually, discovering ordering relationships $a_1 \preceq b_1$, $a_2 \preceq b_2$, and $a_1 \preceq b_3$ as represented by the dotted lines with arrows pointing from an attack to one that is at least as difficult to perform. Next, looking at the sets of attack trees, we can see that every attack tree in $P2$ has an attack in $P1$ that is at most as difficult to perform. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to conclude $P1 \leq P2$.  
+Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack trees $\{ a_1, a_2, a_3\}$ for $P1$ and the set of attack trees $\{b_1, b_2, b_3\}$ for $P2$. We then compare the attack trees individually, discovering ordering relationships $a_1 \preceq b_1$, $a_2 \preceq b_2$, and $a_1 \preceq b_3$ as represented by the dotted lines with arrows pointing from an attack to one that requires at least as much work to perform by the adversary. Next, looking at the sets of attack trees, we can see that every attack tree in $P2$ has an attack in $P1$ that is at most as difficult. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to conclude $P1 \leq P2$.  
 
-We introduce four ordering relations for adversary-constrained protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are partial orders. The relations are enumerated below.
+We introduce four ordering relations for attestation protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are partial orders. The relations are enumerated below.
 
 \vspace*{-5mm}
 
@@ -276,9 +271,9 @@ We introduce four ordering relations for adversary-constrained protocol ordering
 \noindent We choose to define the ordering in this way for a few reasons. First, we refrain from introducing four mutually exclusive relationships (i.e., $=$, $<$, $>$, incomparable) because this results in a drastic increase in the number of incomparable protocols. As such, under our ordering, we do not conclude that one protocol is strictly better than another protocol. Although one might think we could define the relations necessary to draw such conclusions using the irreflexive kernel (deriving a strictly less than operator from the satisfaction of both less than and not equal conditions), we found this was not appropriate because the strictly less than operator would inadvertently introduce an arbitrary ordering over adversarial corruption and repair events where there should not be one.  
 
 
-These four ordering relations serve as foundational categories for adversary-constrained protocol ordering. While the ordering may appear intuitive, mathematically modeling the Chase output and subsequently defining the ordering operations themselves through Coq-based mechanized proofs is challenging. Our results overcome this challenge, defining and verifying the equivalence and partial order relationships over sets of attack trees which are built upon ordering relations over individual attack trees. With this ordering infrastructure, one can provably determine that one protocol is at least as good as another because it requires at least as much adversary effort to generate seemingly trustworthy evidence. 
+These four ordering relations serve as foundational categories for our protocol ordering. While the ordering may appear intuitive, defining the ordering operations themselves and proving they possess the required properties through Coq-based mechanized definitions and proofs is challenging. Our results overcome this challenge, defining and verifying the equivalence and partial order relations over sets of attack trees which are built upon ordering relations over individual attack trees. With this ordering infrastructure, one can provably determine that one protocol is at least as good as another because it requires at least as much adversary effort to generate seemingly trustworthy evidence. 
 
-Under our methodology, an ordering relation between two Copland protocol can be obtained by completing the following workflow:
+Under our methodology, an ordering relationship between two Copland protocol can be obtained by completing the following workflow as demonstrated in Figure  \ref{fig:protocol-org-fig}:
 
 \begin{enumerate}
     \squash
@@ -288,14 +283,14 @@ Under our methodology, an ordering relation between two Copland protocol can be 
     \item Link the set ordering relationship to determine protocol ordering relationship
 \end{enumerate}
 
-The following sections describe the process of introducing and verifying an adversary-constrained ordering for Copland protocols. In this paper, mathematical definitions and proofs are presented manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}.
+The following sections describe the process of introducing and verifying an ordering for Copland protocols. In this paper, mathematical definitions and proofs are presented manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}.
 
 
 \section{Ordering Individual Attack Trees}
 
-Our main contribution lies in introducing an adversary-constrained protocol ordering through analysis of Chase-generated attack trees. In this section, we establish definitions to compare adversary events and utilize these definitions to present orderings over attack trees. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack trees. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack trees.
+Our main contribution lies in introducing an attestation protocol ordering through analysis of Chase-generated attack trees. In this section, we establish definitions to compare adversary events and utilize these definitions to present orderings over attack trees. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack trees. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack trees.
 
-The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our adversary-constrained protocol ordering. In attack tree $a$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $b$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $b$ versus in $a$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a$ and $b$, we wish to conclude that $a$ is strictly less work to perform by an adversary than $b$. Now in attack tree $c$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. 
+The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our protocol ordering. In attack tree $a_1$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $a_2$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $a_2$ versus in $a_1$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a_1$ and $a_2$, we wish to conclude that $a_1$ is strictly less work to perform by an adversary than $a_2$. Now in attack tree $a_3$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a_1$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a_1$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. 
 
 
 
@@ -380,7 +375,7 @@ Next, we must define a strict partial order relation over individual attack tree
   An attack tree $a$ is strictly less than attack tree $b$ (i.e., $a \prec b$) if and only if $a$ requires strictly less work than $b$.
 \end{definition}
 
-\noindent By design, this definition only allows the comparison of attack trees $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack trees that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure \ref{fig:chase-ex}, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a$, $b$, and $c$ and then determine what ordering relationships hold between them. For attack $a$ we get that $\pi(a) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a) = \emptyset$. For attack $b$, $\pi(b) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(b) = \{ \texttt{c\_c2} \}$. And lastly for attack $c$, $\pi(c) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(c) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a \prec b$, $a \prec c$, and $b$ and $c$ are incomparable.
+\noindent By design, this definition only allows the comparison of attack trees $a$ and $b$ where both $\pi(a) \subseteq \pi(b)$ and $\tau(a) \subseteq \tau(b)$. In other words, we only compare attack trees that share common sets of both adversary events and time-constrained adversary events. Looking back at Figure \ref{fig:chase-ex}, we can compute the sets of adversary events and sets of time-constrained adversary events for attacks $a_1$, $a_2$, and $a_3$ and then determine what ordering relationships hold between them. For attack $a_1$ we get that $\pi(a_1) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a_1) = \emptyset$. For attack $a_2$, $\pi(a_2) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a_2) = \{ \texttt{c\_c2} \}$. And lastly for attack $a_3$, $\pi(a_3) = \{ \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and $\tau(a_3) = \{ \texttt{r\_c2} \}$. Using the definition of strict partial order below, we can conclude that $a_1 \prec a_2$, $a_1 \prec a_3$, and $a_2$ and $a_3$ are incomparable.
 
 Furthermore, our design of the strict partial order relation allows it to be enhanced with an ordering over adversarial events themselves. Given a strict partial order over adversarial events, it can be utilized in our definition of ``strictly less work'' in the Coq specification. This is because its definition is parameterized over an arbitrary adversary event ordering. Examples of such orderings are that corrupting a shallower component is less difficult than corrupting a deeper one and that repairing a component is less difficult than corrupting one. We do not assert that these orderings over adversarial events hold. Instead, we only provide them as examples for how our ordering scheme can be enhanced with potentially desirable considerations. For the rest of this paper, we are only reasoning under the empty relation over adversarial events, meaning we do not state that any event is more or less difficult than another.
 
@@ -424,21 +419,20 @@ Supports states that, for every graph in $T$, there exists some related graph in
     \label{fig:sup-cov}
 \end{figure}
 
-The definition of supports and covers is parameterized over a relation $R$. For an adversary-constrained protocol ordering, we choose $R$ to be the partial order over attack trees defined previously. Therefore, in Figure \ref{fig:sup-cov}, arrows between the individual attack trees represent partial order relationships.
+The definition of supports and covers is parameterized over a relation $R$. For an protocol ordering, we choose $R$ to be the partial order over attack trees defined previously. Therefore, in Figure \ref{fig:sup-cov}, arrows between the individual attack trees represent partial order relationships.
 
 \begin{definition}[Partial Order $\leq$]
   A set of attack trees $P$ is less than a set of attack trees $Q$ (i.e., $P \leq Q$) if and only if P supports Q under the partial order relation $\preceq$.
 \end{definition} 
 
-While Rowe defines both supports and covers, we only need to be concerned with supports for our adversary-constrained protocol ordering. The motivation for this two-fold. First, we assume that given a protocol and its associated attacks, an adversary will always perform the easiest one (i.e., some attack $a$ such that $\forall b \in P, b \npreceq a$ where $P$ is the associated set of attack trees). Second, we must consider our desired conclusion of protocol ordering: if a protocol $P$ is less than a protocol $Q$, then $Q$ is at least as good as $P$ and therefore \emph{should be selected over $P$}. Therefore, we must consider every attack in the better protocol so as not to overlook the easiest attack. Furthermore, we need not consider every tree in the weaker protocol. This is best understood by examining the extreme cases for the unevaluated tree: (1) it is the easiest attack or (2) it is the hardest attack. If it is the easiest attack, then clearly the protocol is still the weaker one. If it is the hardest attack, then it has no effect on the protocol since, by our assumption, an attacker would not choose this attack.
+While Rowe defines both supports and covers, we only need to be concerned with supports for our protocol ordering. The motivation for this two-fold. First, we assume that given a protocol and its associated attacks, an adversary will always perform the easiest one.
+Second, we must consider our desired conclusion of protocol ordering: if a protocol $P$ is less than a protocol $Q$, then $Q$ is at least as good as $P$ and therefore \emph{should be selected over $P$}. Therefore, we must consider every attack in the better protocol so as not to overlook the easiest attack. Furthermore, we need not consider every tree in the weaker protocol. This is best understood by examining the extreme cases for the unevaluated tree: (1) it is the easiest attack or (2) it is the hardest attack. If it is the easiest attack, then clearly the protocol is still the weaker one. If it is the hardest attack, then it has no effect on the protocol since, by our assumption, an attacker would not choose this attack.
 
-Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $P \le Q$ and $Q \le P$ then $P = Q$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $P = \{a,b\}$ and $Q = \{a\}$. Then $P \le Q$ since $a \preceq a$, and $Q \le P$ since $a \preceq a$ and $a \preceq b$. But clearly it is not the case that $P$ is the same set as $Q$. Instead, we can see that the set of easiest attacks in $P$ is the same as the set of easiest attacks in $Q$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must provide a preliminary definition.
+Recall that a partial order is reflexive, antisymmetric, and transitive. We easily verify in Coq that our proposed partial order relation is reflexive and transitive. Verifying that the relation is antisymmetric proved more difficult and, in fact, impossible. That is, it is impossible using the classic definition of antisymmetry (i.e., if $P \le Q$ and $Q \le P$ then $P = Q$). A simple counter example can be constructed using the attack trees in Figure \ref{fig:chase-ex}. Let $P = \{a_1,a_2\}$ and $Q = \{a_1\}$. Then $P \le Q$ since $a_1 \preceq a_1$, and $Q \le P$ since $a_1 \preceq a_1$ and $a_1 \preceq a_2$. But clearly it is not the case that $P$ is the same set as $Q$. Instead, we can see that the set of easiest attacks in $P$ is the same as the set of easiest attacks in $Q$. In fact, this property holds not only for this example but for any two protocols. Therefore, we construct and prove a modified version of antisymmetry. Before we give its precise specification, we must quantify what it means to the ``easiest'' attack.
 
 \begin{definition}[Minimal Attack Tree, \normalfont{min}]
   An attack tree $a$ is minimal with respect to a set $P$ if and only $b \nprec a$ for every $b \in P$. Given a set of attack trees $P$, let $\text{min}(P) := \{a \in P \,|\, a \text{ is minimal with respect to } P \}$.
 \end{definition}
-
-Our revised version of antisymmetry is stated as follows: if $P \le Q$ and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. Although this property is mathematically weaker than its standard version, it is, in practice, considering our goals, adequately and equally as strong. To prove this antisymmetry property, we must apply several facts regarding minimal attack trees provided below. These lemmas are true by the definition of minimal.
 
 \begin{lemma}[Minimal Set is Less than Full Set]
   For every set of attack trees $P$, $\text{min}(P) \le P$ (i.e., $\forall a \in P, \exists b \in \text{min}(P), b \preceq a$).
@@ -447,6 +441,10 @@ Our revised version of antisymmetry is stated as follows: if $P \le Q$ and $Q \l
 \begin{lemma}[Minimal Attack is Not Strictly Less than Another]
   For every set of attack trees $P$ and attack trees $a_1, a_2 \in \text{min}(P)$, $a_1 \nprec a_2$.
 \end{lemma}
+
+Our revised version of antisymmetry is stated as follows: if $P \le Q$ and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. Although this property is mathematically weaker than its standard version, it is, in practice, considering our goals, adequately and equally as strong. To prove this antisymmetry property, we must apply several facts regarding minimal attack trees provided above. These lemmas are true by the definition of minimal.
+
+
 
 \begin{theorem}[Antisymmetry of Partial Order $\leq$]
   For all sets of attack trees $P$ and $Q$, if $P \le Q$ and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. 
@@ -464,13 +462,13 @@ Our revised version of antisymmetry is stated as follows: if $P \le Q$ and $Q \l
 \end{proof}
 
 
-With verified equivalence and partial order relations, we can link the ordering decision over sets of attack trees to their corresponding protocols allowing us to provably state that one protocol is at least as difficult to attack as another protocol. If no ordering relation holds, the protocols are incomparable. Therefore, with the additional definitions for individual attack tree comparison and set comparison, we have formally specified and verified the four previously defined mutually inclusive relations for ordering Copland protocols. 
+With verified equivalence and partial order relations, we can link the ordering decision over sets of attack trees to their corresponding protocols allowing us to provably state that one protocol is at least as difficult to attack as another protocol. If no ordering relation holds, the protocols are incomparable. Therefore, we have formally specified and verified the four proposed ordering relations over Copland protocols. 
 
 \section{Representative Examples}
 
-This research finds inspiration in real-life instances of Copland protocol analysis documented in the attestation literature \cite{Rowe:2021:OnOrdering,Coker::Principles-of-R}. We ground our formally-verified adversary-constrained protocol ordering methodology in reality by reasoning about an enterprise that would like to ensure a remote server (target) connecting to its network provides a fresh system scan by the appropriate virus checking software. Adapted from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure consists of a platform dependent on a hardware root of trust for measurement $rtm$. Within this platform are several components, namely the kernel $ker$, a hypervisor $hv$, a virus checker $vc$, and the collective parts of the system scanned by the virus checker $sys$. The virus checker and the system are both dependent on the kernel, while the kernel and the hypervisor have no dependencies within the platform. Each component is equipped with measurement capabilities. We use the notation \texttt{ms}$(c_1,c_2)$ to denote the measurement of component $c_2$ by component $c_1$.
+This research finds inspiration in real-life instances of Copland protocol analysis documented in the attestation literature \cite{Rowe:2021:OnOrdering,Coker::Principles-of-R}. We ground our formally-verified protocol ordering methodology in reality by reasoning about an enterprise that would like to ensure a remote server (target) connecting to its network provides a fresh system scan by the appropriate virus checking software. Adapted from Rowe's \cite{Rowe:2016:Confining} example, the target's infrastructure consists of a platform dependent on a hardware root of trust for measurement $rtm$. Within this platform are several components, namely the kernel $ker$, a hypervisor $hv$, a virus checker $vc$, and the collective parts of the system scanned by the virus checker $sys$. The virus checker and the system are both dependent on the kernel, while the kernel and the hypervisor have no dependencies within the platform. Each component is equipped with measurement capabilities. We use the notation \texttt{ms}$(c_1,c_2)$ to denote the measurement of component $c_2$ by component $c_1$.
 
-We select and evaluate three Copland protocols under this attestation goal and infrastructure using our adversary-constrained protocol ordering methodology in order to demonstrate two hypotheses: (1) measurements that mimic the system's dependency chain better confine the adversary and (2) increasing the number of measurements does not necessarily further confine the adversary. Each protocol contains the same final measurement event \texttt{ms}$(vc,sys)$ since the primary goal of the enterprise is to receive a fresh system scan by the virus checker. Additionally, each protocol contains the same penultimate measurement event \texttt{ms}$(ker,vc)$ since an ancillary goal of the enterprise is to determine whether the target is running the appropriate virus checker.
+We select and evaluate three Copland protocols under this attestation goal and infrastructure using our protocol ordering methodology in order to demonstrate two hypotheses: (1) measurements that mimic the system's dependency chain better confine the adversary and (2) increasing the number of measurements does not necessarily further confine the adversary. Each protocol contains the same final measurement event \texttt{ms}$(vc,sys)$ since the primary goal of the enterprise is to receive a fresh system scan by the virus checker. Additionally, each protocol contains the same penultimate measurement event \texttt{ms}$(ker,vc)$ since an ancillary goal of the enterprise is to determine whether the target is running the appropriate virus checker.
 
 %%% NOTE: Uses true Copland syntax
 % \begin{table}[h]
@@ -507,7 +505,7 @@ We select and evaluate three Copland protocols under this attestation goal and i
 \end{table}
 
 
-The first protocol $P1$ is our baseline protocol consisting only of the required measurement events described above. The second protocol $P2$ is intended to strengthen the first by prepending the measurement event \texttt{ms}$(rtm,ker)$. Since the virus checker and system depend on the kernel, taking a measurement of the kernel from a trusted place should strengthen the protocol according to hypothesis 1. The third protocol $P3$ is intended to be no stronger than the first by prepending the measurement event \texttt{ms}$(ker,hv)$. Since the virus checker and system are independent of the hypervisor, taking a measurement of the hypervisor should not change the strength of the protocol according to hypothesis 2. We apply our adversary-constrained protocol ordering to these protocols to verify that this reasoning does indeed hold.
+The first protocol $P1$ is our baseline protocol consisting only of the required measurement events described above. The second protocol $P2$ is intended to strengthen the first by prepending the measurement event \texttt{ms}$(rtm,ker)$. Since the virus checker and system depend on the kernel, taking a measurement of the kernel from a trusted place should strengthen the protocol according to hypothesis 1. The third protocol $P3$ is intended to be no stronger than the first by prepending the measurement event \texttt{ms}$(ker,hv)$. Since the virus checker and system are independent of the hypervisor, taking a measurement of the hypervisor should not change the strength of the protocol according to hypothesis 2. We apply our protocol ordering to these protocols to verify that this reasoning does indeed hold.
 
 \begin{figure}[h]
     \begin{center}
@@ -533,7 +531,7 @@ Now, let us first compare the first and second protocols. We begin by collecting
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
 %% TODO: Elaborate on antisymmetry application
-Next, let us compare the first and third protocols. The set of reduced attack trees for the third protocol is shown in Figure \ref{fig:hv-reduced}. Now we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq c_1$, $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the ordering relationships between the two protocols: $P1 \leq P3$ and $P3 \leq P1$. Therefore, by the antisymmetry property of our partial order, we can conclude that these two protocols have the same set of weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This supports hypothesis 2 that increasing the number of measurements does not necessarily further confine the adversary.
+Next, let us compare the first and third protocols. The set of reduced attack trees for the third protocol is shown in Figure \ref{fig:hv-reduced}. Now we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq c_1$, $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the ordering relationships between the two protocols: $P1 \leq P3$ and $P3 \leq P1$. Therefore, by the antisymmetry property of our partial order, we can conclude that these two protocols have the same set of weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This proves hypothesis 2 that increasing the number of measurements does not necessarily further confine the adversary.
 
 
 \begin{figure}[h]
@@ -555,7 +553,7 @@ Next, let us compare the first and third protocols. The set of reduced attack tr
   \label{fig:hv-reduced}
 \end{figure}
 
-These examples demonstrate the applicability of our ordering approach to examples from the literature. With these completed examples, we reliably conclude our adversary-constrained protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack trees and linking the relationship between attack trees to the protocol in question.
+These examples demonstrate the applicability of our ordering approach to examples from the literature. With these completed examples, we reliably conclude our protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack trees and linking the relationship between attack trees to the protocol in question.
 
 \section{Conclusion}
 %% TODO: Conclusion
