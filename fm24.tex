@@ -51,7 +51,14 @@
 \begin{document}
 %
 %% TODO: Organization
-\title{An Ordering over Attestation Protocols\thanks{Supported by organization x.}}
+\title{An Ordering over Attestation Protocols\thanks{This work is
+    funded in part by the NSA Science of Security initiative contract
+    \#H98230-18-D-0009 and Honeywell FMT Purchase Order
+    \#N000422909. The views and conclusions contained in this document
+    are those of the authors and should not be interpreted as
+    representing the official policies, either expressed or implied,
+    of the U.S. Government.}
+}
 %
 %\titlerunning{Abbreviated paper title}
 % If the paper title is too long for the running head, you can set
@@ -75,7 +82,7 @@ Perry Alexander}
 Semantic remote attestation is a process of obtaining verifiable evidence from a remote party to establish trust. A relying party makes a request of a target in the form of an attestation protocol that produces evidence for appraisal. The appraisal result determines if and how the relying party will continue interactions with the target. This process occurs within the presence of adversaries intent on misleading the relying party to trust a system they should not. This research introduces a robust approach to evaluating and comparing attestation protocols based on their resilience against such adversaries. We develop a Coq-based, formally-verified mathematical model aimed at quantifying the difficulty for an active adversary to successfully compromise the protocol. Our model allows us to systematically rank attestation protocols by the level of adversary effort required to produce misleading evidence that does not accurately reflect the target system's state.
 
 %% TODO: Keywords
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+\keywords{remote attestation \and formal verification \and protocol ordering.}
 \end{abstract}
 %
 %
