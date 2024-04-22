@@ -22,7 +22,7 @@
 \usepackage{array}
 \usepackage{enumitem}
 %\usepackage{cite}
-\usepackage[numbers,sectionbib]{natbib}
+\usepackage[numbers]{natbib}
 \usepackage{wrapfig}
 \usepackage{multirow}
 \theoremstyle{definition}
@@ -79,7 +79,21 @@ Perry Alexander}
 \maketitle              % typeset the header of the contribution
 %
 \begin{abstract}
-Semantic remote attestation is a process of obtaining verifiable evidence from a remote party to establish trust. A relying party makes a request of a target in the form of an attestation protocol that produces evidence for appraisal. The appraisal result determines if and how the relying party will continue interactions with the target. This process occurs within the presence of adversaries intent on misleading the relying party to trust a system they should not. This research introduces a robust approach to evaluating and comparing attestation protocols based on their resilience against such adversaries. We develop a Coq-based, formally-verified mathematical model aimed at quantifying the difficulty for an active adversary to successfully compromise the protocol. Our model allows us to systematically rank attestation protocols by the level of adversary effort required to produce misleading evidence that does not accurately reflect the target system's state.
+Semantic remote attestation is a process of obtaining verifiable
+evidence from a remote party to establish trust. A relying party makes
+a request of a target in the form of an attestation protocol that
+produces evidence for appraisal. The appraisal result determines if
+and how the relying party will continue interactions with the
+target. This process occurs within the presence of adversaries intent
+on misleading the relying party to trust a system they should
+not. This research introduces a robust approach to evaluating and
+comparing attestation protocols based on their resilience against such
+adversaries. We develop a Coq-based, formally-verified mathematical
+model aimed at quantifying the difficulty for an active adversary to
+successfully compromise the protocol. Our model allows us to
+systematically rank attestation protocols by the level of adversary
+effort required to produce misleading evidence that does not
+accurately reflect the target system's state. 
 
 %% TODO: Keywords
 \keywords{remote attestation \and formal verification \and protocol ordering.}
@@ -110,49 +124,41 @@ When designing or selecting attestation protocols it is critical that
 we know when one protocol is ``better'' than another.
 \citet{Fritz:2023:framework} provide a framework for protocol
 negotiation that defines protocol \emph{soundness} and
-\emph{sufficiency}.  A protocol is sound if it is executable and
-conforms to access control policy.  A protocol is sufficient if it
-provides information deemed suitable for making a trust decision.
-While soundness has a well-defined semantics and is proven decidable,
-sufficiency remains a work-in-progress.
+\emph{sufficiency}.  Here we examine \emph{protocol ordering}, an
+important concept related to sufficiency that defines when one
+protocol is objectively better than another.  The goal of attestation
+is evaluating trust by executing protocols that gather and appraise
+evidence.  The adversary's goal is to hide bad behavior by avoiding or
+compromising attestation.  Our objective becomes choosing an
+attestation protocol that makes the adversary's job as difficult as
+possible.  We say that $P_0>P_1$ if $P_0$ makes it harder to falsify
+evidence or avoid measuring bad states than $P_1$.
 
-Here we examine \emph{protocol ordering}, an important concept related
-to sufficiency that defines when one protocol is objectively better
-than another.  The goal of attestation is evaluating trust by
-executing protocols that gather and appraise evidence.  The
-adversary's goal is to interfere with or avoid attestation in such a
-way that evidence never reflects a bad system.  Our objective becomes
-making that adversary's job as difficult as possible.  We claim one
-attestation protocol is better than another if it is harder to falsify
-evidence or avoid gathering evidence in a bad state.  If $P_0<P_1$
-then $P_1$ makes the adversary's job harder than $P_0$.
-
-Our protocol ordering makes several key assumptions. First, we
+Our protocol ordering makes several assumptions. First, we
 consider an active adversary that is capable of corrupting any
 component of the target causing it to deviate from its regular
 behavior.  Similarly the adversary is capable of repairing any
-component of the target system it corrupts returning it to its regular
+component of the target it corrupts returning it to its regular
 behavior. Thus, a corruption event followed by a repair event results
 in a component that is indistinguishable from the original
 component. If an adversary corrupts a component and repairs the same
 component before measurement, the adversary achieves its goal. If an
 adversary corrupts a component and measurement occurs before repair,
-the adversary is defeated. The only exception is the target's
+the adversary is defeated. The one exception is the target's
 root-of-trust for measurement (RTM) component that we assume cannot be
 corrupted or repaired.
 
-We assume an adversary will always choose the easiest available attack
+We assume an adversary will choose the easiest available attack
 allowed by a protocol. Therefore, a better protocol increases the
 demands of an adversary by making the easiest attack more
 difficult. For an adversary to attack an attestation protocol means to
 corrupt and repair a target system's components in a manner that
-passes appraisal and therefore evades detection at the final
-measurement event.  We assume a good measurer invoked by an
-attestation protocol will generate evidence that accurately reflects
-the corruption state of its target.  Our analysis relies solely on the
-structure protocols and possible attacks and is agnostic to the
-specific details of how an adversary can corrupt or repair system
-components.
+passes appraisal and therefore evades detection.  We assume a good
+measurer invoked by an attestation protocol will generate evidence
+that accurately reflects the corruption state of its target.  Finally,
+our analysis relies solely on the structure protocols and possible
+attacks and is agnostic to the specific details of how an adversary
+can corrupt or repair system components.
 
 % Considering these assumptions, the formalized model and subsequent analysis support the following two principles.
 
@@ -252,7 +258,12 @@ abstract labeling scheme mirrors that of the Chase output.
 
 
 \section{Overview}
-We introduce a Coq-based, formally-verified mathematical model to order attestation protocols by the difficulty required of an active adversary to attack the protocol. This ordering methodology compares two distinct Copland protocols by comparing their sets of Chase-generated attack trees. Sets of attack trees are compared using our proposed novel ordering scheme which is reliant upon an ordering scheme over individual attack trees. We propose an ordering over individual attack trees that considers two facets regarding the work required of an adversary. This ordering scheme is designed such that one can easily plug in additional considerations and constraints to enhance the ordering.
+We introduce a formally-verified ordering of attestation protocols by
+the difficulty required for an active adversary to attack the
+protocol. This ordering compares two Copland protocols by comparing
+their sets of Chase-generated attack trees. Sets of attack trees are
+compared using our ordering scheme which is reliant upon an ordering
+scheme over individual attack trees. 
 
 \begin{figure}[hbtp]
     \centering
@@ -262,9 +273,25 @@ We introduce a Coq-based, formally-verified mathematical model to order attestat
     \label{fig:protocol-org-fig}
 \end{figure}
 
-Abstractly this analysis can be visualized in Figure \ref{fig:protocol-org-fig} where solid lines represent tangible actions and dashed lines represent reasoning. Say we aim to compare two protocols $P1$ and $P2$ where we wish to determine if the change from $P1$ to $P2$ makes the protocol more difficult to attack. Recall that more difficult to attack means more difficult for an active adversary to corrupt a system while evading detection at the final measurement event of the attestation. To ascertain the relationship between the two protocols, we first run Chase to generate the set of attack trees $\{ a_1, a_2, a_3\}$ for $P1$ and the set of attack trees $\{b_1, b_2, b_3\}$ for $P2$. We then compare the attack trees individually, discovering ordering relationships $a_1 \preceq b_1$, $a_2 \preceq b_2$, and $a_1 \preceq b_3$ as represented by the dotted lines with arrows pointing from an attack to one that requires at least as much work to perform by the adversary. Next, looking at the sets of attack trees, we can see that every attack tree in $P2$ has an attack in $P1$ that is at most as difficult. Assuming an adversary would always perform the easiest attack to thwart an appraiser, we conclude that $P2$ is at least as difficult to attack as $P1$ and thus involves at least as much adversary effort as $P1$. This logic is linked to the protocols to conclude $P1 \leq P2$.  
+Abstractly this analysis can be visualized in Figure
+\ref{fig:protocol-org-fig}.  We aim to compare two protocols $P1$ and
+$P2$ to determine if $P2$ is more difficult to defeat than $P1$. To
+ascertain the relationship between the two protocols, we first run
+Chase to generate the set of attack trees $\{ a_1, a_2, a_3\}$ for
+$P1$ and the set of attack trees $\{b_1, b_2, b_3\}$ for $P2$. We then
+compare the attack trees individually, discovering ordering
+relationships $a_1 \preceq b_1$, $a_2 \preceq b_2$, and
+$a_1 \preceq b_3$ represented by the dotted lines. Looking at
+the sets of attack trees, we can see that every attack tree in $P2$
+has an attack in $P1$ that is at most as difficult. Assuming an
+adversary would always perform the easiest attack to thwart an
+appraiser, we conclude that $P2$ is at least as difficult to attack as
+$P1$ and thus involves at least as much adversary effort as $P1$. Thus
+we say $P1 \leq P2$.
 
-We introduce four ordering relations for attestation protocol ordering where $=$ is an equivalence relation and $\le$ and $\ge$ are partial orders. The relations are enumerated below.
+We introduce four canonical ordering relations for attestation
+protocol ordering where $=$ is an equivalence relation and $\le$ and
+$\ge$ are partial orders. The relations are enumerated below.
 
 \vspace*{-5mm}
 
@@ -275,12 +302,35 @@ We introduce four ordering relations for attestation protocol ordering where $=$
 4. & \text{ } P1 \text{ and } P2 \text{ are incomparable}
 \end{align*}
 
-\noindent We choose to define the ordering in this way for a few reasons. First, we refrain from introducing four mutually exclusive relationships (i.e., $=$, $<$, $>$, incomparable) because this results in a drastic increase in the number of incomparable protocols. As such, under our ordering, we do not conclude that one protocol is strictly better than another protocol. Although one might think we could define the relations necessary to draw such conclusions using the irreflexive kernel (deriving a strictly less than operator from the satisfaction of both less than and not equal conditions), we found this was not appropriate because the strictly less than operator would inadvertently introduce an arbitrary ordering over adversarial corruption and repair events where there should not be one.  
+\noindent We choose to define the ordering in this way for several
+reasons. First, we refrain from introducing four mutually exclusive
+relationships (i.e., $=$, $<$, $>$, incomparable) because this results
+in a drastic increase in the number of incomparable protocols. As such
+we do not conclude that one protocol is strictly better than another
+protocol. Although one might think we could define the relations
+necessary to draw such conclusions using the irreflexive kernel
+(deriving a strictly less than operator from the satisfaction of both
+less than and not equal conditions), we found this was not appropriate
+because the strictly less than operator would inadvertently introduce
+an arbitrary ordering over adversarial corruption and repair events
+where there should not be one.
 
 
-These four ordering relations serve as foundational categories for our protocol ordering. While the ordering may appear intuitive, defining the ordering operations themselves and proving they possess the required properties through Coq-based mechanized definitions and proofs is challenging. Our results overcome this challenge, defining and verifying the equivalence and partial order relations over sets of attack trees which are built upon ordering relations over individual attack trees. With this ordering infrastructure, one can provably determine that one protocol is at least as good as another because it requires at least as much adversary effort to generate seemingly trustworthy evidence. 
+These four ordering relations serve as foundational categories for our
+protocol ordering. While the ordering may appear intuitive, defining
+the ordering operations themselves and proving they possess the
+required properties through Coq-based mechanized definitions and
+proofs is challenging. Our results overcome this challenge, defining
+and verifying the equivalence and partial order relations over sets of
+attack trees which are built upon ordering relations over individual
+attack trees. With this ordering infrastructure, one can provably
+determine that one protocol is at least as good as another because it
+requires at least as much adversary effort to generate seemingly
+trustworthy evidence. 
 
-Under our methodology, an ordering relationship between two Copland protocol can be obtained by completing the following workflow as demonstrated in Figure  \ref{fig:protocol-org-fig}:
+Under our methodology, an ordering relationship between two Copland
+protocol can be obtained by completing the following workflow as
+demonstrated in Figure  \ref{fig:protocol-org-fig}: 
 
 \begin{enumerate}
     \squash
@@ -290,22 +340,51 @@ Under our methodology, an ordering relationship between two Copland protocol can
     \item Link the set ordering relationship to determine protocol ordering relationship
 \end{enumerate}
 
-The following sections describe the process of introducing and verifying an ordering for Copland protocols. In this paper, mathematical definitions and proofs are presented manually, but mechanized versions are completed in Coq and can be found at \url{git@github.com:ku-sldg/protocol_ordering.git}.
+The following sections describe the process of introducing and
+verifying an ordering for Copland protocols. In this paper,
+mathematical definitions and proofs are presented manually, but
+mechanized versions are completed in Coq and can be found at
+\url{git@github.com:ku-sldg/protocol_ordering.git}. 
 
 
 \section{Ordering Individual Attack Trees}
 
-Our main contribution lies in introducing an attestation protocol ordering through analysis of Chase-generated attack trees. In this section, we establish definitions to compare adversary events and utilize these definitions to present orderings over attack trees. Specifically, we introduce equivalence ($\simeq$), strict partial order ($\prec$), and partial order ($\preceq$) relations over individual attack trees. In future sections, these relations will be leveraged to introduce equivalence and partial order relations over sets of attack trees.
+Our main contribution lies in introducing an attestation protocol
+ordering through analysis of Chase-generated attack trees. In this
+section we present orderings over attack trees. Specifically, we
+introduce equivalence ($\simeq$), strict partial order ($\prec$), and
+partial order ($\preceq$) relations over individual attack trees. In
+future sections, these relations will be leveraged to introduce
+equivalence and partial order relations over sets of attack trees.
 
-The Chase generated attack trees presented in Figure \ref{fig:chase-ex} can be used to describe the essential insights applied in developing our protocol ordering. In attack tree $a_1$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any measurement events, giving the adversary a minimally-restricted amount of time to perform these actions. In attack tree $a_2$, corruption event \texttt{c\_c2} occurs between measurement events, confining the adversary to a small-time window to perform this action. We assert that performing the same action in a more limited time window (e.g., adversary event \texttt{c\_c2} in $a_2$ versus in $a_1$) is more challenging. Since \texttt{c\_c1} is a minimally-restricted adversary event in both $a_1$ and $a_2$, we wish to conclude that $a_1$ is strictly less work to perform by an adversary than $a_2$. Now in attack tree $a_3$, an adversary must perform three corruption events and one time-constrained repair event. This attack requires an adversary to perform more work than $a_1$ as adversary events have increased. Upon analyzing all three trees, it becomes apparent that attack $a_1$ presents the easiest attack given the absence of time-constrained events and the lowest number of actions required by the adversary. 
+The Chase generated attack trees presented in Figure
+\ref{fig:chase-ex} can be used to describe the essential insights
+applied in developing our protocol ordering. In attack tree $a_1$,
+corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any
+measurement events, giving the adversary a minimally-restricted amount
+of time to perform these actions. In attack tree $a_2$, corruption
+event \texttt{c\_c2} occurs between measurement events, confining the
+adversary to a small-time window to perform this action. We assert
+that performing the same action in a more limited time window (e.g.,
+adversary event \texttt{c\_c2} in $a_2$ versus in $a_1$) is more
+challenging. Since \texttt{c\_c1} is a minimally-restricted adversary
+event in both $a_1$ and $a_2$, we wish to conclude that $a_1$ is
+strictly less work to perform by an adversary than $a_2$. Now in
+attack tree $a_3$, an adversary must perform three corruption events
+and one time-constrained repair event. This attack requires an
+adversary to perform more work than $a_1$ as adversary events have
+increased. Upon analyzing all three trees, it becomes apparent that
+attack $a_1$ presents the easiest attack given the absence of
+time-constrained events and the lowest number of actions required by
+the adversary.  
 
-
-
-This protocol ordering scheme relies on a formal model of the Chase generated attack trees. These attack trees are similar to directed, labeled graphs which contain nodes, edges, and a labeling function. 
+This protocol ordering scheme relies on a formal model of the Chase
+generated attack trees. These attack trees are similar to directed,
+labeled graphs which contain nodes, edges, and a labeling function.  
 
 \begin{definition}[Graph]
     A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of directed edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
-\end{definition}
+\end{definition} 
  
 An attack tree is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each attack tree consists of a set of events, an arrow relationship mapping event to event, and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
 
@@ -313,7 +392,21 @@ An attack tree is an instance of a directed graph. Looking at Figure \ref{fig:ch
     An attack tree is a directed, labeled graph where $N$ is a set of events, $E$ is a set of directed edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
 \end{definition}
 
-When comparing two individual attack trees, we need only consider events that concern an adversary. It is possible for an attack tree to contain two measurement events occurring directly in sequence; the fact that two measurements occurred instead of one has no bearing on the adversary. Furthermore, an adversary is not impacted by the details of any intermediate measurement events either. Instead, sequential measurement events and specific names of non-final measurement events only introduce unnecessary complications in comparing individual attack trees. Therefore, we introduce the idea of attack tree normalization, as formally defined below. Attack tree normalization reduces consecutive measurement events to a single measurement event, namely the latter one, and renames all remaining non-final measurement events to a constant label. This process results in attack trees containing only the events and information relevant to an adversary. 
+When comparing two individual attack trees, we need only consider
+events that concern an adversary. It is possible for an attack tree to
+contain two measurement events occurring directly in sequence; the
+fact that two measurements occurred instead of one has no bearing on
+the adversary. Furthermore, an adversary is not impacted by the
+details of any intermediate measurement events either. Instead,
+sequential measurement events and specific names of non-final
+measurement events only introduce unnecessary complications in
+comparing individual attack trees. Therefore, we introduce the idea of
+attack tree normalization, as formally defined below. Attack tree
+normalization reduces consecutive measurement events to a single
+measurement event, namely the latter one, and renames all remaining
+non-final measurement events to a constant label. This process results
+in attack trees containing only the events and information relevant to
+an adversary.  
 
 
 \begin{definition}[Attack tree Normalization]
