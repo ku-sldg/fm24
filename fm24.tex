@@ -131,20 +131,16 @@ is evaluating trust by executing protocols that gather and appraise
 evidence.  The adversary's goal is to hide bad behavior by avoiding or
 compromising attestation.  Our objective becomes choosing an
 attestation protocol that makes the adversary's job as difficult as
-possible.  We say that $P_0>P_1$ if $P_0$ makes it harder to falsify
-evidence or avoid measuring bad states than $P_1$.
+possible.
 
-Our protocol ordering makes several assumptions. First, we
-consider an active adversary that is capable of corrupting any
-component of the target causing it to deviate from its regular
-behavior.  Similarly the adversary is capable of repairing any
-component of the target it corrupts returning it to its regular
-behavior. Thus, a corruption event followed by a repair event results
-in a component that is indistinguishable from the original
-component. If an adversary corrupts a component and repairs the same
-component before measurement, the adversary achieves its goal. If an
-adversary corrupts a component and measurement occurs before repair,
-the adversary is defeated. The one exception is the target's
+Our protocol ordering makes several assumptions. First, we consider an
+active adversary that is capable of corrupting any component of the
+target causing it to deviate from its regular behavior.  Similarly the
+adversary is capable of repairing any component of the target it
+corrupts returning it to its regular behavior. Thus, a corruption
+event followed by a repair event results in a component that is
+indistinguishable from the original component and therefore
+measurement misses the corruption. The one exception is the target's
 root-of-trust for measurement (RTM) component that we assume cannot be
 corrupted or repaired.
 
@@ -155,10 +151,13 @@ difficult. For an adversary to attack an attestation protocol means to
 corrupt and repair a target system's components in a manner that
 passes appraisal and therefore evades detection.  We assume a good
 measurer invoked by an attestation protocol will generate evidence
-that accurately reflects the corruption state of its target.  Finally,
-our analysis relies solely on the structure protocols and possible
-attacks and is agnostic to the specific details of how an adversary
-can corrupt or repair system components.
+that accurately reflects the corruption state of its target.  A
+corrupt measurer or a measurer dependent on a corrupt component will
+always generate evidence that indicates a good target regardless of
+the target's actual state.  Finally, our analysis relies solely on the
+structure protocols and possible attacks and is agnostic to the
+specific details of how an adversary can corrupt or repair system
+components.
 
 % Considering these assumptions, the formalized model and subsequent analysis support the following two principles.
 
@@ -631,7 +630,19 @@ Now, let us first compare the first and second protocols. We begin by collecting
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
 %% TODO: Elaborate on antisymmetry application
-Next, let us compare the first and third protocols. The set of reduced attack trees for the third protocol is shown in Figure \ref{fig:hv-reduced}. Now we can determine the ordering relationships between the individual attack trees in the two sets: $a_1 \simeq c_1$, $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the ordering relationships between the two protocols: $P1 \leq P3$ and $P3 \leq P1$. Therefore, by the antisymmetry property of our partial order, we can conclude that these two protocols have the same set of weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This proves hypothesis 2 that increasing the number of measurements does not necessarily further confine the adversary.
+Next, let us compare the first and third protocols. The set of reduced
+attack trees for the third protocol is shown in Figure
+\ref{fig:hv-reduced}. Now we can determine the ordering relationships
+between the individual attack trees in the two sets: $a_1 \simeq c_1$,
+$a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq
+c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec
+c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the
+ordering relationships between the two protocols: $P1 \leq P3$ and $P3
+\leq P1$. Therefore, by the antisymmetry property of our partial
+order, we can conclude that these two protocols have the same set of
+weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3,
+c_5\}$. This proves hypothesis 2 that increasing the number of
+measurements does not necessarily further confine the adversary. 
 
 
 \begin{figure}[h]
@@ -653,25 +664,28 @@ Next, let us compare the first and third protocols. The set of reduced attack tr
   \label{fig:hv-reduced}
 \end{figure}
 
-These examples demonstrate the applicability of our ordering approach to examples from the literature. With these completed examples, we reliably conclude our protocol ordering methodology successfully enhances the evaluation of remote attestation protocols. Leveraging the Chase model finder, we order Copland protocols according to their adversary constraint by comparing all possible attack trees and linking the relationship between attack trees to the protocol in question.
+These examples demonstrate the applicability of our ordering approach
+to examples from the literature. With these completed examples, we
+reliably conclude our protocol ordering methodology successfully
+enhances the evaluation of remote attestation protocols. Leveraging
+the Chase model finder, we order Copland protocols according to their
+adversary constraint by comparing all possible attack trees and
+linking the relationship between attack trees to the protocol in
+question. 
 
 \section{Conclusion}
 %% TODO: Conclusion
 
 Remote attestation is a process of gathering and appraising evidence
 reflecting a system's behavior.  Attacks on remote attestation include
-attempts to hide nefarious behavior by avoiding measurement.
-Specifically, executing attacks and cleaning up prior to measurement
-or avoiding measurement completely.  Inspired by
+attempts to hide nefarious behavior by corrupting and repairing
+components in a way that avoids detection.  Inspired by
 \citet{Rowe:2021:OnOrdering} and using the Chase model
 finder~\citep{Ramsdell:2020:Chase} we have developed and verified a
 partial ordering for attestation protocols.  This ordering reflects
-relative resistance to attacking protocols by avoiding measurement.
-We say that $P_0\leq P_1$ if avoiding measurement by $P_1$ is at least
-as hard as $P_0$.  Our ordering is based on comparing the easiest
-allowed attack.  Assuming the adversary always chooses the easiest
-attach, $P_0\leq P_1$ if the easiest attack allowed by $P_1$ is at
-least as hard as the easiest attack allowed by $P_0$.
+relative resistance to attack.  We say that $P_0\leq P_1$ if avoiding
+detection by $P_1$ is at least as hard as $P_0$ based on comparing
+allowed attacks.
 
 Our ordering is useful as a static design metric and a dynamic
 negotiation metric.  During protocol design ordering helps establish
