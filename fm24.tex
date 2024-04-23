@@ -50,7 +50,6 @@
 
 \begin{document}
 %
-%% TODO: Organization
 \title{An Ordering over Attestation Protocols\thanks{This work is
     funded in part by the NSA Science of Security initiative contract
     \#H98230-18-D-0009 and Honeywell FMT Purchase Order
@@ -95,7 +94,6 @@ systematically rank attestation protocols by the level of adversary
 effort required to produce misleading evidence that does not
 accurately reflect the target system's state. 
 
-%% TODO: Keywords
 \keywords{remote attestation \and formal verification \and protocol ordering.}
 \end{abstract}
 %
@@ -155,7 +153,7 @@ that accurately reflects the corruption state of its target.  A
 corrupt measurer or a measurer dependent on a corrupt component will
 always generate evidence that indicates a good target regardless of
 the target's actual state.  Finally, our analysis relies solely on the
-structure protocols and possible attacks and is agnostic to the
+structure of protocols and possible attacks and is agnostic to the
 specific details of how an adversary can corrupt or repair system
 components.
 
@@ -260,9 +258,8 @@ represent chronological time. This abstract labeling scheme mirrors that of the 
 We introduce a formally-verified ordering of attestation protocols by
 the difficulty required for an active adversary to attack the
 protocol. This ordering compares two Copland protocols by comparing
-their sets of Chase-generated attack trees. Sets of attack trees are
-compared using our ordering scheme which is reliant upon an ordering
-scheme over individual attack trees. 
+their sets of Chase-generated attack trees. Comparing sets of attack trees is reliant upon an ordering over individual attack trees.
+We therefore define and verify ordering relations over both sets of attack trees and individual attack trees.
 
 \begin{figure}[hbtp]
     \centering
@@ -333,7 +330,7 @@ demonstrated in Figure  \ref{fig:protocol-org-fig}:
 
 \begin{enumerate}
     \squash
-    \item Obtain Chase output for each protocol and formally model the generated sets of attack trees
+    \item Obtain Chase output for each protocol
     \item Determine ordering relationships between the individual attack trees
     \item Leverage the individual ordering relationships to determine the ordering relationship between the sets of attack trees
     \item Link the set ordering relationship to determine protocol ordering relationship
@@ -348,9 +345,7 @@ mechanized versions are completed in Coq and can be found at
 
 \section{Ordering Individual Attack Trees}
 
-Our main contribution lies in introducing an attestation protocol
-ordering through analysis of Chase-generated attack trees. In this
-section we present orderings over attack trees. Specifically, we
+In this section we present orderings over attack trees. Specifically, we
 introduce equivalence ($\simeq$), strict partial order ($\prec$), and
 partial order ($\preceq$) relations over individual attack trees. In
 future sections, these relations will be leveraged to introduce
@@ -360,14 +355,13 @@ The Chase generated attack trees presented in Figure
 \ref{fig:chase-ex} can be used to describe the essential insights
 applied in developing our protocol ordering. In attack tree $a_1$,
 corruption events \texttt{c\_c1} and \texttt{c\_c2} occur before any
-measurement events, giving the adversary a minimally-restricted amount
+measurement events, giving the adversary an unrestricted amount
 of time to perform these actions. In attack tree $a_2$, corruption
 event \texttt{c\_c2} occurs between measurement events, confining the
 adversary to a small-time window to perform this action. We assert
 that performing the same action in a more limited time window (e.g.,
 adversary event \texttt{c\_c2} in $a_2$ versus in $a_1$) is more
-challenging. Since \texttt{c\_c1} is a minimally-restricted adversary
-event in both $a_1$ and $a_2$, we wish to conclude that $a_1$ is
+challenging. Since \texttt{c\_c1} is in both $a_1$ and $a_2$, we wish to conclude that $a_1$ is
 strictly less work to perform by an adversary than $a_2$. Now in
 attack tree $a_3$, an adversary must perform three corruption events
 and one time-constrained repair event. This attack requires an
@@ -377,15 +371,14 @@ attack $a_1$ presents the easiest attack given the absence of
 time-constrained events and the lowest number of actions required by
 the adversary.  
 
-This protocol ordering scheme relies on a formal model of the Chase
-generated attack trees. These attack trees are similar to directed,
-labeled graphs which contain nodes, edges, and a labeling function.  
+Now we begin by formalizing a model of the Chase
+generated attack trees. An attack tree is an instance of a directed graph.
 
 \begin{definition}[Graph]
     A directed, labeled graph is a tuple $G = (N, E, \ell)$ where $N$ is a finite set of nodes, $E \subseteq N \times N$ is a finite set of directed edges represented as ordered pairs of nodes, and $\ell : N \rightarrow L$ is a labeling function from nodes to some set $L$ of labels. 
 \end{definition} 
  
-An attack tree is an instance of a directed graph. Looking at Figure \ref{fig:chase-ex}, one can see that each attack tree consists of a set of events, an arrow relationship mapping event to event, and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
+\noindent Looking at Figure \ref{fig:chase-ex}, one can see that each attack tree consists of a set of events, an arrow relationship mapping event to event, and an event labeling scheme disclosing the type of event (i.e., measurement, corruption, or repair).
 
 \begin{definition}[Attack Tree]
     An attack tree is a directed, labeled graph where $N$ is a set of events, $E$ is a set of directed edges representing chronological time between events, and $\ell$ is a labeling function from event to measurement or adversary event label.
