@@ -756,23 +756,24 @@ attestation protocols, thus achieving our research goal.
 
 \section{Representative Examples}
 
-Our research finds inspiration in real-life instances of Copland
-protocol analysis documented in the attestation literature
-\citep{Rowe:2021:OnOrdering,Coker::Principles-of-R}. We demonstrate
-our protocol ordering methodology by reasoning about an enterprise
-that would like to ensure a remote server (the target) connecting to
-its network provides a fresh system scan by the appropriate virus
-checking software. Adapted from \citeauthor{Rowe:2021:OnOrdering}'s
-\citep{Rowe:2016:Confining} example, the target's infrastructure
-consists of a platform dependent on a hardware root of trust for
-measurement $rtm$. Within this platform are several components, namely
-the kernel $ker$, a hypervisor $hv$, a virus checker $vc$, and the
-collective parts of the system scanned by the virus checker $sys$. The
-virus checker and the system are both dependent on the kernel, while
-the kernel and the hypervisor have no dependencies within the
-platform. Each component is equipped with measurement capabilities. We
-use the notation \texttt{ms}$(c_1,c_2)$ to denote the measurement of
-component $c_2$ by component $c_1$ .
+We evaluate our ordering results against instances of Copland protocol
+analysis documented in the attestation literature
+\citep{Rowe:2021:OnOrdering,Coker::Principles-of-R}. Specifically, we
+use an example of an enterprise ensuring a remote server (the target)
+connecting to its network provides a fresh system scan by the
+appropriate virus checking software. Adapted from
+\citeauthor{Rowe:2021:OnOrdering}'s \citep{Rowe:2016:Confining}
+example, this model has been used extensively for evaluation and
+demonstration.  The target's infrastructure consists of a platform
+dependent on a hardware root of trust for measurement, $rtm$. Within
+this platform are several components, namely the kernel $ker$, a
+hypervisor $hv$, a virus checker $vc$, and the collective parts of the
+system scanned by the virus checker $sys$. The virus checker and the
+system are both dependent on the kernel, while the kernel and the
+hypervisor have no dependencies within the platform. Each component is
+equipped with measurement capabilities. We use the notation
+\texttt{ms}$(c_1,c_2)$ to denote the measurement of component $c_2$ by
+component $c_1$ .
 
 We select and evaluate three Copland protocols that achieve this
 attestation goal using our protocol ordering methodology in order to
