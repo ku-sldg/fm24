@@ -855,36 +855,35 @@ these assertions do indeed hold.
 \end{figure}
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
-Let us first compare the first and second protocols. We begin by
+We first compare the first and second protocols beginning by
 collecting the Chase output and reducing the attack trees to normal
 form as shown in Figure \ref{fig:rtm-compare-reduced}. Next, we can
 determine the ordering relationships between the individual attack
-trees in the two sets: $a_1 \simeq b_1$, $a_2 \simeq b_2$, $a_3 \prec
-b_3$, $a_4 \prec b_4$, and $a_5 \simeq b_5$. Lastly we can determine
-the ordering relationships between the two protocols. It is clear to
-see that for every attack $b$ in $P2$ there exists an attack $a$ in
-$P1$ such that $a \preceq b$. Therefore, we can conclude that $P1 \leq
-P2$. Furthermore, it is not the case that $P2 \leq P1$ since there is
-no attack in $P2$ that is less than $a_3$ or $a_4$. Our ultimate
-conclusion supports hypothesis 1 that measurements that mimic the
-system's dependency chain better confine the adversary. 
+trees in the two sets: $a_1 \simeq b_1$, $a_2 \simeq b_2$,
+$a_3 \prec b_3$, $a_4 \prec b_4$, and $a_5 \simeq b_5$. Lastly we can
+determine the ordering relationships between the two protocols. It is
+clear that for every attack $b$ in $P2$ there exists an attack
+$a$ in $P1$ such that $a \preceq b$. Therefore, we can conclude that
+$P1 \leq P2$. Furthermore, it is not the case that $P2 \leq P1$ since
+there is no attack in $P2$ that is less than $a_3$ or $a_4$. Our
+ultimate conclusion supports hypothesis 1 that measurements that mimic
+the system's dependency chain better confine the adversary.
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
 %% TODO: Elaborate on antisymmetry application
-Next, let us compare the first and third protocols. The set of reduced
+Next, we compare the first and third protocols. The set of reduced
 attack trees for the third protocol is shown in Figure
-\ref{fig:hv-reduced}. Now we can determine the ordering relationships
+\ref{figf:hv-reduced}. We can determine the ordering relationships
 between the individual attack trees in the two sets: $a_1 \simeq c_1$,
-$a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$, $a_5 \simeq
-c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$, $a_4 \prec
-c_9$, and $a_5 \prec c_{10}$. And again lastly we can determine the
-ordering relationships between the two protocols: $P1 \leq P3$ and $P3
-\leq P1$. Therefore, by the antisymmetry property of our partial
-order, we can conclude that these two protocols have the same set of
-weakest attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3,
-c_5\}$. This proves hypothesis 2 that increasing the number of
-measurements does not necessarily further confine the adversary. 
-
+$a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$,
+$a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$,
+$a_4 \prec c_9$, and $a_5 \prec c_{10}$.  Lastly we can determine the
+ordering relationships between the two protocols: $P1 \leq P3$ and
+$P3 \leq P1$. By the antisymmetry property of our partial order, we
+can conclude that these two protocols have the same set of weakest
+attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This
+proves hypothesis 2 that increasing the number of measurements does
+not necessarily further confine the adversary.
 
 \begin{figure}[h]
   \begin{center}
@@ -906,12 +905,16 @@ measurements does not necessarily further confine the adversary.
 \end{figure}
 
 These examples demonstrate the applicability of our ordering approach
-on examples from the literature.  We conclude our protocol ordering
-methodology successfully enhances the evaluation of remote attestation
-protocols. Leveraging the Chase model finder, we order Copland
-protocols according to their adversary constraint by comparing all
-allowed attack trees and linking the relationship between attack
-trees to the protocol in question.
+on an example system from the literature.  Results provide support for
+the important protocol design consideration of when and where to add
+measurement events.  Specifically, adding a measurement that mimics
+system structure improves resistance to attack and adding a
+measurement of a previously unmeasured component does not.  Thus, we
+conclude our protocol ordering methodology successfully enhances the
+evaluation of remote attestation protocols.  Leveraging the Chase
+model finder, we order Copland protocols according to their adversary
+constraint by comparing all allowed attack trees and linking the
+relationship between attack trees to the protocol in question.
 
 \section{Conclusion}
 %% TODO: Conclusion
