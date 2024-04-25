@@ -906,7 +906,6 @@ to attack by comparing allowed attacks and linking the
 relationship between the sets of attacks to the protocol in question.
 
 \section{Conclusion}
-%% TODO: Conclusion
 
 Remote attestation is a process of gathering and appraising evidence
 reflecting a system's behavior.  Attacks on remote attestation include
@@ -914,13 +913,12 @@ attempts to hide nefarious behavior by corrupting and repairing
 components in a way that avoids detection.  Inspired by
 \citet{Rowe:2021:OnOrdering} and using the Chase model
 finder~\citep{Ramsdell:2020:Chase} we have developed and verified a
-partial ordering for attestation protocols.  This ordering reflects
-relative resistance to attack.  We say that $P_0\leq P_1$ if avoiding
-detection by $P_1$ is at least as hard as $P_0$ based on comparing
-allowed attacks.
+partial order over attestation protocols.  This ordering reflects
+relative resistance to attack.  We say that $P_1 \leq P_2$ if attacking
+the system while avoiding detection by $P_2$ is at least as difficult as $P_1$.
 
 Our ordering is useful as a static design metric and a dynamic
-negotiation metric.  During protocol design ordering helps establish
+negotiation metric.  During protocol design, ordering helps establish
 when design changes truly impact the quality or strength of a
 protocol.  During protocol negotiation~\citep{Fritz:2023:framework}
 the ordering allows an appraiser to choose a best protocol from a
