@@ -580,7 +580,7 @@ and transitive.
 
 The ordering relations over individual attack trees can now be
 leveraged to compare protocols by ordering their corresponding sets of
-attack trees. Below we introduce equivalence ($=$) and partial order
+attack trees. Here we introduce equivalence ($=$) and partial order
 ($\le$) relations over sets of attack trees.
 
 First, we define an equivalence relation over sets of attack trees
@@ -611,7 +611,7 @@ covers~\citep{Rowe:2021:OnOrdering}:
 \begin{definition}[Supports/Covers]
     Given two sets of graphs $S$ and $T$ and some preorder $R$ over
     graphs, we say that $S$ supports $T$ if and only if for every $h
-    \in T$, there is some $g \in S$, such that $R\: g\: h$. We  say
+    \in T$ there is some $g \in S$ such that $R\: g\: h$. We  say
     that $T$ covers $S$ if and only if for every $g \in S$ there is
     some $h \in T$ such that $R\: g\: h$. 
 \end{definition}
@@ -628,12 +628,12 @@ $ \{b1, b2 ,b3\}$.
     \centering
     \input{supports-fig.tex}
     \captionsetup{justification=centering,margin=1cm}
-    \caption[Supports and covers]{A visual representation of supports and covers. \\ Arrows represent ordering relationships.}
+    \caption[Supports and covers]{A visual representation of supports and covers.}
     \label{fig:sup-cov}
 \end{figure}
 
 The definition of supports and covers is parameterized over a relation
-$R$. For an protocol ordering, we choose $R$ to be the partial order
+$R$. For our protocol ordering, we choose $R$ to be the partial order
 over attack trees defined previously. Therefore, in Figure
 \ref{fig:sup-cov}, arrows between the individual attack trees
 represent partial order relationships. 
@@ -646,15 +646,15 @@ represent partial order relationships.
 
 While \citeauthor{Rowe:2021:OnOrdering} defines both supports and
 covers, we only need supports for our protocol ordering. The
-motivation for this two-fold. First, we assume that given a protocol
+motivation for this is two-fold. First, we assume that given a protocol
 and its associated attacks, an adversary will always perform the
 easiest one.  Second, we must consider our desired protocol ordering
 outcome: if a protocol $P$ is less than a protocol $Q$, then $Q$ is at
 least as good as $P$ and therefore \emph{should be selected over
   $P$}. Therefore, we must consider every attack in the better
 protocol so as not to overlook the easiest attack. Furthermore, we
-need not consider every tree in the weaker protocol. This is best
-understood by examining the extreme cases for the unevaluated tree:
+need not consider every attack in the weaker protocol. This is best
+understood by examining the extreme cases for the unevaluated attack:
 (i) it is the easiest attack; or (ii) it is the hardest attack. If it
 is the easiest attack, then clearly the protocol is still the weaker
 one. If it is the hardest attack, then it has no effect on the
@@ -676,7 +676,7 @@ in $P$ is the same as the set of easiest attacks in $Q$. In fact, this
 property holds not only for this example but for any two
 protocols. Therefore, we construct and prove a modified version of
 antisymmetry. Before we give its precise specification, we must
-quantify what it means to the \emph{easiest} attack. 
+quantify what it means to be the \emph{easiest} attack. 
 
 \begin{definition}[Minimal Attack Tree, \normalfont{min}]
   An attack tree $a$ is minimal with respect to a set $P$ if and only
@@ -698,11 +698,12 @@ quantify what it means to the \emph{easiest} attack.
 Our adapted version of antisymmetry is stated as follows: if $P \le Q$
 and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. Although this
 property is mathematically weaker than the canonical antisymmetric
-property, it is for our goals adequate and equally strong. To prove
-this antisymmetry property, we must apply several facts regarding
-minimal attack trees provided above. These lemmas are true by the
-definition of minimal.
+property, it is for our goals adequate and equally strong. 
 
+To prove this antisymmetry property, we must apply several facts regarding
+minimal attack trees provided above. These lemmas are true by the
+definition of minimal. We formally verify this antisymmetry property in Coq.
+In this paper, we present the proof of antisymmetry manually below. 
 
 
 \begin{theorem}[Antisymmetry of Partial Order $\leq$]
@@ -713,7 +714,7 @@ definition of minimal.
   Let $P$ and $Q$ be arbitrary sets of attack trees. Suppose that $P
   \le Q$ and $Q \le P$.  
   
-  Let us begin by proving two intermediate statements regarding the
+  Let us begin by proving two intermediate results regarding the
   ordering relationships between $\text{min}(P)$ and $\text{min}(Q)$,
   namely that $\text{min}(P) \leq \text{min}(Q)$ and $\text{min}(Q)
   \leq \text{min}(P)$. Since $\text{min}(P) \leq P$ by Lemma 1 and $P
@@ -728,19 +729,22 @@ definition of minimal.
   isomorphism. Therefore, let us proceed by proving the first subgoal:
   $\text{min}(P) \subseteq \text{min}(Q)$ up to isomorphism (i.e.,
   $\forall a \in \text{min}(P), \exists b \in \text{min}(Q), a \simeq
-  b)$.  Let $a$ be an arbitrary attack tree in $\text{min}(P)$.  
-
+  b)$.  
+   
+  Let $a$ be an arbitrary attack tree in $\text{min}(P)$.  
   Since $\text{min}(Q) \leq \text{min}(P)$, there exists some attack
   tree $b \in \text{min}(Q)$ such that $b \preceq a$. Therefore,
   either $b \simeq a$ or $b \prec a$. Suppose $b \simeq a$. Then $a
-  \simeq b$ by symmetry of $\simeq$. And we have proven our goal and
-  are done. Now suppose $b \prec a$. Since $\text{min}(P) \leq
-  \text{min}(Q)$, there exists some attack $a' \in \text{min}(P)$ such
-  that $a' \preceq b$. Then $a' \prec a$ by transitivity of the
-  composition of $\preceq$ and $\prec$. A contradiction by Lemma
-  2. Therefore, we have proven that $\text{min}(P) \subseteq
-  \text{min}(Q)$ up to isomorphism. 
-  
+  \simeq b$ by symmetry of $\simeq$, and we have proven our goal.
+  Now suppose $b \prec a$. Since $\text{min}(P) \leq \text{min}(Q)$, 
+  there exists some attack $a' \in \text{min}(P)$ such
+  that $a' \preceq b$. Therefore, either $a' \simeq b$ or $a' \prec b$. 
+  Suppose $a' \simeq b$. Then $a' \prec a$ by the composition of $\simeq$
+  and $\prec$. A contradiction by Lemma 2. Now suppose $a' \prec b$. 
+  Then $a' \prec a$ by transitivity of $\prec$. A contradiction again by 
+  Lemma 2. Therefore, we have proven that 
+  $\text{min}(P) \subseteq \text{min}(Q)$ up to isomorphism. 
+
   We can apply a similar reasoning to prove the second subgoal:
   $\text{min}(Q) \subseteq \text{min}(P)$ up to isomorphism. Thereby
   proving antisymmetry of $\leq$. 
@@ -749,7 +753,7 @@ definition of minimal.
 With verified equivalence and partial order relations, we can link the
 ordering decision over sets of attack trees to their corresponding
 protocols allowing us to provably state that one protocol is at least
-as difficult to attack as another protocol. If no ordering relation
+as difficult to attack as another protocol. If no ordering relationship
 holds, the protocols are incomparable. We now have formally specified
 and verified the four proposed ordering relations over Copland
 attestation protocols, thus achieving our research goal.
