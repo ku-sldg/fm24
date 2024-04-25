@@ -391,19 +391,21 @@ repair).
     to measurement or adversary event label. 
 \end{definition}
 
-When comparing two individual attack trees, we need only consider
-events that concern the adversary. It is possible for an attack tree
+When comparing two individual attack trees, we need only consider the
+events necessary to determine the difficulty required by the adversary 
+to perform the attack. It is possible for an attack tree
 to contain two measurement events in sequence; the fact that two
 measurements occurred instead of one has no bearing on the
 adversary. Furthermore, an adversary is not impacted by the details of
 any measurement events. Sequential measurement events and specific
 names of non-final measurement complicate comparing individual attack
 trees. Therefore, we introduce attack tree normalization. As defined
-below, attack tree normalization reduces consecutive measurement
-events to a single measurement event with a constant label, renaming
-all remaining non-final measurement events. Normalization results in
-attack trees containing only the events and information relevant to an
-adversary.
+below, attack tree normalization reduces consecutive measurement events 
+to a single measurement event, namely the latter one, and renames all 
+remaining non-final measurement events to a constant label. Normalization 
+results in attack trees containing only the events and information relevant 
+to compare the difficulties required by the adversary to perform the attacks.
+
 
 \begin{definition}[Attack tree Normalization]
     An attack tree is in its normal form when all sequences of
@@ -538,7 +540,7 @@ $\pi(a_2) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a_2) = \{
 \texttt{c\_c2} \}$. And lastly for attack $a_3$, $\pi(a_3) = \{
 \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and
 $\tau(a_3) = \{ \texttt{r\_c2} \}$. Using the definition of strict
-partial order below, we can conclude that $a_1 \prec a_2$, $a_1 \prec
+partial order, we can conclude that $a_1 \prec a_2$, $a_1 \prec
 a_3$, and $a_2$ and $a_3$ are incomparable. 
 
 Our design of the strict partial order relation allows it to be
