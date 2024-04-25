@@ -775,17 +775,17 @@ equipped with measurement capabilities. We use the notation
 \texttt{ms}$(c_1,c_2)$ to denote the measurement of component $c_2$ by
 component $c_1$ .
 
-We select and evaluate three Copland protocols that achieve this
-attestation goal using our protocol ordering methodology in order to
-demonstrate two hypotheses: (i) measurements that mimic the system's
-dependency chain better confine the adversary; and (ii) increasing the
-number of measurements does not necessarily further confine the
-adversary. Each protocol contains the same final measurement event
-\texttt{ms}$(vc,sys)$ since the primary goal of the enterprise is to
-receive a fresh system scan by the virus checker. Additionally, each
-protocol contains the same penultimate measurement event
-\texttt{ms}$(ker,vc)$ since an ancillary goal of the enterprise is to
-determine whether the target is running the appropriate virus checker.
+We evaluate three Copland protocols that achieve this attestation goal
+using our protocol ordering methodology to demonstrate two hypotheses:
+(i) measurements that mimic the system's dependency chain better
+confine the adversary; and (ii) increasing the number of measurements
+does not necessarily further confine an adversary. Each protocol
+contains the same final measurement event \texttt{ms}$(vc,sys)$ since
+the primary goal of the enterprise is to receive a fresh system scan
+by the virus checker. Additionally, each protocol contains the same
+penultimate measurement event \texttt{ms}$(ker,vc)$ since an ancillary
+goal of the enterprise is to determine whether the target is running
+the appropriate virus checker.
 
 %%% NOTE: Uses true Copland syntax
 % \begin{table}[h]
@@ -821,19 +821,19 @@ determine whether the target is running the appropriate virus checker.
   \label{Chase-table}
 \end{table}
 
-
 The first protocol $P1$ is our baseline protocol consisting only of
 the required measurement events described above. The second protocol
-$P2$ is intended to strengthen the first by prepending the measurement
-event \texttt{ms}$(rtm,ker)$. Since the virus checker and system
-depend on the kernel, taking a measurement of the kernel from a
+$P2$ is intended to strengthen the first by prepending a measurement
+of the kernel \texttt{ms}$(rtm,ker)$. Since the virus checker and
+system depend on the kernel, taking a measurement of the kernel from a
 trusted place should strengthen the protocol according to hypothesis
 1. The third protocol $P3$ is intended to be no stronger than the
-first by prepending the measurement event \texttt{ms}$(ker,hv)$. Since
-the virus checker and system are independent of the hypervisor, taking
-a measurement of the hypervisor should not change the strength of the
-protocol according to hypothesis 2. We apply our protocol ordering to
-these protocols to verify that this reasoning does indeed hold. 
+first by prepending a measurement of the hypervisor by the kernel,
+\texttt{ms}$(ker,hv)$. Since the virus checker and system are
+independent of the hypervisor, taking a measurement of the hypervisor
+should not change the strength of the protocol according to hypothesis
+2. We apply our protocol ordering to these protocols to verify that
+these assertions do indeed hold.
 
 \begin{figure}[h]
     \begin{center}
