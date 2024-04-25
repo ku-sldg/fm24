@@ -342,7 +342,7 @@ examples.
 
 Here we present orderings over individual attack trees. Specifically,
 we introduce equivalence ($\simeq$), strict partial order ($\prec$),
-and partial order ($\preceq$) relations over individual trees. These
+and partial order ($\preceq$) relations over attacks. These
 relations will in turn be used to introduce equivalence and partial
 order relations over sets of attack trees.
 
@@ -350,10 +350,10 @@ Attack trees from Figure \ref{fig:chase-ex} are useful for describing
 essential insights applied in developing our ordering. In attack tree
 $a_1$, corruption events \texttt{c\_c1} and \texttt{c\_c2} occur
 before any measurement events, thus allowing the adversary an
-unrestricted time window to before measurement perform its attack. In
+unrestricted time window to perform these actions. In
 attack tree $a_2$, corruption event \texttt{c\_c2} occurs between
 measurement events \texttt{ms1} and \texttt{ms2}, thus confining the
-adversary to a finite time window to perform its corruption. We
+adversary to a brief time window. We
 assert that performing the same event in a limited time window (e.g.,
 \texttt{c\_c2} in $a_2$ versus in $a_1$) is more difficult for the
 adversary. Since \texttt{c\_c1} is in both $a_1$ and $a_2$, we
@@ -390,19 +390,23 @@ event (i.e., measurement, corruption, or repair).
     to measurement or adversary event label. 
 \end{definition}
 
-When comparing two individual attack trees, we need only consider
-events concerning the adversary's necessary effort to perform the
-attack. It is possible for an attack tree to contain two measurement
-events in sequence; the fact that two measurements occurred instead of
-one has no bearing on the adversary. Furthermore, an adversary is not
-impacted by the details of any measurement events. Sequential
-measurement events and specific names of non-final measurement
-complicate comparing individual attack trees. Therefore, we introduce
-\emph{attack tree normalization}. As defined below, attack tree normalization
-reduces consecutive measurement events to a single measurement event
-with a constant label, renaming all remaining non-final measurement
-events to a constant label. Normalization results in attack trees
-containing only the events and information relevant to an adversary.
+Since the objective of our attestation protocol ordering is choosing 
+a protocol that makes the adversary’s job as difficult as possible,
+we need only consider events concerning the adversary's effort to 
+perform an attack. Specifically, sequential measurement events and names 
+of non-final measurement events complicate comparing individual attack 
+trees because they do not pertain to the adversary's burden. It is 
+possible for an attack tree to contain two measurement events in 
+sequence; the fact that two measurements occurred instead of one 
+has no bearing on the adversary. Furthermore, the adversary is not 
+impacted by the details of any measurement events.  Therefore, we 
+introduce \emph{attack tree normalization}. As defined below, attack 
+tree normalization reduces consecutive measurement events to a 
+single measurement event, namely the latter one, and renames all 
+remaining non-final measurement events to a constant label.
+Normalization results in attack trees containing only the events and 
+information relevant to compare the efforts required by the 
+adversary to perform the attacks.
 
 \begin{definition}[Attack tree Normalization]
     An attack tree is in its normal form when all sequences of
@@ -430,13 +434,11 @@ measurement event \texttt{ms1} is renamed to \texttt{ms}. For the
 remainder of this paper, unless otherwise noted, we assume all
 Chase-generated attack trees are in their normal form.
 
-To help compare individual attack trees, we define \emph{adversary
-  events} and \emph{time-constrained adversary events}. Central to
-comparison is the classification of adversary actions that may be
-present within an attack tree. Attack trees intermix measurement and
-adversary events and it is the variety of consecutive occurrences that
-may occur that determines ordering. First we define an adversary
-event:
+Central to comparison of individual attack trees is the classification 
+of adversary actions that may be present within an attack tree. Attack 
+trees intermix measurement and adversary events, and it is the variety of
+consecutive occurrences that may occur that determines ordering. Therefore, 
+we define \emph{adversary events} and \emph{time-constrained adversary events}. 
 
 \begin{definition}[Adversary Event, $\pi$]
   An adversary event is any action performed by an adversary to
@@ -467,15 +469,12 @@ every attack tree $a$.
 
 With these preliminary definitions, we now describe our ordering
 relations. Two individual attack trees are equivalent if they are
-semantically equivalent. Defining equivalence in this way ensures
-trees that have the same adversary events in the same order and the
-same final measurement event are indeed equivalent, regardless of the
-specific, intermediate measurement events that occurred. Therefore, we
-only compare trees in their normal form so there are no sequences of
-consecutive measurement events and all non-final measurement events
-have the same label.  We naturally define attack tree equivalence by
-graph isomorphism:
-
+the same attack from the adversary's perspective. We naturally 
+define attack tree equivalence by graph isomorphism. It warrants
+reiterating that we only compare attack trees in their normal form 
+so that attacks with the same adversary events in the same order 
+and the same final measurement events are indeed equivalent, regardless 
+of the specific, intermediate measurement events that occurred. 
 
 \begin{definition}[Isomorphism]
   Directed, labeled graphs $G$ and $H$ are isomorphic if and only if
@@ -490,20 +489,21 @@ graph isomorphism:
   only they are isomorphic. 
 \end{definition}
 
-\noindent Coq mechanization requires we formally verify an isomorphism
+Coq mechanization requires we formally verify an isomorphism
 is an equivalence relation.  With the proofs of reflexivity, symmetry,
 and transitivity, we have a formally-verified equivalence relation
-over attack trees allowing us to prove when two trees are semantically
-equivalent. This work is routine, thus we do not discuss proofs here.
+over attack trees allowing us to prove when two attacks are equivalent
+from the adversary's perspective. This work is routine, thus we do not 
+discuss proofs here.
 
 Next, we define a strict partial order over individual attack
 trees. It should be the case that under this relation one attack tree
 is strictly better than another if it increases the burden of an
-attacker. To formally define increasing adversary constraint, we
+attacker. To formally define increasing adversary effort, we
 analyzed many Chase-generated attack trees to ground our logic in
 concrete examples. By studying patterns in the trees, we select two
 distinct conditions that confine an adversary to define the ordering
-scheme.  An attack is more difficult if it: (i) requires more
+scheme.  An attack is more difficult if it requires: (i) more
 adversary events; or (ii) more time-constrained adversary events. We
 formally define this relation as \emph{strictly less work}:
 
@@ -542,19 +542,19 @@ $\tau(a_3) = \{ \texttt{r\_c2} \}$. Using the definition of strict
 partial order, we can conclude that $a_1 \prec a_2$, $a_1 \prec
 a_3$, and $a_2$ and $a_3$ are incomparable. 
 
-Note that our strict partial order relation allows it to be enhanced
-with an ordering over adversarial events themselves. Given a strict
-partial order over adversarial events, it can be used in our
-definition of strictly less work.  The Coq specification is
+Our strict partial order relation can be enhanced
+with an ordering over adversary events themselves. Given a strict
+partial order over adversary events, it can be integrated into our
+definition of strictly less work. The Coq specification is
 parameterized over an arbitrary adversary event ordering. Examples of
-possible adversary event orderings include: (i) corrupting a shallower
+such orderings include: (i) corrupting a shallower
 component is less difficult than corrupting a deeper one; (ii)
 repairing a component is less difficult than corrupting one; or (iii)
-one corruption requires more resources than another.  While we do not
+corrupting some component requires more resources than another.  While we do not
 use the adversary event ordering in this paper, the ordering scheme
 can be customized when details of adversary event ordering are
-known. For the rest of this paper we assume that all unconstrained
-individual adversary events are equally difficult to perform.
+known. For the rest of this paper we assume that individual adversary events 
+are incomparable.
 
 To verify our strict partial order over individual attack trees is
 indeed a strict partial order, we prove the relation is irreflexive,
