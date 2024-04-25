@@ -769,7 +769,7 @@ appropriate virus checking software. Adapted from
 \citeauthor{Rowe:2021:OnOrdering}'s \citep{Rowe:2016:Confining}
 example, this model has been used extensively for evaluation and
 demonstration.  The target's infrastructure consists of a platform
-dependent on a hardware root of trust for measurement, $rtm$. Within
+dependent on a hardware root of trust for measurement $rtm$. Within
 this platform are several components, namely the kernel $ker$, a
 hypervisor $hv$, a virus checker $vc$, and the collective parts of the
 system scanned by the virus checker $sys$. The virus checker and the
@@ -777,39 +777,23 @@ system are both dependent on the kernel, while the kernel and the
 hypervisor have no dependencies within the platform. Each component is
 equipped with measurement capabilities. We use the notation
 \texttt{ms}$(c_1,c_2)$ to denote the measurement of component $c_2$ by
-component $c_1$ .
+component $c_1$.
 
 We evaluate three Copland protocols that achieve this attestation goal
 using our protocol ordering methodology to demonstrate two hypotheses:
-(i) measurements that mimic the system's dependency chain better
-confine the adversary; and (ii) increasing the number of measurements
-does not necessarily further confine an adversary. Each protocol
-contains the same final measurement event \texttt{ms}$(vc,sys)$ since
+(i) protocols with measurements that better mimic the system's dependency 
+chain require more adversary effort to attack; and 
+(ii) protocols with more measurements do not 
+necessarily require more adversary effort to attack. 
+Each protocol contains the same final measurement event 
+\texttt{ms}$(vc,sys)$ since
 the primary goal of the enterprise is to receive a fresh system scan
 by the virus checker. Additionally, each protocol contains the same
 penultimate measurement event \texttt{ms}$(ker,vc)$ since an ancillary
 goal of the enterprise is to determine whether the target is running
 the appropriate virus checker.
 
-%%% NOTE: Uses true Copland syntax
-% \begin{table}[h]
-%   \setlength\extrarowheight{7pt}
-%   \centering
-%   \footnotesize
-%   \begin{tabular}{|M{2.2cm}|M{9.7cm}|N}
-%       \hline
-%       Protocol Name & Actual protocol &\\
-%       \hline   
-%       $ker\text{-}vc\text{-}sys$ & *target:  $\at{\texttt{p4}}{(\texttt{ker p4 vc})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{vc p4 sys})}$ &\\ \hline 
-%       $rtm\text{-}ker\text{-}vc\text{-}sys$ & *target: $\at{\texttt{p1}}{(\texttt{rtm p4 ker})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{ker p4 vc})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{vc p4 sys})}$ &\\
-%       \hline
-%       $ker\text{-}hv\text{-}vc\text{-}sys$ & *target: $\at{\texttt{p4}}{(\texttt{ker p4 hv})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{ker p4 vc})}$ \texttt{+<+} $\at{\texttt{p4}}{(\texttt{vc p4 sys})}$ &\\ \hline 
-%   \end{tabular}
-%   \caption[Chase Analysis with Varied Dependencies]{Example Copland protocols analyzed with Chase}
-%   \label{Chase-table}
-% \end{table}
 
-%% NOTE: Uses abstract Copland syntax
 \begin{table}[h]
   \setlength\extrarowheight{7pt}
   \centering
@@ -825,18 +809,18 @@ the appropriate virus checker.
   \label{Chase-table}
 \end{table}
 
-The first protocol $P1$ is our baseline protocol consisting only of
-the required measurement events described above. The second protocol
-$P2$ is intended to strengthen the first by prepending a measurement
-of the kernel \texttt{ms}$(rtm,ker)$. Since the virus checker and
+The protocol $P1$ is our baseline protocol consisting only of
+the required measurement events described above. The protocol
+$P2$ is intended to strengthen $P1$ by prepending a measurement
+of the kernel by the root of trust, \texttt{ms}$(rtm,ker)$. Since the virus checker and
 system depend on the kernel, taking a measurement of the kernel from a
-trusted place should strengthen the protocol according to hypothesis
-1. The third protocol $P3$ is intended to be no stronger than the
-first by prepending a measurement of the hypervisor by the kernel,
+trusted place should strengthen the protocol according to the first hypothesis. 
+The protocol $P3$ is intended to be no stronger than $P1$ by prepending 
+a measurement of the hypervisor by the kernel,
 \texttt{ms}$(ker,hv)$. Since the virus checker and system are
 independent of the hypervisor, taking a measurement of the hypervisor
-should not change the strength of the protocol according to hypothesis
-2. We apply our protocol ordering to these protocols to verify that
+should not change the strength of the protocol according to the second hypothesis. 
+We apply our protocol ordering to these protocols to verify that
 these assertions do indeed hold.
 
 \begin{figure}[h]
@@ -859,7 +843,7 @@ these assertions do indeed hold.
 \end{figure}
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
-We first compare the first and second protocols beginning by
+We first compare $P1$ and $P2$ beginning with
 collecting the Chase output and reducing the attack trees to normal
 form as shown in Figure \ref{fig:rtm-compare-reduced}. Next, we can
 determine the ordering relationships between the individual attack
@@ -870,24 +854,25 @@ clear that for every attack $b$ in $P2$ there exists an attack
 $a$ in $P1$ such that $a \preceq b$. Therefore, we can conclude that
 $P1 \leq P2$. Furthermore, it is not the case that $P2 \leq P1$ since
 there is no attack in $P2$ that is less than $a_3$ or $a_4$. Our
-ultimate conclusion supports hypothesis 1 that measurements that mimic
-the system's dependency chain better confine the adversary.
+ultimate conclusion supports our first hypothesis that protocols 
+with measurements that better mimic the system's dependency chain 
+require more adversary effort to attack.
 
 %% TODO: Elaborate on why individual tree ordering relationships hold
 %% TODO: Elaborate on antisymmetry application
-Next, we compare the first and third protocols. The set of reduced
-attack trees for the third protocol is shown in Figure
-\ref{figf:hv-reduced}. We can determine the ordering relationships
+Next, we compare $P1$ and $P3$. The set of reduced
+attack trees for $P3$ is shown in Figure
+\ref{fig:hv-reduced}. We can determine the ordering relationships
 between the individual attack trees in the two sets: $a_1 \simeq c_1$,
 $a_2 \simeq c_2$, $a_3 \simeq c_3$, $a_4 \simeq c_4$,
 $a_5 \simeq c_5$, $a_2 \simeq c_6$, $a_1 \prec c_7$, $a_2 \prec c_8$,
 $a_4 \prec c_9$, and $a_5 \prec c_{10}$.  Lastly we can determine the
 ordering relationships between the two protocols: $P1 \leq P3$ and
 $P3 \leq P1$. By the antisymmetry property of our partial order, we
-can conclude that these two protocols have the same set of weakest
+can conclude that these two protocols have the same set of easiest
 attacks, namely $\{a_1, a_3, a_5\}$ and $\{c_1, c_3, c_5\}$. This
-proves hypothesis 2 that increasing the number of measurements does
-not necessarily further confine the adversary.
+proves our second hypothesis that protocols with more measurements do not 
+necessarily require more adversary effort to attack.
 
 \begin{figure}[h]
   \begin{center}
@@ -912,13 +897,13 @@ These examples demonstrate the applicability of our ordering approach
 on an example system from the literature.  Results provide support for
 the important protocol design consideration of when and where to add
 measurement events.  Specifically, adding a measurement that mimics
-system structure improves resistance to attack and adding a
-measurement of a previously unmeasured component does not.  Thus, we
+system structure improves resistance to attack while arbitrarily adding a
+measurement does not.  Thus, we
 conclude our protocol ordering methodology successfully enhances the
 evaluation of remote attestation protocols.  Leveraging the Chase
-model finder, we order Copland protocols according to their adversary
-constraint by comparing all allowed attack trees and linking the
-relationship between attack trees to the protocol in question.
+model finder, we order Copland protocols according to their difficulty 
+to attack by comparing allowed attacks and linking the
+relationship between the sets of attacks to the protocol in question.
 
 \section{Conclusion}
 %% TODO: Conclusion
