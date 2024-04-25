@@ -206,18 +206,18 @@ order model finder that utilizes geometric
 logic~\citep{Enderton:logic} to find minimal models of a given
 theory. Inputs to the Chase model finder include a set of axioms
 describing assumptions and system dependencies. From those axioms,
-Chase generates all satisfying
+Chase generates all satisfying models.
 
 %% TODO: Talk about difference between these attack trees and those used in the security field
 
-\citet{Rowe:2021:AutomatedTrust}~define a Chase model for Copland
+\citet{Rowe:2021:AutomatedTrust}~define a Chase theory for Copland
 attestation protocols useful for establishing the susceptibility of a
 protocol to attack. Given a Copland phrase, a model of adversary
 events, and a model of the evaluated protocol, Chase produces output
 enumerating all possible protocol executions as attack trees. These
 sequential attack trees~\citep{Horne:Attack, Jhaware:attack} are
 formal models of adversary attacks that evade detection by the
-attestation protocol.  In an attack trees the presence of an active
+attestation protocol.  In these attack trees the presence of an active
 adversary can be recognized by the corruption and repair of target
 system components. The specific details of how an adversary performs
 corruption and repair are not the focus of this work nor of
@@ -234,7 +234,7 @@ final measurement \texttt{ms2}. In this abstract scenario, \texttt{ms1} and
 \texttt{c3}. These system dependencies are realized within the
 user-defined theory file input into the Chase model finder. Running
 Chase on this protocol generates attack trees as found in Figure
-\ref{fig:chase-ex}. In these figures, the prefix \texttt{ms}
+\ref{fig:chase-ex}. The prefix \texttt{ms}
 represents measurement events with final measurement events presented
 within green boxes. The prefixes \texttt{c\_} and  \texttt{r\_} 
 represent the corruption and repair of components. Both
@@ -309,15 +309,14 @@ because the strictly less than operator would inadvertently introduce
 an arbitrary ordering over adversarial corruption and repair events
 where there should not be one.
 
-The four ordering relations serve as foundational categories for
-protocol ordering. While the ordering may appear intuitive, defining
-ordering operations and verifying they possess required properties is
-challenging. We overcome this challenge, defining and verifying the
-equivalence and partial order relations over sets of attack trees that
-are built on ordering relations over individual attack trees. With
-this ordering infrastructure, one can provably determine when one
-protocol is at least as good as another because it requires at least
-as much adversary effort to generate evidence.
+While the ordering may appear intuitive, defining the ordering
+operations themselves and verifying they possess required properties is
+challenging. We overcome this challenge, defining and
+verifying the equivalence and partial order relations over sets of
+attack trees that are built on ordering relations over individual
+attack trees. With this ordering infrastructure, one can provably
+determine when one protocol is at least as good as another because it
+requires at least as much adversary effort to attack.
 
 In our methodology, an ordering relationship between two Copland
 protocols can be constructed using the following workflow, illustrated
@@ -333,8 +332,8 @@ in Figure~\ref{fig:protocol-org-fig}:
 \end{enumerate}
 
 The following sections describe the process of introducing and
-verifying an ordering for Copland attestation protocols. All
-mathematical definitions and proofs are presented manually, however
+verifying an ordering for Copland attestation protocols. 
+Mathematical definitions and proofs are presented manually, however
 mechanized versions are completed in Coq and can be found at
 \url{git@github.com:ku-sldg/protocol_ordering.git} including worked
 examples. 
@@ -392,17 +391,17 @@ event (i.e., measurement, corruption, or repair).
 \end{definition}
 
 When comparing two individual attack trees, we need only consider
-events that concern the adversary allowing simplifying attack trees.
-It is possible for an attack tree to contain two measurement events in
-sequence; the fact that two measurements occurred instead of one has
-no impact on the adversary. Furthermore, an adversary is not impacted
-by the details of any measurement events. Sequential measurement
-events and specific names of non-final measurement complicate
-comparing individual attack trees. Therefore, we introduce
-\emph{attack tree normalization}. As defined below, attack tree
-normalization reduces consecutive measurement events to a single
-measurement event with a constant label, renaming all remaining
-non-final measurement events.  Normalization results in attack trees
+events concerning the adversary's necessary effort to perform the
+attack. It is possible for an attack tree to contain two measurement
+events in sequence; the fact that two measurements occurred instead of
+one has no bearing on the adversary. Furthermore, an adversary is not
+impacted by the details of any measurement events. Sequential
+measurement events and specific names of non-final measurement
+complicate comparing individual attack trees. Therefore, we introduce
+\emph{attack tree normalization}. As defined below, attack tree normalization
+reduces consecutive measurement events to a single measurement event
+with a constant label, renaming all remaining non-final measurement
+events to a constant label. Normalization results in attack trees
 containing only the events and information relevant to an adversary.
 
 \begin{definition}[Attack tree Normalization]
@@ -540,7 +539,7 @@ $\pi(a_2) = \{ \texttt{c\_c1}, \texttt{c\_c2} \}$ and $\tau(a_2) = \{
 \texttt{c\_c2} \}$. And lastly for attack $a_3$, $\pi(a_3) = \{
 \texttt{c\_c1}, \texttt{c\_c2}, \texttt{c\_c3}, \texttt{r\_c2} \}$ and
 $\tau(a_3) = \{ \texttt{r\_c2} \}$. Using the definition of strict
-partial order below, we can conclude that $a_1 \prec a_2$, $a_1 \prec
+partial order, we can conclude that $a_1 \prec a_2$, $a_1 \prec
 a_3$, and $a_2$ and $a_3$ are incomparable. 
 
 Note that our strict partial order relation allows it to be enhanced
