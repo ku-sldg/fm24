@@ -51,8 +51,8 @@
 \begin{document}
 %
 \title{An Ordering over Attestation Protocols\thanks{This work is
-    funded in part by the NSA Science of Security initiative contract
-    \#H98230-18-D-0009 and Honeywell FMT Purchase Order
+    funded in part by the NSA Science of Security initiative contracts
+    \#H98230-18-D-0009 and \#H98230-23-C-0277 and Honeywell FMT Purchase Order
     \#N000422909. The views and conclusions contained in this document
     are those of the authors and should not be interpreted as
     representing the official policies, either expressed or implied,
@@ -252,15 +252,14 @@ labeling scheme mirrors that of the Chase output.
     \label{fig:chase-ex}
 \end{figure}
 
-
-
-
 \section{Overview}
 We introduce a formally-verified ordering of attestation protocols by
-the difficulty required for an active adversary to attack the
-protocol. This ordering compares two Copland protocols by comparing
-their sets of Chase-generated attack trees. Comparing sets of attack trees is reliant upon an ordering over individual attack trees.
-We therefore define and verify ordering relations over both sets of attack trees and individual attack trees.
+the difficulty required for an adversary to attack the protocol. This
+ordering compares two Copland protocols by comparing their sets of
+Chase-generated attack trees. Comparing sets of attack trees is
+reliant upon an ordering over individual attack trees.  We therefore
+define and verify ordering relations over both sets of attack trees
+and individual attack trees.
 
 \begin{figure}[hbtp]
     \centering
@@ -277,14 +276,14 @@ Chase to generate the set of attack trees $\{ a_1, a_2, a_3\}$ for
 $P1$ and the set of attack trees $\{b_1, b_2, b_3\}$ for $P2$. We then
 compare the attack trees individually, discovering ordering
 relationships $a_1 \preceq b_1$, $a_2 \preceq b_2$, and
-$a_1 \preceq b_3$ represented by dotted lines. Looking at the sets of
+$a_1 \preceq b_3$ represented by dotted arrows. Looking at the sets of
 attack trees, we can see every attack tree in $P2$ has an attack in
 $P1$ that is at most as difficult. Assuming an adversary would always
 perform the easiest attack, we conclude that $P2$ is at least as
 difficult to attack as $P1$ and thus involves at least as much
 adversary effort as $P1$. Thus we say $P1 \leq P2$.
 
-We introduce four canonical ordering relations for attestation
+We define four canonical ordering relations for attestation
 protocol ordering where $=$ is an equivalence relation and $\le$ and
 $\ge$ are partial orders:
 
@@ -299,18 +298,18 @@ $\ge$ are partial orders:
 
 \noindent We define the ordering in this way for several
 reasons. First, we refrain from introducing four mutually exclusive
-relationships (i.e., $=$, $<$, $>$, incomparable) as it results in an
-explosion of the number of incomparable protocols. As such we
-do not conclude that one protocol is strictly better than another
+relationships (i.e., $=$, $<$, $>$, incomparable) as this results in
+an explosion of the number of incomparable protocols. As such we do
+not conclude that one protocol is strictly better than another
 protocol. Although one might think we could define the relations
 necessary to draw such conclusions using the irreflexive kernel
 (deriving a strictly less than operator from the satisfaction of both
 less than and not equal conditions), we found this is not appropriate
-because the strictly less than operator would inadvertently introduce
+because the strictly less than operator inadvertently introduces
 an arbitrary ordering over adversarial corruption and repair events
-where there should not be one.
+when there should not be one.
 
-While the ordering may appear intuitive, defining the ordering
+While the orderings may appear intuitive, defining the ordering
 operations themselves and verifying they possess required properties is
 challenging. We overcome this challenge, defining and
 verifying the equivalence and partial order relations over sets of
@@ -320,8 +319,8 @@ determine when one protocol is at least as good as another because it
 requires at least as much adversary effort to attack.
 
 In our methodology, an ordering relationship between two Copland
-protocols can be constructed using the following workflow, illustrated
-in Figure~\ref{fig:protocol-org-fig}:
+protocols can be constructed using the following workflow also
+illustrated in Figure~\ref{fig:protocol-org-fig}:
 
 \begin{enumerate}
   \squash
@@ -391,23 +390,23 @@ event (i.e., measurement, corruption, or repair).
     to measurement or adversary event label. 
 \end{definition}
 
-Since the objective of our attestation protocol ordering is choosing 
-a protocol that makes the adversary’s job as difficult as possible,
-we need only consider events concerning the adversary's effort to 
-perform an attack. Specifically, sequential measurement events and names 
-of non-final measurement events complicate comparing individual attack 
-trees because they do not pertain to the adversary's burden. It is 
-possible for an attack tree to contain two measurement events in 
-sequence; the fact that two measurements occurred instead of one 
-has no bearing on the adversary. Furthermore, the adversary is not 
-impacted by the details of any measurement events.  Therefore, we 
-introduce \emph{attack tree normalization}. As defined below, attack 
-tree normalization reduces consecutive measurement events to a 
-single measurement event, namely the latter one, and renames all 
+Since the objective of our attestation protocol ordering is choosing a
+protocol that makes the adversary’s job as difficult as possible, we
+need only consider events concerning the adversary's effort to perform
+an attack. Specifically, sequential measurement events and names of
+non-final measurement events complicate comparing individual attack
+trees because they do not pertain to the adversary's burden. It is
+possible for an attack tree to contain two measurement events in
+sequence; the fact that two measurements occurred instead of one has
+no bearing on the adversary. Furthermore, the adversary is not
+impacted by the details of any measurement events.  Therefore, we
+introduce \emph{attack tree normalization}. As defined below, attack
+tree normalization reduces consecutive measurement events to a single
+measurement event, specifically the latter one, and renames all
 remaining non-final measurement events to a constant label.
-Normalization results in attack trees containing only the events and 
-information relevant to compare the efforts required by the 
-adversary to perform the attacks.
+Normalization results in attack trees containing only the events and
+information relevant to compare the efforts required by the adversary
+to perform the attacks.
 
 \begin{definition}[Attack tree Normalization]
     An attack tree is in its normal form when all sequences of
@@ -435,11 +434,12 @@ measurement event \texttt{ms1} is renamed to \texttt{ms}. For the
 remainder of this paper, unless otherwise noted, we assume all
 Chase-generated attack trees are in their normal form.
 
-Central to comparison of individual attack trees is the classification 
-of adversary actions that may be present within an attack tree. Attack 
-trees intermix measurement and adversary events, and it is the variety of
-consecutive occurrences that may occur that determines ordering. Therefore, 
-we define \emph{adversary events} and \emph{time-constrained adversary events}. 
+Central to comparison of individual attack trees is the classification
+of adversary actions that may be present within an attack tree. Attack
+trees intermix measurement and adversary events and it is the variety
+of possible consecutive occurrences that determines
+ordering. Therefore, we define \emph{adversary events} and
+\emph{time-constrained adversary events}.
 
 \begin{definition}[Adversary Event, $\pi$]
   An adversary event is any action performed by an adversary to
@@ -664,20 +664,20 @@ attack.
 
 Recall that a partial order is reflexive, antisymmetric, and
 transitive. We easily verify in Coq that our proposed partial order
-relation is reflexive and transitive. Verifying that the relation is
+relation is reflexive and transitive. Verifying the relation is
 antisymmetric proved more difficult and, in fact, impossible. That is,
 it is impossible using the classic definition of antisymmetry (i.e.,
 if $P \le Q$ and $Q \le P$ then $P = Q$). A simple counter example can
 be constructed using the attack trees in Figure
-\ref{fig:chase-ex}. Let $P = \{a_1,a_2\}$ and $Q = \{a_1\}$. Then $P
-\le Q$ since $a_1 \preceq a_1$, and $Q \le P$ since $a_1 \preceq a_1$
-and $a_1 \preceq a_2$. But clearly it is not the case that $P$ is the
-same set as $Q$. Instead, we can see that the set of easiest attacks
-in $P$ is the same as the set of easiest attacks in $Q$. In fact, this
-property holds not only for this example but for any two
-protocols. Therefore, we construct and prove a modified version of
-antisymmetry. Before we give its precise specification, we must
-quantify what it means to be the \emph{easiest} attack. 
+\ref{fig:chase-ex}. Let $P = \{a_1,a_2\}$ and $Q = \{a_1\}$. Then
+$P \le Q$ since $a_1 \preceq a_1$, and $Q \le P$ since
+$a_1 \preceq a_1$ and $a_1 \preceq a_2$. But clearly it is not the
+case that $P$ is the same set as $Q$. Instead, we can see that the set
+of easiest attacks in $P$ is the same as the set of easiest attacks in
+$Q$. In fact, this property holds not only for this example but for
+any two protocols. Therefore, we construct and prove a modified
+version of antisymmetry. Before we give its precise specification, we
+must quantify what it means to be the \emph{easiest} attack.
 
 \begin{definition}[Minimal Attack Tree, \normalfont{min}]
   An attack tree $a$ is minimal with respect to a set $P$ if and only
@@ -701,10 +701,11 @@ and $Q \le P$ then $\text{min}(P) = \text{min}(Q)$. Although this
 property is mathematically weaker than the canonical antisymmetric
 property, it is for our goals adequate and equally strong. 
 
-To prove this antisymmetry property, we must apply several facts regarding
-minimal attack trees provided above. These lemmas are true by the
-definition of minimal. We formally verify this antisymmetry property in Coq.
-In this paper, we present the proof of antisymmetry manually below. 
+To prove this antisymmetry property, we must apply several facts
+regarding minimal attack trees provided above. These lemmas are true
+by the definition of minimal. We formally verify this antisymmetry
+property in Coq.  We outline the proof of antisymmetry manually below,
+avoiding the bulkiness of Coq details.
 
 
 \begin{theorem}[Antisymmetry of Partial Order $\leq$]
