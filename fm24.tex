@@ -118,7 +118,7 @@ and the maat~\citep{Pendergrass:2018:Maat} and
 MAESTRO~\citep{Petz:2021:faithful} infrastructures implementing
 Copland protocol execution.
 
-When designing or selecting attestation protocols it is critical that
+When designing or selecting attestation protocols, it is critical that
 we know when one protocol is ``better'' than another.
 \citet{Fritz:2023:framework} provide a framework for protocol
 negotiation that defines protocol \emph{soundness} and
@@ -233,6 +233,14 @@ measurement \texttt{ms2}. Also, assume that \texttt{ms1} and
 \texttt{ms2} depend on components in the environment, namely
 \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on
 \texttt{c3}. These system dependencies are realized within the
+\begin{figure}[h]
+  \centering 
+  \begin{tabular}{m{3cm} m{3cm} m{3cm}}
+      \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
+  \end{tabular}
+  \caption[Example Chase Models]{Example Chase models}
+  \label{fig:chase-ex}
+\end{figure}
 user-defined theory file input into the Chase model finder. Running
 Chase on this protocol generates attack trees shown in Figure
 \ref{fig:chase-ex}. The prefix \texttt{ms} represents measurement
@@ -243,14 +251,7 @@ as adversary events and are presented within yellow and orange boxes
 respectively. Arrows represent chronological time. This
 labeling scheme mirrors that of the Chase output.
 
-\begin{figure}[hbtp]
-    \centering 
-    \begin{tabular}{m{3cm} m{3cm} m{3cm}}
-        \input{examples/general-example/one.tex} & \input{examples/general-example/two.tex} & \input{examples/general-example/three.tex} 
-    \end{tabular}
-    \caption[Example Chase Models]{Example Chase models}
-    \label{fig:chase-ex}
-\end{figure}
+
 
 \section{Overview}
 We introduce a formally-verified ordering of attestation protocols by
@@ -280,8 +281,7 @@ $a_1 \preceq b_3$ represented by dotted arrows. Looking at the sets of
 attack trees, we can see every attack tree in $P2$ has an attack in
 $P1$ that is at most as difficult. Assuming an adversary would always
 perform the easiest attack, we conclude that $P2$ is at least as
-difficult to attack as $P1$ and thus involves at least as much
-adversary effort as $P1$. Thus we say $P1 \leq P2$.
+difficult to attack as $P1$. Thus, we say $P1 \leq P2$.
 
 We define four canonical ordering relations for attestation
 protocol ordering where $=$ is an equivalence relation and $\le$ and
@@ -332,7 +332,7 @@ illustrated in Figure~\ref{fig:protocol-org-fig}:
 \end{enumerate}
 
 The following sections describe the process of introducing and
-verifying an ordering for Copland attestation protocols. 
+verifying an ordering over Copland attestation protocols. 
 Mathematical definitions and proofs are presented manually, however
 mechanized versions are completed in Coq and can be found at
 \url{git@github.com:ku-sldg/protocol_ordering.git} including worked
@@ -408,7 +408,7 @@ Normalization results in attack trees containing only the events and
 information relevant to compare the efforts required by the adversary
 to perform the attacks.
 
-\begin{definition}[Attack tree Normalization]
+\begin{definition}[Attack Tree Normalization]
     An attack tree is in its normal form when all sequences of
     consecutive measurement events are reduced to only the final
     measurement event in the sequence and all remaining non-final
@@ -425,7 +425,7 @@ to perform the attacks.
   \label{fig:reduce-ex}
 \end{figure}
 
-\noindent As an example of attack tree normalization, consider the
+\noindent As an example of attack tree normalization, consider
 Figure~\ref{fig:reduce-ex} where tree $a$ is normalized to $a'$. When
 applying attack tree normalization, the consecutive measurement events
 \texttt{ms2} and \texttt{ms3} are reduced to only the latter
@@ -450,7 +450,7 @@ ordering. Therefore, we define \emph{adversary events} and
   and only if $\ell_a(n)$ is an adversary event label. 
 \end{definition}
 
-Time constraints on adversary events increases their difficulty.
+Time constraints on adversary events increase their difficulty.
 Intuitively, it is harder when an adversary must complete its work
 between measurement events than when no such time constraints
 exist. We capture this by defining time-constrained adversary events:
@@ -617,7 +617,7 @@ covers~\citep{Rowe:2021:OnOrdering}:
     some $h \in T$ such that $R\: g\: h$. 
 \end{definition}
 
-Supports states that, for every graph in $T$, there exists some
+\noindent Supports states that, for every graph in $T$, there exists some
 related graph in $S$. Conversely, covers says that, for every graph in
 $S$, there exists a related graph in $T$.  This idea is best
 visualized by Figure \ref{fig:sup-cov} where we denote Copland
@@ -721,15 +721,16 @@ avoiding the bulkiness of Coq details.
   namely that $\text{min}(P) \leq \text{min}(Q)$ and $\text{min}(Q)
   \leq \text{min}(P)$. Since $\text{min}(P) \leq P$ by Lemma 1 and $P
   \leq Q$ by assumption, $\text{min}(P) \leq Q$ by transitivity of
-  $\leq$. Then since $\text{min}(Q) \subseteq Q$, $\text{min}(P) \leq
-  \text{min}(Q)$ trivially. We can apply a similar reasoning to get
+  $\leq$. Then since $\text{min}(Q) \subseteq Q$, $Q \leq \text{min}(Q)$
+  trivially. So $\text{min}(P) \leq \text{min}(Q)$ by transitivity of
+  $\leq$. We can apply a similar reasoning to get
   that $\text{min}(Q) \leq \text{min}(P)$. 
 
   Now recall our definition of set equivalence: $\text{min}(P) =
   \text{min}(Q)$ if and only if $\text{min}(P) \subseteq
   \text{min}(Q)$ and $\text{min}(Q) \subseteq \text{min}(P)$ up to
   isomorphism. Therefore, let us proceed by proving the first subgoal:
-  $\text{min}(P) \subseteq \text{min}(Q)$ up to isomorphism (i.e.,
+  $\text{min}(P) \subseteq \text{min}(Q)$ (i.e.,
   $\forall a \in \text{min}(P), \exists b \in \text{min}(Q), a \simeq
   b)$.  
    
@@ -743,12 +744,12 @@ avoiding the bulkiness of Coq details.
   that $a' \preceq b$. Therefore, either $a' \simeq b$ or $a' \prec b$. 
   Suppose $a' \simeq b$. Then $a' \prec a$ by the composition of $\simeq$
   and $\prec$. A contradiction by Lemma 2. Now suppose $a' \prec b$. 
-  Then $a' \prec a$ by transitivity of $\prec$. A contradiction again by 
+  Then $a' \prec a$ by transitivity of $\prec$. Again, a contradiction by 
   Lemma 2. Therefore, we have proven that 
-  $\text{min}(P) \subseteq \text{min}(Q)$ up to isomorphism. 
+  $\text{min}(P) \subseteq \text{min}(Q)$. 
 
   We can apply a similar reasoning to prove the second subgoal:
-  $\text{min}(Q) \subseteq \text{min}(P)$ up to isomorphism. Thereby
+  $\text{min}(Q) \subseteq \text{min}(P)$. Thereby
   proving antisymmetry of $\leq$. 
 \end{proof}
 
@@ -807,7 +808,7 @@ the appropriate virus checker.
       \hline
       $P3$ & *target: \texttt{ms}$(ker, hv)$ \texttt{+<+} \texttt{ms}$(ker, vc)$ \texttt{+<+} \texttt{ms}$(vc, sys)$ &\\ \hline 
   \end{tabular}
-  \caption[Chase Analysis with Varied Dependencies]{Abstractly rendered Copland protocols}
+  \caption[Chase Analysis with Varied Dependencies]{Abstractly rendered Copland protocols.}
   \label{Chase-table}
 \end{table}
 
@@ -840,7 +841,7 @@ these assertions do indeed hold.
                  & \input{examples/rtm_ker-vc-sys-seq_reduced-copy/m5.tex} \\ 
             \end{tabular}
     \end{center}
-    \caption{Normalized attack trees for $P1$ and $P2$}
+    \caption{Normalized attack trees for $P1$ and $P2$.}
     \label{fig:rtm-compare-reduced}
 \end{figure}
 
@@ -891,7 +892,7 @@ necessarily require more adversary effort to attack.
               & \\
           \end{tabular}
   \end{center}
-  \caption{Normalized attack trees for $P3$}
+  \caption{Normalized attack trees for $P3$.}
   \label{fig:hv-reduced}
 \end{figure}
 
