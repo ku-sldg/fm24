@@ -135,24 +135,23 @@ Our protocol ordering makes several assumptions. First, we consider an
 active adversary that is capable of corrupting any component of the
 target causing it to deviate from its regular behavior.  Similarly the
 adversary is capable of repairing any component of the target it
-corrupts returning it to its regular behavior. Thus, a corruption
+corrupts, returning it to its regular behavior. Thus, a corruption
 event followed by a repair event results in a component that is
-indistinguishable from the original component and therefore
-measurement misses the corruption. The one exception is the target's
-root-of-trust for measurement (RTM) component that we assume cannot be
-corrupted or repaired.
+indistinguishable from the original component. The only exception is
+the target's root-of-trust for measurement (RTM) component that we
+assume cannot be corrupted or repaired.
 
-We assume an adversary will choose the easiest available attack
-allowed by a protocol. Therefore, a better protocol increases the
-demands of an adversary by making the easiest attack more
-difficult. For an adversary to attack an attestation protocol means to
-corrupt and repair a target system's components in a manner that
-passes appraisal and therefore evades detection.  We assume a good
-measurer invoked by an attestation protocol will generate evidence
-that accurately reflects the corruption state of its target.  A
-corrupt measurer or a measurer dependent on a corrupt component will
-always generate evidence that indicates a good target regardless of
-the target's actual state.  Finally, our analysis relies solely on the
+We assume an adversary will choose the easiest available attack on a
+protocol.  For an adversary to attack an attestation protocol means to
+corrupt and repair a target system's components, including measurers,
+in a manner that passes appraisal and therefore evades detection.  A
+protocol is better if it increases the demands on an adversary by
+making the easiest attack more difficult.  We assume a good measurer
+invoked by an attestation protocol will generate evidence that
+accurately reflects the corruption state of its target.  A corrupt
+measurer or a measurer dependent on a corrupt component will always
+generate evidence that indicates a good target regardless of the
+target's actual state.  Finally, our analysis relies solely on the
 structure of protocols and possible attacks and is agnostic to the
 specific details of how an adversary can corrupt or repair system
 components.
@@ -176,8 +175,7 @@ order relations and Chase generated attack trees.
 \subsection*{Properties of Orders}
 
 Critical to our study are the canonical properties of a binary
-relation $R$ over a set $X$. We use the following
-properties:
+relation $R$ over a set $X$. We use the following properties:
 
 \begin{itemize}
   \squash
@@ -198,6 +196,9 @@ properties:
 \item a \emph{partial order} is reflexive, antisymmetric, and transitive 
 \item a \emph{strict partial order} is irreflexive, asymmetric, and transitive 
 \end{itemize}
+
+We will be defining various orderings over individual attack trees,
+sets of attack trees, and subsequently protocols.
 
 \subsection*{Chase Analysis}
 
@@ -221,26 +222,26 @@ attestation protocol.  In these attack trees the presence of an active
 adversary can be recognized by the corruption and repair of target
 system components. The specific details of how an adversary performs
 corruption and repair are not the focus of this work nor of
-Chase. Instead, the goal of Chase is to allow users to better
+Chase. Instead, the goal of Chase is allowing users to better
 understand potential vulnerabilities of the Copland
 protocol itself.
 
 Consider a trivial example Copland protocol where two measurements are
-performed in sequence: \texttt{ms1} \texttt{+<+} \texttt{ms2}.
-The measurement \texttt{ms1} is performed followed by the
-final measurement \texttt{ms2}. In this abstract scenario, \texttt{ms1} and
-\texttt{ms2} depend on some components of the environment, namely
+performed in sequence: \texttt{ms1} \texttt{+<+} \texttt{ms2}.  The
+measurement \texttt{ms1} is performed followed by the final
+measurement \texttt{ms2}. Also, assume that \texttt{ms1} and
+\texttt{ms2} depend on components in the environment, namely
 \texttt{c1} and \texttt{c2}; additionally \texttt{ms1} depends on
 \texttt{c3}. These system dependencies are realized within the
 user-defined theory file input into the Chase model finder. Running
-Chase on this protocol generates attack trees as found in Figure
-\ref{fig:chase-ex}. The prefix \texttt{ms}
-represents measurement events with final measurement events presented
-within green boxes. The prefixes \texttt{c\_} and  \texttt{r\_} 
-represent the corruption and repair of components. Both
-corruption and repair events are classified as adversary events and
-are presented within yellow and orange boxes respectively. Arrows 
-represent chronological time. This abstract labeling scheme mirrors that of the Chase output.
+Chase on this protocol generates attack trees shown in Figure
+\ref{fig:chase-ex}. The prefix \texttt{ms} represents measurement
+events with final measurement events presented within green boxes. The
+prefixes \texttt{c\_} and \texttt{r\_} represent the corruption and
+repair of components. Both corruption and repair events are classified
+as adversary events and are presented within yellow and orange boxes
+respectively. Arrows represent chronological time. This
+labeling scheme mirrors that of the Chase output.
 
 \begin{figure}[hbtp]
     \centering 
